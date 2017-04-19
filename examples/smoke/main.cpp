@@ -418,7 +418,7 @@ static void IVOCKAdvance()
 	//sl2D_solver.AddVortConf(v, simParams.vort_conf_eps, VFXEpoch::VORT_METHODS::LEAST_SQUARE);
 	sl2D_solver._project(v, pressure, divergence);
 
-	///*------------------------------ Advect temperature Field ------------------------------*/
+	/*------------------------------ Advect temperature Field ------------------------------*/
 	sl2D_solver._set_source(t, t0);
 	VFXEpoch::Swap(t, t0);
 	sl2D_solver._diffuse(t, t0);
