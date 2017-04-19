@@ -1,0 +1,187 @@
+/*******************************************************************************
+    VFXEPOCH - Physically based simulation VFX
+
+    Copyright (c) 2016 Snow Tsui <trevor.miscellaneous@gmail.com>
+
+    All rights reserved. Use of this source code is governed by
+    the MIT license as written in the LICENSE file.
+*******************************************************************************/
+#include "UTL_General.h"
+
+using namespace VFXEpoch;
+
+float
+VFXEpoch::RandomF(float min, float max)
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> range(min, max);
+	return range(gen);
+}
+
+int
+VFXEpoch::RandomI(int min, int max)
+{
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<int> range(min, max);
+	return range(gen);
+}
+
+float
+VFXEpoch::Lerp(float t, float x0, float x1)
+{
+	return (1 - t) * x0 + t * x1;
+}
+
+float
+VFXEpoch::Bilerp(float t, float s, float x0, float x1, float y0, float y1)
+{
+	return VFXEpoch::Lerp(s, VFXEpoch::Lerp(t, x0, x1), VFXEpoch::Lerp(t, y0, y1));
+}
+
+void
+VFXEpoch::ExtractComponents(VFXEpoch::Grid2DfScalarField& component, VFXEpoch::Grid2DVector2DfField vectorField, VECTOR_COMPONENTS axis)
+{
+	if (component.getDimY() != vectorField.getDimY() ||
+		component.getDimX() != vectorField.getDimX())
+	{
+		assert(component.getDimY() == vectorField.getDimY() && component.getDimX() != vectorField.getDimX());
+	}
+	else
+	{
+		switch (axis)
+		{
+		case VFXEpoch::VECTOR_COMPONENTS::X:
+			for (int i = 0; i != component.getDimY(); i++){
+				for (int j = 0; j != component.getDimX(); j++){
+					component.setData(vectorField.getData(i, j).m_x, i, j);
+				}
+			}
+			break;
+		case VFXEpoch::VECTOR_COMPONENTS::Y:
+			for (int i = 0; i != component.getDimY(); i++){
+				for (int j = 0; j != component.getDimX(); j++){
+					component.setData(vectorField.getData(i, j).m_y, i, j);
+				}
+			}
+			break;
+		case VFXEpoch::VECTOR_COMPONENTS::Z:
+			break;
+		default:
+			for (int i = 0; i != component.getDimY(); i++){
+				for (int j = 0; j != component.getDimX(); j++){
+					component.setData(vectorField.getData(i, j).m_x, i, j);
+				}
+			}
+			break;
+		}
+	}
+}
+
+void
+VFXEpoch::ExtractComponents(VFXEpoch::Grid2DfScalarField& component, VFXEpoch::Grid3DVector3DfField vectorField, VECTOR_COMPONENTS axis)
+{
+
+}
+
+void
+VFXEpoch::InsertComponents(VFXEpoch::Grid2DfScalarField component, VFXEpoch::Grid2DVector2DfField& vectorField, VECTOR_COMPONENTS axis)
+{
+	if (component.getDimY() != vectorField.getDimY() ||
+		component.getDimX() != vectorField.getDimX())
+	{
+		assert(component.getDimY() == vectorField.getDimY() && component.getDimX() != vectorField.getDimX());
+	}
+	else
+	{
+		VFXEpoch::Vector2Df vec(0.0f, 0.0f);
+		switch (axis)
+		{
+		case VFXEpoch::VECTOR_COMPONENTS::X:
+			for (int i = 0; i != component.getDimY(); i++){
+				for (int j = 0; j != component.getDimX(); j++){
+					vec = vectorField.getData(i, j);
+					vec.m_x = component.getData(i, j);
+					vectorField.setData(vec, i, j);
+				}
+			}
+			break;
+		case VFXEpoch::VECTOR_COMPONENTS::Y:
+			for (int i = 0; i != component.getDimY(); i++){
+				for (int j = 0; j != component.getDimX(); j++){
+					vec = vectorField.getData(i, j);
+					vec.m_y = component.getData(i, j);
+					vectorField.setData(vec, i, j);
+				}
+			}
+			break;
+		case VFXEpoch::VECTOR_COMPONENTS::Z:
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void
+VFXEpoch::InsertComponents(VFXEpoch::Grid2DfScalarField component, VFXEpoch::Grid3DVector3DfField& vectorField, VECTOR_COMPONENTS axis)
+{
+}
+
+float
+VFXEpoch::InterpolateGrid(int N, float x, float y, VFXEpoch::Grid2DfScalarField& field)
+{
+	int i, j;
+	float fx, fy;
+
+	VFXEpoch::get_barycentric(x, i, fx, 0, field.getDimX());
+	VFXEpoch::get_barycentric(y, j, fy, 0, field.getDimY());
+
+	return VFXEpoch::Bilerp(fx, fy, field.getData(i, j), field.getData(i + 1, j), field.getData(i, j + 1), field.getData(i + 1, j + 1));
+}
+
+void
+VFXEpoch::Zeros(VFXEpoch::Grid2DfScalarField& field)
+{
+	for (int i = 0; i != field.getDimY(); i++)
+	{
+		for (int j = 0; j != field.getDimX(); j++)
+		{
+			field.setData(0.0f, i, j);
+		}
+	}
+}
+
+void
+VFXEpoch::Zeros(VFXEpoch::Grid2DVector2DfField& field)
+{
+	for (int i = 0; i != field.getDimY(); i++)
+	{
+		for (int j = 0; j != field.getDimX(); j++)
+		{
+			VFXEpoch::Vector2Df data(0.0f, 0.0f);
+			field.setData(data, i, j);
+		}
+	}
+}
+
+void
+VFXEpoch::Zeros(VFXEpoch::Grid2DiScalarField& field)
+{
+	for (int i = 0; i != field.getDimY(); i++){
+		for (int j = 0; j != field.getDimX(); j++){
+			field(i, j) = 0;
+		}
+	}
+}
+
+void
+VFXEpoch::Zeros(VFXEpoch::Grid2DVector2DiField& field)
+{
+	for (int i = 0; i != field.getDimY(); i++){
+		for (int j = 0; j != field.getDimX(); j++){
+			field(i, j) = VFXEpoch::Vector2Di(0, 0);
+		}
+	}
+}
