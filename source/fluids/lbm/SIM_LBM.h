@@ -18,12 +18,11 @@
 *******************************************************************************/
 #ifndef _SIM_LBM_H_
 #define _SIM_LBM_H_
-#include "../../Utility/UTL_Grid.h"
-#include "../../Utility/UTL_Matrix.h"
-#include "../../Utility/UTL_Vector.h"
-#include "../../Utility/UTL_General.h"
-#include "../../Utility/UTL_LinearSolvers.h"
-#include "../../Solver/GAS/SIM_Mac.h"
+#include "../../utl/UTL_Grid.h"
+#include "../../utl/UTL_Matrix.h"
+#include "../../utl/UTL_Vector.h"
+#include "../../utl/UTL_General.h"
+#include "../../utl/UTL_LinearSolvers.h"
 
 #include <math.h>
 

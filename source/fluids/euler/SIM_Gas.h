@@ -9,11 +9,11 @@
 #ifndef _SIM_GAS_H_
 #define _SIM_GAS_H_
 
-#include "../../Utility/UTL_Grid.h"
-#include "../../Utility/UTL_Matrix.h"
-#include "../../Utility/UTL_Vector.h"
-#include "../../Utility/UTL_General.h"
-#include "../../Utility/UTL_LinearSolvers.h"
+#include "../../utl/UTL_Grid.h"
+#include "../../utl/UTL_Matrix.h"
+#include "../../utl/UTL_Vector.h"
+#include "../../utl/UTL_General.h"
+#include "../../utl/UTL_LinearSolvers.h"
 #include "../../Solver/GAS/SIM_Mac.h"
 
 namespace VFXEpoch
@@ -30,7 +30,7 @@ namespace VFXEpoch
 		* Proceedings of ACM SIGGRAPH 1999, 26th annual conference on
 		* computer graphics & interactive techniques
 		* Link: http://www.autodeskresearch.com/pdf/ns.pdf
-		* Desc: Pioneer of CFD in Computer Graphics
+		*
 		*/
 		class SL2D
 		{
@@ -143,7 +143,17 @@ namespace VFXEpoch
 
 		class SL3D
 		{
+		public:
+			SL3D();
+			SL3D(const SL3D& src);
+			SL3D& operator=(const SL3D& rhs);
+			~SL3D();
 
+		public:
+			//TODO: Public interfaces
+
+		private:
+			//TODO: Kernel functions
 		};
 	}
 }
