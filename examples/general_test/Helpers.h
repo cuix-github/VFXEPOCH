@@ -8,16 +8,9 @@
 *******************************************************************************/
 #ifndef _HELPERS_H_
 #define _HELPERS_H_
-#include "../../../VFXEpoch_dev/Solver/LBM/SIM_LBM.h"
-#include "../../../VFXEpoch_dev/Solver/Gas/SIM_Gas.h"
-#include "../../../VFXEpoch_dev/Solver/Gas/SIM_Mac.h"
-#include "../../../VFXEpoch_dev/Utility/UTL_General.h"
-#include "../../../VFXEpoch_dev/Utility/PCGSolver/pcg_solver.h"
-#include <Windows.h>
 #include <iostream>
 #include <iomanip>
 #include <time.h>
-#include <glut.h>
 
 #ifdef __cplusplus__
 #include <cstdlib>
@@ -28,7 +21,10 @@
 using namespace std;
 using namespace VFXEpoch;
 
-#pragma comment(lib, "C:\\R&D\\VFX\\VFXEpoch_dev\\Lib\\Debug\\VFXEpoch_x86d.lib")
+#ifdef _WIN32
+//TODO: Visual Studio pre-compile symbols
+#include <Windows.h>
+#endif
 
 namespace Helper
 {

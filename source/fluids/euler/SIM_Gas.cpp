@@ -368,13 +368,19 @@ SL2D::_set_source(VFXEpoch::Grid2DfScalarField& scalarField, VFXEpoch::Grid2DfSc
 	}
 }
 
+//TODO: Fix the problem:
+/*
+error: invalid initialization of non-const reference of type ‘VFXEpoch::Vector2D<float>&’ from an rvalue of type ‘VFXEpoch::Vector2D<float>’
+    VFXEpoch::Vector2Df k = vectorField(i, j) + source(i, j) * (float)timeStep * sourceRate;
+*/
 void
 SL2D::_set_source(VFXEpoch::Grid2DVector2DfField& vectorField, VFXEpoch::Grid2DVector2DfField source)
 {
 	for (int i = 0; i != vectorField.m_yCell; i++)
 	{
-		for (int j = 0; j != vectorField.m_xCell; j++)
+		for (int j = 0; j != vectorField.m_xCell; j++) {
 			vectorField.setData(vectorField(i, j) + source(i, j) * (float)timeStep * sourceRate, i, j);
+		}
 	}
 }
 

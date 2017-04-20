@@ -106,10 +106,26 @@ namespace VFXEpoch
 		GRAD_PRESSURE,
 	};
 
+	enum class COMPUTATIONAL_SCALAR_FIELD_3D
+	{
+		//TODO: Potential 3D scalar field
+	};
+
+	enum class COMPUTATIONAL_VECTOR_FIELD_3D
+	{
+		//TODO: Potential 3D vector field
+	};
+
 	enum class COMPUTATIONAL_FIELD_2D
 	{
 		COMPUTATIONAL_SCALAR_FIELD_2D,
 		COMPUTATIONAL_VECTOR_FIELD_2D,
+	};
+
+	enum class COMPUTATIONAL_FIELD_3D
+	{
+		COMPUTATIONAL_SCALAR_FIELD_3D,
+		COMPUTATIONAL_VECTOR_FIELD_3D,
 	};
 
 	// xCell for column loop
@@ -128,8 +144,7 @@ namespace VFXEpoch
 		Grid2D(int x, int y) : m_xCell(x), m_yCell(y){ data.clear(); data.resize(m_xCell * m_yCell); }
 		Grid2D(int x, int y, float _dx, float _dy) : m_xCell(x), m_yCell(y), dx(_dx), dy(_dy){ data.clear(); data.resize(m_xCell * m_yCell); }
 		Grid2D(const Grid2D& source){ m_xCell = source.m_xCell; m_yCell = source.m_yCell; dx = source.dx; dy = source.dx; data.clear(); data = source.data; }
-		Grid2D<T>& operator=(const Grid2D<T>& source)
-		{
+		Grid2D<T>& operator=(const Grid2D<T>& source) {
 			m_xCell = source.m_xCell;
 			m_yCell = source.m_yCell;
 			dx = source.dx;
@@ -140,8 +155,7 @@ namespace VFXEpoch
 			return *this;
 		}
 
-		friend Grid2D<T> operator+(Grid2D<T>& a, Grid2D<T>& b)
-		{
+		friend Grid2D<T> operator+(Grid2D<T>& a, Grid2D<T>& b) {
 			if (a.m_yCell != b.m_yCell || a.m_xCell != b.m_xCell)
 				assert(a.m_yCell == b.m_yCell && a.m_xCell == b.m_xCell);
 
@@ -157,8 +171,7 @@ namespace VFXEpoch
 			return result;
 		}
 
-		friend Grid2D<T> operator-(Grid2D<T>& a, Grid2D<T>& b)
-		{
+		friend Grid2D<T> operator-(Grid2D<T>& a, Grid2D<T>& b) {
 			if (a.m_yCell != b.m_yCell || a.m_xCell != b.m_xCell)
 				assert(a.m_yCell == b.m_yCell && a.m_xCell == b.m_xCell);
 
@@ -174,7 +187,7 @@ namespace VFXEpoch
 			return result;
 		}
 
-		Grid2D<T>& operator+=(const VFXEpoch::Grid2D<T>& rhs){
+		Grid2D<T>& operator+=(const VFXEpoch::Grid2D<T>& rhs) {
 			assert(rhs.m_xCell == m_xCell && rhs.m_yCell == m_yCell);
 
 			for (int i = 0; i != m_yCell; i++){
@@ -186,7 +199,7 @@ namespace VFXEpoch
 			return *this;
 		}
 
-		Grid2D<T>& operator-=(const VFXEpoch::Grid2D<T>& rhs){
+		Grid2D<T>& operator-=(const VFXEpoch::Grid2D<T>& rhs) {
 			assert(rhs.m_xCell == m_xCell && rhs.m_yCell == m_yCell);
 
 			for (int i = 0; i != m_yCell; i++){
@@ -198,14 +211,12 @@ namespace VFXEpoch
 			return *this;
 		}
 
-		const T& operator()(int i, int j) const
-		{
+		const T& operator()(int i, int j) const {
 			assert(i >= 0 && i <= m_xCell - 1 && j >= 0 && j <= m_yCell - 1);
 			return data[IDX2D(i, j)];
 		}
 
-		T& operator()(int i, int j)
-		{
+		T& operator()(int i, int j)	{
 			assert(i >= 0 && i <= m_xCell - 1 && j >= 0 && j <= m_yCell - 1);
 			return data[IDX2D(i, j)];
 		}
@@ -518,7 +529,7 @@ namespace VFXEpoch
 			for (int k = 0; k != m_zCell; k++){
 				for (int i = 0; i != m_yCell; i++){
 					for (int j = 0; j != m_xCell; j++){
-						data[k * zCell + i * m_yCell + j] *= f;
+						data[k * m_zCell + i * m_yCell + j] *= f;
 					}
 				}
 			}
@@ -814,8 +825,10 @@ namespace VFXEpoch
 
 	typedef Grid3D<VFXEpoch::Vector3Df> Grid3DVector3DfField;
 	typedef Grid3D<VFXEpoch::Vector3Dd> Grid3DVector3DdField;
+	typedef Grid3D<VFXEpoch::Vector3Di> Grid3DVector3DiField;
 	typedef Grid3D<float> Grid3DfScalarField;
 	typedef Grid3D<double> Grid3DdScalarField;
+	typedef Grid3D<int> Grid3DiScalarField;
 };
 
 #endif

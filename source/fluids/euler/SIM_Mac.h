@@ -9,7 +9,7 @@
 #ifndef _MAC_H_
 #define _MAC_H_
 
-#include "../../Utility/UTL_Analysis.h"
+#include "../../utl/UTL_Analysis.h"
 
 namespace VFXEpoch
 {

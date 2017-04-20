@@ -15,6 +15,8 @@
 #include <assert.h>
 #include <vector>
 
+using std::numeric_limits;
+
 #define UTL_PI 3.14159265358979323846
 #define UTL_PI_DEGREE 180
 #define UTL_ZERO 0
@@ -49,9 +51,11 @@ namespace VFXEpoch
 		Vector2D(T _x, T _y) : m_x(_x), m_y(_y){}
 		Vector2D(const Vector2D& source) : m_x(source.m_x), m_y(source.m_y){}
 		~Vector2D(){}
-		Vector2D& operator=(const Vector2D& source){ this->m_x = source.m_x; this->m_y = source.m_y; return *this; }
+		Vector2D& operator=(const Vector2D& rhs){ this->m_x = rhs.m_x; this->m_y = rhs.m_y; return *this; }
 		Vector2D operator+(Vector2D& source){ return Vector2D(m_x + source.m_x, m_y + source.m_y); }
+		Vector2D operator+(Vector2D&& source){ return Vector2D(m_x + source.m_x, m_y + source.m_y); }
 		Vector2D operator-(Vector2D& source){ return Vector2D(m_x - source.m_x, m_y - source.m_y); }
+		Vector2D operator-(Vector2D&& source){ return Vector2D(m_x - source.m_x, m_y - source.m_y); }
 		Vector2D operator-(){ return Vector2D(-m_x, -m_y); }
 		Vector2D operator*(T coef){ return Vector2D(m_x * coef, m_y * coef); }
 		Vector2D operator/(T coef){ return Vector2D(m_x / coef, m_y / coef); }
@@ -103,7 +107,7 @@ namespace VFXEpoch
 		}
 
 		T length(){ return std::sqrt(m_x * m_x + m_y * m_y); }
-		T dist(Vector2D v) { Vector2D v(v.m_x - m_x, v.m_y - m_y); return v.length(); }
+		T dist(Vector2D v) { Vector2D _v(v.m_x - m_x, v.m_y - m_y); return _v.length(); }
 		Vector2D& normalize(){ if (T(UTL_ZERO) == length()) return *this; *this *= (1.0f / length()); return *this; }
 		static T dot(Vector2D v1, Vector2D v2) { return v1.m_x * v2.m_x + v1.m_y * v2.m_y; }
 		static T det(Vector2D v1, Vector2D v2) { return (v1.m_x * v2.m_y) - (v1.m_y * v2.m_x); }
@@ -120,11 +124,11 @@ namespace VFXEpoch
 			T d = dot(vec1, vec2);
 
 			if (d > 0)
-				return RIGHT;
+				return SIDE::RIGHT;
 			else if (d < 0)
-				return LEFT;
+				return SIDE::LEFT;
 			else
-				return EQUAL;
+				return SIDE::EQUAL;
 		}
 
 		// If v2 at the right side of v1, return the positive degree, or negative.
@@ -201,7 +205,7 @@ namespace VFXEpoch
 		}
 
 		T length(){ return std::sqrt(m_x * m_x + m_y * m_y + m_z * m_z); }
-		T dist(Vector3D v) { Vector3D v(v.m_x - m_x, v.m_y - m_y, v.m_z - m_z); return v.length(); }
+		T dist(Vector3D v) { Vector3D _v(v.m_x - m_x, v.m_y - m_y, v.m_z - m_z); return _v.length(); }
 		Vector3D& normalize(){ if (T(UTL_ZERO) == length()) return *this; *this *= (1.0f / length()); return *this; }
 		static T dot(Vector3D v1, Vector3D v2) { return v1.m_x * v2.m_x + v1.m_y * v2.m_y + v1.m_z * v2.m_z; }
 
