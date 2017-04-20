@@ -529,7 +529,7 @@ namespace VFXEpoch
 			for (int k = 0; k != m_zCell; k++){
 				for (int i = 0; i != m_yCell; i++){
 					for (int j = 0; j != m_xCell; j++){
-						data[k * zCell + i * m_yCell + j] *= f;
+						data[k * m_zCell + i * m_yCell + j] *= f;
 					}
 				}
 			}

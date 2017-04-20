@@ -14,7 +14,7 @@
 #include "../../utl/UTL_Vector.h"
 #include "../../utl/UTL_General.h"
 #include "../../utl/UTL_LinearSolvers.h"
-#include "../../Solver/GAS/SIM_Mac.h"
+#include "SIM_Mac.h"
 
 namespace VFXEpoch
 {

@@ -139,9 +139,9 @@ namespace VFXEpoch
 		int size;
 
 	public:
-		MatrixNxN(){ size = 0; size = 0; }
+		MatrixNxN(){ size = 0; m_data.clear(); }
 		MatrixNxN(int N) : size(N){ m_data.resize(size * size); }
-		MatrixNxN(const MatrixNxN& source){ size = N; m_data = source.m_data; }
+		MatrixNxN(const MatrixNxN& source){ size = source.size; m_data = source.m_data; }
 		~MatrixNxN(){ m_data.clear(); }
 
 		MatrixNxN& operator=(const MatrixNxN& source) {

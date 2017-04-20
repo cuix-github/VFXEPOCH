@@ -11,13 +11,14 @@
 const int Nx = 4;
 const int Ny = 4;
 const float source = 1.0f;
-const float stride = 1.0 / (N + 1);
+const float spacex = 1.0f / (Nx + 1);
+const float spcaey = 1.0f / (Ny + 1);
 
 using namespace Helper;
 
 int main(int argc, char** argv)
 {
-	
+
 	system("Pause");
 	return 0;
 }
