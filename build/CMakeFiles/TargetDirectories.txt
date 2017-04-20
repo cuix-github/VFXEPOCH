@@ -1,5 +1,0 @@
-/home/faq/Documents/dev/VFXEPOCH/build/CMakeFiles/edit_cache.dir
-/home/faq/Documents/dev/VFXEPOCH/build/CMakeFiles/rebuild_cache.dir
-/home/faq/Documents/dev/VFXEPOCH/build/source/CMakeFiles/rebuild_cache.dir
-/home/faq/Documents/dev/VFXEPOCH/build/source/CMakeFiles/edit_cache.dir
-/home/faq/Documents/dev/VFXEPOCH/build/source/CMakeFiles/VFXEpoch.dir

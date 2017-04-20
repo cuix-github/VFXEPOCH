@@ -379,8 +379,7 @@ SL2D::_set_source(VFXEpoch::Grid2DVector2DfField& vectorField, VFXEpoch::Grid2DV
 	for (int i = 0; i != vectorField.m_yCell; i++)
 	{
 		for (int j = 0; j != vectorField.m_xCell; j++) {
-			VFXEpoch::Vector2Df k = vectorField(i, j) + source(i, j) * (float)timeStep * sourceRate;
-			vectorField(i, j) = k;
+			vectorField.setData(vectorField(i, j) + source(i, j) * (float)timeStep * sourceRate, i, j);
 		}
 	}
 }
