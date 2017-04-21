@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 PROJECT(VFXEpoch C CXX)
 
-set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release)
 
 file(GLOB_RECURSE VFXEpoch_Headers "fluids/*.h" "utl/*.h")
 
@@ -19,6 +19,7 @@ else()
         message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
+#WARNING: Turn this option OFF when first time compile the VFXEpoch library
 option(VFXEPOCH_EXAMPLES "Turn ON to build example projects" ON)
 
 IF (VFXEPOCH_EXAMPLES)

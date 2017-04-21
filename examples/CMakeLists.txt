@@ -6,8 +6,8 @@ FILE(
 
 FILE(
   GLOB_RECURSE EXAMPLE_UNIT_TEST
-  "${CMAKE_CURRENT_SOURCE_DIR}/smoke/*.h"
-  "${CMAKE_CURRENT_SOURCE_DIR}/smoke/*.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/general_test/*.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/general_test/*.cpp"
 )
 
 find_package(OpenGL REQUIRED)

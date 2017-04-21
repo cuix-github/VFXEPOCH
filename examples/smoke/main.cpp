@@ -43,7 +43,7 @@ static int stopFrame = -1;
 static int frame_counter = 0;
 
 
-static void Init();
+static void Init(int argc, char** argv);
 static void WindowShowup(int width, int height);
 static void PreDisplay();
 static void PostDisplay();
@@ -65,7 +65,7 @@ static void Loop();
 static void KeepSource();
 static void Close();
 
-static void Init()
+static void Init(int argc, char **argv)
 {
 	// Simulation parameters
 	simParams.nx = 166;	simParams.ny = 166;
@@ -160,6 +160,8 @@ static void Init()
 			grav.setData(VFXEpoch::Vector2Df(0.0f, -9.8f), i, j);
 		}
 	}
+
+	glutInit(&argc, argv);
 }
 
 static void WindowShowup(int width, int height)
@@ -566,7 +568,7 @@ int main(int argc, char** argv)
 	cout << "Press 'x' to exit" << endl;
 
 	cout << endl << "-------------- Simulation Setup --------------" << endl;
-	Init();
+	Init(argc, argv);
 	WindowShowup(width, height);
 	cout << endl << "Simulation parameters:";
 	cout << endl << simParams << endl;
@@ -574,7 +576,6 @@ int main(int argc, char** argv)
 	cout << endl << "-------------- Simulation Start --------------" << endl;
 	Loop();
 	Close();
-
-	system("Pause");
+			
 	return 0;
 }
