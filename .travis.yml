@@ -1,0 +1,20 @@
+language: cpp
+
+compiler:
+  - gcc-5
+  - g++-5
+
+# branches to build
+branches:
+  # whitelist
+  only:
+    - master
+
+#scripts:
+ - mkdir build && cd build && cmake .. -DVFXEPOCH_EXAMPLES=OFF
+ - make
+ - make install
+ - cd ..
+ - rm -rf build
+ - mkdir build && cd build && cmake .. -DVFXEPOCH_EXAMPLES=ON
+ - make
