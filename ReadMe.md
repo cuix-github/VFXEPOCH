@@ -3,7 +3,7 @@
 2. gcc-5.4 & ubuntu 14.04 pass
 3. gcc-6.2 & ubuntu 14.04 pass
 
-***Commands for checking and switching your gcc version:***
+**Commands for checking and switching your gcc version:**
 ```sh
 $ ls -l $(which gcc)
 ```
