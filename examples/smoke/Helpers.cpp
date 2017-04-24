@@ -53,8 +53,11 @@ Helper::randomInitScalarField(VFXEpoch::Grid2DfScalarField& field, float min, fl
 	{
 		for (int j = 1; j != field.getDimX() - 1; j++)
 		{
-			float data = VFXEpoch::RandomI(min, max);
-			field.setData(data, i, j);
+			// float data = VFXEpoch::RandomI(min, max);
+			// field.setData(data, i, j);
+
+			// TODO: Fix the random number generator which causes core dump
+			// field(i, j) = 0.0f;
 		}
 	}
 }
@@ -66,10 +69,13 @@ Helper::randomInitVectorField(VFXEpoch::Grid2DVector2DfField& field, float min, 
 	{
 		for (int j = 1; j != field.getDimX() - 1; j++)
 		{
-			Vector2Df data;
-			data.m_x = VFXEpoch::RandomI(min, max);
-			data.m_y = VFXEpoch::RandomI(min, max);
-			field.setData(data, i, j);
+			// Vector2Df data(0.0f, 0.0f);
+			// data.m_x = VFXEpoch::RandomI(min, max);
+			// data.m_y = VFXEpoch::RandomI(min, max);
+			// field.setData(data, i, j);
+
+			// TODO: Fix the random number generator which causes core dump
+			// field(i, j) = data;
 		}
 	}
 }

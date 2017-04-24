@@ -29,8 +29,7 @@
 
 using namespace std;
 using namespace VFXEpoch;
-
-#pragma comment(lib, "C:\\R&D\\VFX\\VFXEpoch_dev\\Lib\\Release\\VFXEpoch_x86.lib")
+using namespace VFXEpoch::Solvers;
 
 namespace Helper
 {

@@ -24,5 +24,5 @@ message("WILL INSTALL LIB PATH = ${CMAKE_SOURCE_DIR}/vfxepoch_libs")
 add_executable(smoke ${EXAMPLE_SMOKE})
 add_executable(general_test ${EXAMPLE_UNIT_TEST})
 
-target_link_libraries(smoke LINK_PUBLIC VFXEpoch ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
-target_link_libraries(general_test LINK_PUBLIC VFXEpoch ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
+target_link_libraries(smoke VFXEpoch ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
+target_link_libraries(general_test VFXEpoch ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})

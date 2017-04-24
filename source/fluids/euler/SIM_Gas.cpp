@@ -13,11 +13,33 @@ using namespace VFXEpoch::Solvers;
 SL2D::SL2D(){
 	dimX = dimY = 0;
 	iterations = 0;
-	viscosity = 0.0;
-	spacingX = 0.0;
-	spacingY = 0.0;
-	timeStep = 0.0;
+	viscosity = 0.0f;
+	spacingX = 0.0f;
+	spacingY = 0.0f;
+	timeStep = 0.0f;
 	diffuseRate = 0.0f;
+
+	//IMPORTANT!!
+	//Initialize all the members
+	fieldBoundaries[0].side = EDGES_2DSIM::TOP;
+	fieldBoundaries[0].boundaryType = BOUNDARY::STREAK;
+	fieldBoundaries[1].side = EDGES_2DSIM::BOTTOM;
+	fieldBoundaries[1].boundaryType = BOUNDARY::STREAK;
+	fieldBoundaries[2].side = EDGES_2DSIM::RIGHT;
+	fieldBoundaries[2].boundaryType = BOUNDARY::STREAK;
+	fieldBoundaries[3].side = EDGES_2DSIM::LEFT;
+	fieldBoundaries[3].boundaryType = BOUNDARY::STREAK;
+	velocityField.clear();
+	velocityFieldPrev.clear();
+	gradPressure.clear();
+	pressure.clear();
+	divergence.clear();
+	densityField.clear();
+	densityFieldPrev.clear();
+	temperature.clear();
+	temperaturePrev.clear();
+	particles.clear();
+	staggeredGrid.Reset();
 }
 
 SL2D::SL2D(int dimX, int dimY, int iterations, double timeStep, float diffuseRate, float viscosity, float sourceRate, float spacingX, float spacingY,
