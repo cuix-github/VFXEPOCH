@@ -12,6 +12,12 @@
 #include <iomanip>
 #include <time.h>
 
+#include "fluids/lbm/SIM_LBM.h"
+#include "fluids/euler/SIM_Gas.h"
+#include "fluids/euler/SIM_Mac.h"
+#include "utl/UTL_General.h"
+#include "utl/PCGSolver/pcg_solver.h"
+
 #ifdef __cplusplus__
 #include <cstdlib>
 #else
@@ -33,6 +39,7 @@ namespace Helper
 	public:
 		_sim_params()
 		{
+			// Set to default values
 			nx = ny = 32;
 			dt = 0.01f;
 			src = 100.0f;

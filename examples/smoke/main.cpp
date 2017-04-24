@@ -28,44 +28,44 @@ VFXEpoch::Grid2DfScalarField psi;
 VFXEpoch::Grid2DVector2DfField dvel;
 std::vector<VFXEpoch::Particle2D> particles;
 
-VFXEpoch::Solvers::SL2D sl2D_solver;
+VFXEpoch::Solvers::SL2D *sl2D_solver = NULL;
 Helper::SimulationParameters simParams;
-static int ID = 0;
-static int width = 640;
-static int height = 720;
-static int mouse_status[3];
-static int mx0, my0, mx, my;
-static bool bVel = false;
-static bool bSmoke = false;
-static bool bParticles = true;
-static bool bPause = false;
-static int stopFrame = -1;
-static int frame_counter = 0;
+int ID = 0;
+int width = 640;
+int height = 720;
+int mouse_status[3];
+int mx0, my0, mx, my;
+bool bVel = false;
+bool bSmoke = false;
+bool bParticles = true;
+bool bPause = false;
+int stopFrame = -1;
+int frame_counter = 0;
 
+void Init(int argc, char** argv);
+void WindowShowup(int width, int height);
+void PreDisplay();
+void PostDisplay();
+void Display();
+void DisplayParticles();
+void DisplayVelocityField();
+void DispolayDensityField();
+void GetUserOperations(VFXEpoch::Grid2DfScalarField& density, VFXEpoch::Grid2DVector2DfField& vel);
+void Advance();
+void IVOCKAdvance();
+void ParticlesAdvector_RKII();
+void Reset();
+void mouse_func(int button, int state, int x, int y);
+void motion_func(int x, int y);
+void Reshape(int width, int height);
+void Idle();
+void Keys(unsigned char key, int x, int y);
+void Loop();
+void KeepSource();
+void Close();
 
-static void Init();
-static void WindowShowup(int width, int height);
-static void PreDisplay();
-static void PostDisplay();
-static void Display();
-static void DisplayParticles();
-static void DisplayVelocityField();
-static void DispolayDensityField();
-static void GetUserOperations(VFXEpoch::Grid2DfScalarField& density, VFXEpoch::Grid2DVector2DfField& vel);
-static void Advance();
-static void IVOCKAdvance();
-static void ParticlesAdvector_RKII();
-static void Reset();
-static void mouse_func(int button, int state, int x, int y);
-static void motion_func(int x, int y);
-static void Reshape(int width, int height);
-static void Idle();
-static void Keys(unsigned char key, int x, int y);
-static void Loop();
-static void KeepSource();
-static void Close();
-
-static void Init()
+void
+Init(int argc, char **argv)
 {
 	// Simulation parameters
 	simParams.nx = 166;	simParams.ny = 166;
@@ -117,6 +117,9 @@ static void Init()
 	VFXEpoch::Zeros(pressure);
 	VFXEpoch::Zeros(divergence);
 
+	sl2D_solver = new VFXEpoch::Solvers::SL2D();
+	if(!sl2D_solver) exit(-1);
+
 	// Setup particles
 	float r(0.0f), g(0.0f), b(0.0f);
 	float x(0.0f), y(0.0f);
@@ -129,7 +132,7 @@ static void Init()
 	}
 
 	// Initialize gas solver
-	if (!sl2D_solver.Initialize(VFXEpoch::Vector2Di(simParams.ny + 2, simParams.nx + 2), VFXEpoch::Vector2Df(1.0f / simParams.ny, 1.0f / simParams.nx),
+	if (!sl2D_solver->Initialize(VFXEpoch::Vector2Di(simParams.ny + 2, simParams.nx + 2), VFXEpoch::Vector2Df(1.0f / simParams.ny, 1.0f / simParams.nx),
 		simParams.linear_solver_iterations, simParams.dt, simParams.diff, simParams.visc, simParams.src_rate)) {
 		cout << "Solver initialization failed" << endl;
 		system("Pause");
@@ -141,18 +144,18 @@ static void Init()
 
 	// If any field get new value, it requires call the following
 	// interfaces to transport data to the solver.
-	sl2D_solver.SetField(v, VFXEpoch::COMPUTATIONAL_VECTOR_FIELD_2D::VEL);
-	sl2D_solver.SetField(v0, VFXEpoch::COMPUTATIONAL_VECTOR_FIELD_2D::VEL_PREV);
-	sl2D_solver.SetField(d, VFXEpoch::COMPUTATIONAL_SCALAR_FIELD_2D::DENSITY);
-	sl2D_solver.SetField(d0, VFXEpoch::COMPUTATIONAL_SCALAR_FIELD_2D::DENSITY_PREV);
-	sl2D_solver.SetField(t, VFXEpoch::COMPUTATIONAL_SCALAR_FIELD_2D::TEMPERATURE);
-	sl2D_solver.SetField(t0, VFXEpoch::COMPUTATIONAL_SCALAR_FIELD_2D::TEMPERATURE_PREV);
-	sl2D_solver.SetField(pressure, VFXEpoch::COMPUTATIONAL_SCALAR_FIELD_2D::PRESSURE);
-	sl2D_solver.SetField(divergence, VFXEpoch::COMPUTATIONAL_SCALAR_FIELD_2D::DIVERGENCE);
-	sl2D_solver.SetFieldBoundary(VFXEpoch::BOUNDARY::NEUMANN_OPEN, VFXEpoch::EDGES_2DSIM::TOP);
-	sl2D_solver.SetFieldBoundary(VFXEpoch::BOUNDARY::NEUMANN_OPEN, VFXEpoch::EDGES_2DSIM::BOTTOM);
-	sl2D_solver.SetFieldBoundary(VFXEpoch::BOUNDARY::NEUMANN_OPEN, VFXEpoch::EDGES_2DSIM::RIGHT);
-	sl2D_solver.SetFieldBoundary(VFXEpoch::BOUNDARY::NEUMANN_OPEN, VFXEpoch::EDGES_2DSIM::LEFT);
+	sl2D_solver->SetField(v, VFXEpoch::COMPUTATIONAL_VECTOR_FIELD_2D::VEL);
+	sl2D_solver->SetField(v0, VFXEpoch::COMPUTATIONAL_VECTOR_FIELD_2D::VEL_PREV);
+	sl2D_solver->SetField(d, VFXEpoch::COMPUTATIONAL_SCALAR_FIELD_2D::DENSITY);
+	sl2D_solver->SetField(d0, VFXEpoch::COMPUTATIONAL_SCALAR_FIELD_2D::DENSITY_PREV);
+	sl2D_solver->SetField(t, VFXEpoch::COMPUTATIONAL_SCALAR_FIELD_2D::TEMPERATURE);
+	sl2D_solver->SetField(t0, VFXEpoch::COMPUTATIONAL_SCALAR_FIELD_2D::TEMPERATURE_PREV);
+	sl2D_solver->SetField(pressure, VFXEpoch::COMPUTATIONAL_SCALAR_FIELD_2D::PRESSURE);
+	sl2D_solver->SetField(divergence, VFXEpoch::COMPUTATIONAL_SCALAR_FIELD_2D::DIVERGENCE);
+	sl2D_solver->SetFieldBoundary(VFXEpoch::BOUNDARY::NEUMANN_OPEN, VFXEpoch::EDGES_2DSIM::TOP);
+	sl2D_solver->SetFieldBoundary(VFXEpoch::BOUNDARY::NEUMANN_OPEN, VFXEpoch::EDGES_2DSIM::BOTTOM);
+	sl2D_solver->SetFieldBoundary(VFXEpoch::BOUNDARY::NEUMANN_OPEN, VFXEpoch::EDGES_2DSIM::RIGHT);
+	sl2D_solver->SetFieldBoundary(VFXEpoch::BOUNDARY::NEUMANN_OPEN, VFXEpoch::EDGES_2DSIM::LEFT);
 
 	// Set gravity
 	for (int i = 1; i != grav.getDimY() - 1; i++) {
@@ -160,9 +163,12 @@ static void Init()
 			grav.setData(VFXEpoch::Vector2Df(0.0f, -9.8f), i, j);
 		}
 	}
+
+	glutInit(&argc, argv);
 }
 
-static void WindowShowup(int width, int height)
+void
+WindowShowup(int width, int height)
 {
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
 	glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - width) / 2,
@@ -183,7 +189,8 @@ static void WindowShowup(int width, int height)
 	glutDisplayFunc(Display);
 }
 
-static void PreDisplay()
+void
+PreDisplay()
 {
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
@@ -194,12 +201,14 @@ static void PreDisplay()
 	glEnable(GL_POINT_SMOOTH);
 }
 
-static void PostDisplay()
+void
+PostDisplay()
 {
 	glutSwapBuffers();
 }
 
-static void Display()
+void
+Display()
 {
 	PreDisplay();
 
@@ -215,7 +224,8 @@ static void Display()
 	PostDisplay();
 }
 
-static void DisplayVelocityField()
+void
+DisplayVelocityField()
 {
 	glColor3f(0.0f, 0.0f, 0.0f);
 	glLineWidth(1.0f);
@@ -247,7 +257,8 @@ static void DisplayVelocityField()
 	//glEnd();
 }
 
-static void DisplayParticles()
+void
+DisplayParticles()
 {
 	glPointSize(1.0f);
 
@@ -264,7 +275,8 @@ static void DisplayParticles()
 	glEnd();
 }
 
-static void DispolayDensityField()
+void
+DispolayDensityField()
 {
 	float x, y, hx, hy, d00, d01, d10, d11;
 	hx = 1.0f / simParams.nx;
@@ -288,7 +300,8 @@ static void DispolayDensityField()
 	glEnd();
 }
 
-static void GetUserOperations(VFXEpoch::Grid2DfScalarField& density, VFXEpoch::Grid2DVector2DfField& vel)
+void
+GetUserOperations(VFXEpoch::Grid2DfScalarField& density, VFXEpoch::Grid2DVector2DfField& vel)
 {
 	VFXEpoch::Vector2Df vec(0.0f, 0.0f);
 	VFXEpoch::Zeros(vel);
@@ -311,18 +324,20 @@ static void GetUserOperations(VFXEpoch::Grid2DfScalarField& density, VFXEpoch::G
 	my0 = my;
 }
 
-static void ParticlesAdvector_RKII()
+void
+ParticlesAdvector_RKII()
 {
 	VFXEpoch::Grid2DfScalarField du(v.getDimY(), v.getDimX(), 1.0f / v.getDimX(), 1.0f / v.getDimY());
 	VFXEpoch::Grid2DfScalarField dv(v.getDimY(), v.getDimX(), 1.0f / v.getDimX(), 1.0f / v.getDimY());
 	VFXEpoch::ExtractComponents(du, v, VFXEpoch::VECTOR_COMPONENTS::X);
 	VFXEpoch::ExtractComponents(dv, v, VFXEpoch::VECTOR_COMPONENTS::Y);
-	sl2D_solver._advect_particles_rk2(du, dv, particles);
+	sl2D_solver->_advect_particles_rk2(du, dv, particles);
 	du.clear();
 	dv.clear();
 }
 
-static void Advance()
+void
+Advance()
 {
 	/*-------------------------------- Advect Velocity Field --------------------------------*/
 	VFXEpoch::Zeros(wn);
@@ -333,38 +348,39 @@ static void Advance()
 	VFXEpoch::Zeros(dw);
 	VFXEpoch::Zeros(buoy);
 
-	sl2D_solver._set_source(v0, grav);
-	sl2D_solver._set_source(v, v0);
+	sl2D_solver->_set_source(v0, grav);
+	sl2D_solver->_set_source(v, v0);
 
 	ParticlesAdvector_RKII();
 
 	VFXEpoch::Swap(v, v0);
-	sl2D_solver._diffuse(v, v0);
-	sl2D_solver._project(v, pressure, divergence);
+	sl2D_solver->_diffuse(v, v0);
+	sl2D_solver->_project(v, pressure, divergence);
 	// VFXEpoch::Swap(v, v0);
-	sl2D_solver._advect(v, v0, v0);
-	sl2D_solver._get_buoyancy(d, t, buoy, 0.1f, 0.4f);
+	sl2D_solver->_advect(v, v0, v0);
+	sl2D_solver->_get_buoyancy(d, t, buoy, 0.1f, 0.4f);
 	v += buoy;
-	//sl2D_solver.AddVortConf(v, simParams.vort_conf_eps, VFXEpoch::VORT_METHODS::LEAST_SQUARE);
-	sl2D_solver._project(v, pressure, divergence);
+	//sl2D_solver->AddVortConf(v, simParams.vort_conf_eps, VFXEpoch::VORT_METHODS::LEAST_SQUARE);
+	sl2D_solver->_project(v, pressure, divergence);
 
 	///*------------------------------ Advect temperature Field ------------------------------*/
-	sl2D_solver._set_source(t, t0);
+	sl2D_solver->_set_source(t, t0);
 	VFXEpoch::Swap(t, t0);
-	sl2D_solver._diffuse(t, t0);
+	sl2D_solver->_diffuse(t, t0);
 	VFXEpoch::Swap(t, t0);
-	sl2D_solver._advect(t, t0, v);
+	sl2D_solver->_advect(t, t0, v);
 
 
 	/*-------------------------------- Advect density Field --------------------------------*/
-	sl2D_solver._set_source(d, d0);
+	sl2D_solver->_set_source(d, d0);
 	VFXEpoch::Swap(d, d0);
-	sl2D_solver._diffuse(d, d0);
+	sl2D_solver->_diffuse(d, d0);
 	VFXEpoch::Swap(d, d0);
-	sl2D_solver._advect(d, d0, v);
+	sl2D_solver->_advect(d, d0, v);
 }
 
-static void IVOCKAdvance()
+void
+IVOCKAdvance()
 {
 	/*-------------------------------- Advect Velocity Field --------------------------------*/
 	VFXEpoch::Zeros(wn);
@@ -375,14 +391,14 @@ static void IVOCKAdvance()
 	VFXEpoch::Zeros(dw);
 	VFXEpoch::Zeros(buoy);
 
-	sl2D_solver._set_source(v0, grav);
-	sl2D_solver._set_source(v, v0);
+	sl2D_solver->_set_source(v0, grav);
+	sl2D_solver->_set_source(v, v0);
 
 	ParticlesAdvector_RKII();
 
 	VFXEpoch::Swap(v, v0);
-	sl2D_solver._diffuse(v, v0);
-	sl2D_solver._project(v, pressure, divergence);
+	sl2D_solver->_diffuse(v, v0);
+	sl2D_solver->_project(v, pressure, divergence);
 	VFXEpoch::Swap(v, v0);
 
 	// Compute vorticity from the original velocity field
@@ -391,9 +407,9 @@ static void IVOCKAdvance()
 	// VFXEpoch::Analysis::computeCurl_uniform_Stokes(wn, v0);
 
 	// Advect vorticity by following velocity field
-	sl2D_solver._advect(wBar, wn, v0);
+	sl2D_solver->_advect(wBar, wn, v0);
 
-	sl2D_solver._advect(v, v0, v0);
+	sl2D_solver->_advect(v, v0, v0);
 
 	// Compute vorticity from the velocity field which has been advected
 	// VFXEpoch::Analysis::computeCurl_uniform_Richardson(wStar, v);
@@ -405,36 +421,37 @@ static void IVOCKAdvance()
 	dw.scale(-1.0f);
 
 	// Linearly solve the psi and deduce velocity from vorticity
-	//VFXEpoch::LinearSolver::GSSolve(psi, dw, sl2D_solver.getFieldBoundaries(), 1, 4, simParams.linear_solver_iterations);
-	VFXEpoch::LinearSolver::JacobiSolve(psi, dw, sl2D_solver.getFieldBoundaries(), 1, 4, simParams.linear_solver_iterations);
-	//VFXEpoch::LinearSolver::MultigridSolve_V_Cycle(1.f / (simParams.ny - 1), psi, dw, sl2D_solver.getFieldBoundaries(), 1, 4, 30);
+	//VFXEpoch::LinearSolver::GSSolve(psi, dw, sl2D_solver->getFieldBoundaries(), 1, 4, simParams.linear_solver_iterations);
+	VFXEpoch::LinearSolver::JacobiSolve(psi, dw, sl2D_solver->getFieldBoundaries(), 1, 4, simParams.linear_solver_iterations);
+	//VFXEpoch::LinearSolver::MultigridSolve_V_Cycle(1.f / (simParams.ny - 1), psi, dw, sl2D_solver->getFieldBoundaries(), 1, 4, 30);
 	VFXEpoch::Analysis::find_vector_from_vector_potential_2D(dvel, psi);
 	// Combine the differences
 	v += dvel;
 
 	// Get buoyancy
-	sl2D_solver._get_buoyancy(d, t, buoy, 0.1f, 0.4f);
+	sl2D_solver->_get_buoyancy(d, t, buoy, 0.1f, 0.4f);
 	v += buoy;
-	//sl2D_solver.AddVortConf(v, simParams.vort_conf_eps, VFXEpoch::VORT_METHODS::LEAST_SQUARE);
-	sl2D_solver._project(v, pressure, divergence);
+	//sl2D_solver->AddVortConf(v, simParams.vort_conf_eps, VFXEpoch::VORT_METHODS::LEAST_SQUARE);
+	sl2D_solver->_project(v, pressure, divergence);
 
 	/*------------------------------ Advect temperature Field ------------------------------*/
-	sl2D_solver._set_source(t, t0);
+	sl2D_solver->_set_source(t, t0);
 	VFXEpoch::Swap(t, t0);
-	sl2D_solver._diffuse(t, t0);
+	sl2D_solver->_diffuse(t, t0);
 	VFXEpoch::Swap(t, t0);
-	sl2D_solver._advect(t, t0, v);
+	sl2D_solver->_advect(t, t0, v);
 
 
 	/*-------------------------------- Advect density Field --------------------------------*/
-	sl2D_solver._set_source(d, d0);
+	sl2D_solver->_set_source(d, d0);
 	VFXEpoch::Swap(d, d0);
-	sl2D_solver._diffuse(d, d0);
+	sl2D_solver->_diffuse(d, d0);
 	VFXEpoch::Swap(d, d0);
-	sl2D_solver._advect(d, d0, v);
+	sl2D_solver->_advect(d, d0, v);
 }
 
-void Reset()
+void
+Reset()
 {
 	float r(0.0f), g(0.0f), b(0.0f);
 	float x(0.0f), y(0.0f);
@@ -450,12 +467,12 @@ void Reset()
 	d.zeroScalars(); d0.zeroScalars();
 	t.zeroScalars(); t0.zeroScalars();
 	pressure.zeroScalars();	divergence.zeroScalars();
-	sl2D_solver.Reset();
+	sl2D_solver->Reset();
 
 	frame_counter = 0;
 }
 
-static void mouse_func(int button, int state, int x, int y)
+void mouse_func(int button, int state, int x, int y)
 {
 	mx0 = mx = x;
 	my0 = my = y;
@@ -463,13 +480,15 @@ static void mouse_func(int button, int state, int x, int y)
 	mouse_status[button] = state == GLUT_DOWN;
 }
 
-static void motion_func(int x, int y)
+void
+motion_func(int x, int y)
 {
 	mx = x;
 	my = y;
 }
 
-static void Reshape(int width, int height)
+void
+Reshape(int width, int height)
 {
 	glutSetWindow(ID);
 	glutReshapeWindow(width, height);
@@ -477,7 +496,8 @@ static void Reshape(int width, int height)
 	::height = height;
 }
 
-static void Keys(unsigned char key, int x, int y)
+void
+Keys(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
@@ -504,7 +524,8 @@ static void Keys(unsigned char key, int x, int y)
 	}
 }
 
-static void Idle()
+void
+Idle()
 {
 	GetUserOperations(d0, v0);
 	if (!bPause)
@@ -525,12 +546,14 @@ static void Idle()
 	glutPostRedisplay();
 }
 
-static void Loop()
+void
+Loop()
 {
 	glutMainLoop();
 }
 
-static void KeepSource()
+void
+KeepSource()
 {
 	int idxi = simParams.nx / 2;
 	int idxj = 10;
@@ -543,7 +566,8 @@ static void KeepSource()
 	t0(idxi - 2, idxj) = simParams.heat_source;
 }
 
-static void Close()
+void
+Close()
 {
 	particles.clear();
 	v.clear();	v0.clear();
@@ -554,10 +578,15 @@ static void Close()
 	wStar.clear(); dvel.clear();
 	psi.clear();
 	pressure.clear(); divergence.clear();
-	sl2D_solver.Shutdown();
+
+	if(sl2D_solver){
+		sl2D_solver->Shutdown();
+		delete [] sl2D_solver;
+	}
 }
 
-int main(int argc, char** argv)
+int
+main(int argc, char** argv)
 {
 	cout << "-------------- Smoke Simulation Info --------------" << endl;
 	cout << "Press 'v' switching to display velocity field" << endl;
@@ -566,7 +595,7 @@ int main(int argc, char** argv)
 	cout << "Press 'x' to exit" << endl;
 
 	cout << endl << "-------------- Simulation Setup --------------" << endl;
-	Init();
+	Init(argc, argv);
 	WindowShowup(width, height);
 	cout << endl << "Simulation parameters:";
 	cout << endl << simParams << endl;
@@ -575,6 +604,5 @@ int main(int argc, char** argv)
 	Loop();
 	Close();
 
-	system("Pause");
 	return 0;
 }

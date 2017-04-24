@@ -18,7 +18,6 @@ using namespace Helper;
 
 int main(int argc, char** argv)
 {
-
-	system("Pause");
+	std::cout << "VFXEpoch - Ubuntu v14.04" << '\n';
 	return 0;
 }

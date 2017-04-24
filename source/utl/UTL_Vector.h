@@ -165,7 +165,9 @@ namespace VFXEpoch
 		~Vector3D(){}
 		Vector3D& operator=(const Vector3D& source){ this->m_x = source.m_x; this->m_y = source.m_y; this->m_z = source.m_z; return *this; }
 		Vector3D operator+(Vector3D& source){ return Vector3D(m_x + source.m_x, m_y + source.m_y, m_z + source.m_z); }
+		Vector3D operator+(Vector3D&& source){ return VEctor3D(m_x + source.m_x, m_y + source.m_y, m_z + source.m_z); }
 		Vector3D operator-(Vector3D& source){ return Vector3D(m_x - source.m_x, m_y - source.m_y, m_z - source.m_z); }
+		Vector3D operator-(Vector3D&& source){ return Vector3D(m_x - source.m_x, m_y - source.m_y, m_z - source.m_z); }
 		Vector3D operator-(){ return Vector3D(-m_x, -m_y, -m_z); }
 		Vector3D operator*(T coef){ return Vector3D(m_x * coef, m_y * coef, m_z * coef); }
 		Vector3D operator/(T coef){ return Vector3D(m_x / coef, m_y / coef, m_z / coef); }

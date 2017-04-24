@@ -8,15 +8,18 @@
 *******************************************************************************/
 #ifndef _HELPERS_H_
 #define _HELPERS_H_
-#include "../../../VFXEpoch_dev/Solver/Gas/SIM_Gas.h"
-#include "../../../VFXEpoch_dev/Solver/Gas/SIM_Mac.h"
-#include "../../../VFXEpoch_dev/Utility/UTL_General.h"
-#include "../../../VFXEpoch_dev/Utility/PCGSolver/pcg_solver.h"
-#include <Windows.h>
+#include "fluids/euler/SIM_Gas.h"
+#include "fluids/euler/SIM_Mac.h"
+#include "utl/UTL_General.h"
+#include "utl/PCGSolver/pcg_solver.h"
 #include <iostream>
 #include <iomanip>
 #include <time.h>
-#include <glut.h>
+#include <GL/glut.h>
+
+#ifdef _WIN32
+#include <Windows.h>
+#endif
 
 #ifdef __cplusplus__
 #include <cstdlib>
@@ -26,8 +29,7 @@
 
 using namespace std;
 using namespace VFXEpoch;
-
-#pragma comment(lib, "C:\\R&D\\VFX\\VFXEpoch_dev\\Lib\\Release\\VFXEpoch_x86.lib")
+using namespace VFXEpoch::Solvers;
 
 namespace Helper
 {

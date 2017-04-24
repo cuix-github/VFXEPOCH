@@ -447,7 +447,6 @@ namespace VFXEpoch
 			m_xCell = 0;
 			m_yCell = 0;
 			data.clear();
-			data.resize(0);
 		}
 	};
 

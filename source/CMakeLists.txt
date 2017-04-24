@@ -1,4 +1,17 @@
-file(GLOB_RECURSE VFXEpoch_SRC "fluids/*.h" "fluids/*.cpp" "utl/*.h" "utl/*.cpp")
+FILE(
+  GLOB_RECURSE VFXEpoch_SRC
+  "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+)
+
 add_library(VFXEpoch STATIC ${VFXEpoch_SRC})
-file(GLOB_RECURSE VFXEpoch_HEADERS "fluids/*.h" "utl/*.h")
-INSTALL(FILES ${VFXEpoch_HEADERS} DESTINATION ../include)
+
+INSTALL(
+  DIRECTORY ${CMAKE_SOURCE_DIR}/source/
+  DESTINATION ${CMAKE_SOURCE_DIR}/include FILES_MATCHING PATTERN "*.h"
+)
+
+INSTALL(
+  TARGETS VFXEpoch
+  DESTINATION ${CMAKE_SOURCE_DIR}/vfxepoch_libs
+)
