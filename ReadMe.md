@@ -1,6 +1,6 @@
 | **`Linux - ubuntu`** |
 |----------------------|
-|[![Build Status](https://travis-ci.org/Shakebones/VFXEPOCH.svg?branch=master)]
+|[![Build Status](https://travis-ci.org/Shakebones/VFXEPOCH.svg?branch=master)]|
 
 ### **Note:**
 1. gcc-4.8 & ubuntu 14.04 failed
