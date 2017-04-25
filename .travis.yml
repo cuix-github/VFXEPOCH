@@ -2,7 +2,8 @@ language: generic
 sudo: required
 dist: trusty
 compiler:
-  - g++
+  - g++-5
+  - g++-6
 
 # branches to build
 branches:
