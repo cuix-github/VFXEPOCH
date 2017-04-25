@@ -211,11 +211,13 @@ namespace VFXEpoch
 			return *this;
 		}
 
+		// TODO: Check the logic for m_xCell & m_yCell
 		const T& operator()(int i, int j) const {
 			assert(i >= 0 && i <= m_xCell - 1 && j >= 0 && j <= m_yCell - 1);
 			return data[IDX2D(i, j)];
 		}
 
+		// TODO: Check the logic for m_xCell & m_yCell
 		T& operator()(int i, int j)	{
 			assert(i >= 0 && i <= m_xCell - 1 && j >= 0 && j <= m_yCell - 1);
 			return data[IDX2D(i, j)];
