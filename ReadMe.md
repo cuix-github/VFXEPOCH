@@ -1,7 +1,11 @@
+| **`Linux - ubuntu`** |
+|----------------------|
+|[![Build Status](https://travis-ci.org/Shakebones/VFXEPOCH.svg?branch=master)]
+
 ### **Note:**
 1. gcc-4.8 & ubuntu 14.04 failed
-2. gcc-5.4 & ubuntu 14.04 pass
-3. gcc-6.2 & ubuntu 14.04 pass
+2. gcc-5.4 & ubuntu 14.04 passed
+3. gcc-6.2 & ubuntu 14.04 passed
 
 **Commands for checking and switching your gcc version:**
 ```sh
