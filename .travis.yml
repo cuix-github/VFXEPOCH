@@ -1,8 +1,8 @@
-language: cpp
-
+language: generic
+sudo: required
+dist: trusty
 compiler:
-  - gcc-5
-  - g++-5
+  - g++
 
 # branches to build
 branches:
@@ -10,7 +10,7 @@ branches:
   only:
     - master
 
-#scripts:
+scripts:
  - mkdir build && cd build && cmake .. -DVFXEPOCH_EXAMPLES=OFF
  - make
  - make install
