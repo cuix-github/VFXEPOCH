@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 PROJECT(VFXEpoch C CXX)
 
-set(CMAKE_BUILD_TYPE Release)
+set(CMAKE_BUILD_TYPE Debug)
 
 file(GLOB_RECURSE VFXEpoch_Headers "fluids/*.h" "utl/*.h")
 

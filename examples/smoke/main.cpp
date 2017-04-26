@@ -68,7 +68,7 @@ void
 Init(int argc, char **argv)
 {
 	// Simulation parameters
-	simParams.nx = 166;	simParams.ny = 128;
+	simParams.nx = 64;	simParams.ny = 32;
 	simParams.dt = 0.01f;
 	simParams.diff = 0.0f; simParams.visc = 0.0f;
 	simParams.src = 100.0f;	simParams.src_rate = 1.0f;
@@ -124,7 +124,7 @@ Init(int argc, char **argv)
 	float r(0.0f), g(0.0f), b(0.0f);
 	float x(0.0f), y(0.0f);
 	for (std::vector<VFXEpoch::Particle2D>::iterator ite = particles.begin(); ite != particles.end(); ite++){
-		x = (simParams.nx / 2 + VFXEpoch::RandomI(-40, 40)) * 1.0f / simParams.nx;
+		x = (simParams.nx / 2 + VFXEpoch::RandomI(-10, 10)) * 1.0f / simParams.nx;
 		y = (VFXEpoch::RandomI(0, 30)) * 1.0f / simParams.nx;
 		ite->pos = VFXEpoch::Vector2Df(x, y);
 		ite->vel = VFXEpoch::Vector2Df(0.0f, 0.0f);
@@ -326,8 +326,8 @@ GetUserOperations(VFXEpoch::Grid2DfScalarField& density, VFXEpoch::Grid2DVector2
 void
 ParticlesAdvector_RKII()
 {
-	VFXEpoch::Grid2DfScalarField du(v.getDimY(), v.getDimX(), 1.0f / v.getDimX(), 1.0f / v.getDimY());
-	VFXEpoch::Grid2DfScalarField dv(v.getDimY(), v.getDimX(), 1.0f / v.getDimX(), 1.0f / v.getDimY());
+	VFXEpoch::Grid2DfScalarField du(v.getDimX(), v.getDimY(), 1.0f / v.getDimX(), 1.0f / v.getDimY());
+	VFXEpoch::Grid2DfScalarField dv(v.getDimX(), v.getDimY(), 1.0f / v.getDimX(), 1.0f / v.getDimY());
 	VFXEpoch::ExtractComponents(du, v, VFXEpoch::VECTOR_COMPONENTS::X);
 	VFXEpoch::ExtractComponents(dv, v, VFXEpoch::VECTOR_COMPONENTS::Y);
 	sl2D_solver->_advect_particles_rk2(du, dv, particles);
@@ -353,6 +353,8 @@ Advance()
 	ParticlesAdvector_RKII();
 
 	VFXEpoch::Swap(v, v0);
+
+	// TODO: Bug in ExtractComponents(...)
 	sl2D_solver->_diffuse(v, v0);
 	sl2D_solver->_project(v, pressure, divergence);
 	// VFXEpoch::Swap(v, v0);
@@ -397,6 +399,8 @@ IVOCKAdvance()
 
 	VFXEpoch::Swap(v, v0);
 	sl2D_solver->_diffuse(v, v0);
+
+	// TODO: Bugs
 	sl2D_solver->_project(v, pressure, divergence);
 	VFXEpoch::Swap(v, v0);
 
@@ -455,7 +459,7 @@ Reset()
 	float r(0.0f), g(0.0f), b(0.0f);
 	float x(0.0f), y(0.0f);
 	for (std::vector<VFXEpoch::Particle2D>::iterator ite = particles.begin(); ite != particles.end(); ite++){
-		x = (simParams.nx / 2 + VFXEpoch::RandomI(-40, 40)) * 1.0f / simParams.nx;
+		x = (simParams.nx / 2 + VFXEpoch::RandomI(-10, 10)) * 1.0f / simParams.nx;
 		y = (VFXEpoch::RandomI(0, 30)) * 1.0f / simParams.nx;
 		ite->pos = VFXEpoch::Vector2Df(x, y);
 		ite->vel = VFXEpoch::Vector2Df(0.0f, 0.0f);

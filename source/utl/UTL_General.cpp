@@ -40,14 +40,11 @@ VFXEpoch::Bilerp(float t, float s, float x0, float x1, float y0, float y1) {
 void
 VFXEpoch::ExtractComponents(VFXEpoch::Grid2DfScalarField& component, VFXEpoch::Grid2DVector2DfField vectorField, VECTOR_COMPONENTS axis) {
 	if (component.getDimY() != vectorField.getDimY() ||
-		component.getDimX() != vectorField.getDimX())
-	{
-		assert(component.getDimY() == vectorField.getDimY() && component.getDimX() != vectorField.getDimX());
+		component.getDimX() != vectorField.getDimX()) {
+		assert(component.getDimY() == vectorField.getDimY() && component.getDimX() == vectorField.getDimX());
 	}
-	else
-	{
-		switch (axis)
-		{
+	else {
+		switch (axis)	{
 		case VFXEpoch::VECTOR_COMPONENTS::X:
 			for (int i = 0; i != component.getDimY(); i++){
 				for (int j = 0; j != component.getDimX(); j++){

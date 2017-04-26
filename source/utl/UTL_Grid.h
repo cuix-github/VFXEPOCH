@@ -143,7 +143,7 @@ namespace VFXEpoch
 		Grid2D(){ m_xCell = m_yCell = 0; dx = 0.0f; data.clear(); }
 		Grid2D(int x, int y) : m_xCell(x), m_yCell(y){ data.clear(); data.resize(m_xCell * m_yCell); }
 		Grid2D(int x, int y, float _dx, float _dy) : m_xCell(x), m_yCell(y), dx(_dx), dy(_dy){ data.clear(); data.resize(m_xCell * m_yCell); }
-		Grid2D(const Grid2D& source){ m_xCell = source.m_xCell; m_yCell = source.m_yCell; dx = source.dx; dy = source.dx; data.clear(); data = source.data; }
+		Grid2D(const Grid2D& source){ this->m_xCell = source.m_xCell; this->m_yCell = source.m_yCell; this->dx = source.dx; this->dy = source.dy; this->data.clear(); this->data = source.data; }
 		Grid2D<T>& operator=(const Grid2D<T>& source) {
 			m_xCell = source.m_xCell;
 			m_yCell = source.m_yCell;
