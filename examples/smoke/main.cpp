@@ -132,7 +132,7 @@ Init(int argc, char **argv)
 	}
 
 	// Initialize gas solver
-	if (!sl2D_solver->Initialize(VFXEpoch::Vector2Di(simParams.nx + 2, simParams.nx + 2), VFXEpoch::Vector2Df(1.0f / simParams.nx, 1.0f / simParams.nx),
+	if (!sl2D_solver->Initialize(VFXEpoch::Vector2Di(simParams.nx + 2, simParams.ny + 2), VFXEpoch::Vector2Df(1.0f / simParams.nx, 1.0f / simParams.nx),
 		simParams.linear_solver_iterations, simParams.dt, simParams.diff, simParams.visc, simParams.src_rate)) {
 		cout << "Solver initialization failed" << endl;
 		exit(-1);
