@@ -105,7 +105,7 @@ bool
 SL2D::Initialize(VFXEpoch::Vector2Di dimension, VFXEpoch::Vector2Df spacing, int iterations, float timeStep, float diffuseRate, float viscosity, float sourceRate)
 {
 	bool result;
-	result = _init(dimension.m_y, dimension.m_x, iterations, timeStep, diffuseRate, viscosity, sourceRate, spacing.m_x, spacing.m_y);
+	result = _init(dimension.m_x, dimension.m_y, iterations, timeStep, diffuseRate, viscosity, sourceRate, spacing.m_x, spacing.m_y);
 	if (!result)
 		return false;
 
@@ -284,7 +284,7 @@ VFXEpoch::BndConditionPerEdge* SL2D::getFieldBoundaries()
 }
 
 bool
-SL2D::_init(int dimY, int dimX, int iterations, double timeStep, float diffuseRate, float viscosity, float sourceRate, float spacingX, float spacingY)
+SL2D::_init(int dimX, int dimY, int iterations, double timeStep, float diffuseRate, float viscosity, float sourceRate, float spacingX, float spacingY)
 {
 	this->dimX = dimX; this->dimY = dimY;
 	this->timeStep = timeStep;
@@ -294,13 +294,13 @@ SL2D::_init(int dimY, int dimX, int iterations, double timeStep, float diffuseRa
 	this->iterations = iterations;
 	this->viscosity = viscosity;
 
-	velocityFieldPrev.ResetDimension(dimY, dimX);
-	velocityField.ResetDimension(dimY, dimX);
-	gradPressure.ResetDimension(dimY, dimX);
-	pressure.ResetDimension(dimY, dimX);
-	divergence.ResetDimension(dimY, dimX);
-	densityFieldPrev.ResetDimension(dimY, dimX);
-	densityField.ResetDimension(dimY, dimX);
+	velocityFieldPrev.ResetDimension(dimX, dimY);
+	velocityField.ResetDimension(dimX, dimY);
+	gradPressure.ResetDimension(dimX, dimY);
+	pressure.ResetDimension(dimX, dimY);
+	divergence.ResetDimension(dimX, dimY);
+	densityFieldPrev.ResetDimension(dimX, dimY);
+	densityField.ResetDimension(dimX, dimY);
 
 	this->velocityFieldPrev.zeroVectors();
 	this->velocityField.zeroVectors();
@@ -554,10 +554,10 @@ SL2D::_diffuse(VFXEpoch::Grid2DfScalarField& densityField, VFXEpoch::Grid2DfScal
 void
 SL2D::_diffuse(VFXEpoch::Grid2DVector2DfField& vectorField, VFXEpoch::Grid2DVector2DfField vectorFieldOrigin)
 {
-	VFXEpoch::Grid2DfScalarField x(vectorFieldOrigin.getDimY(), vectorFieldOrigin.getDimX(), vectorFieldOrigin.getDx(), vectorFieldOrigin.getDy());
-	VFXEpoch::Grid2DfScalarField xPrev(vectorFieldOrigin.getDimY(), vectorFieldOrigin.getDimX(), vectorFieldOrigin.getDx(), vectorFieldOrigin.getDy());
-	VFXEpoch::Grid2DfScalarField y(vectorFieldOrigin.getDimY(), vectorFieldOrigin.getDimX(), vectorFieldOrigin.getDx(), vectorFieldOrigin.getDy());
-	VFXEpoch::Grid2DfScalarField yPrev(vectorFieldOrigin.getDimY(), vectorFieldOrigin.getDimX(), vectorFieldOrigin.getDx(), vectorFieldOrigin.getDy());
+	VFXEpoch::Grid2DfScalarField x(vectorFieldOrigin.getDimX(), vectorFieldOrigin.getDimY(), vectorFieldOrigin.getDx(), vectorFieldOrigin.getDy());
+	VFXEpoch::Grid2DfScalarField xPrev(vectorFieldOrigin.getDimX(), vectorFieldOrigin.getDimY(), vectorFieldOrigin.getDx(), vectorFieldOrigin.getDy());
+	VFXEpoch::Grid2DfScalarField y(vectorFieldOrigin.getDimX(), vectorFieldOrigin.getDimY(), vectorFieldOrigin.getDx(), vectorFieldOrigin.getDy());
+	VFXEpoch::Grid2DfScalarField yPrev(vectorFieldOrigin.getDimX(), vectorFieldOrigin.getDimY(), vectorFieldOrigin.getDx(), vectorFieldOrigin.getDy());
 	ExtractComponents(xPrev, vectorFieldOrigin, VFXEpoch::VECTOR_COMPONENTS::X);
 	ExtractComponents(yPrev, vectorFieldOrigin, VFXEpoch::VECTOR_COMPONENTS::Y);
 	this->_diffuse(x, xPrev);

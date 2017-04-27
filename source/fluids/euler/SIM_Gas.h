@@ -106,7 +106,7 @@ namespace VFXEpoch
 			// For test, make the microsolvers as public members.
 		public:
 			// TODO: Micro-Solvers
-			bool _init(int dimY, int dimX, int iterations, double timeStep, float diffuseRate, float viscosity, float sourceRate, float spacingX, float spacingY);
+			bool _init(int dimX, int dimY, int iterations, double timeStep, float diffuseRate, float viscosity, float sourceRate, float spacingX, float spacingY);
 			void _set_field(VFXEpoch::Grid2DfScalarField field, VFXEpoch::COMPUTATIONAL_SCALAR_FIELD_2D fieldName);
 			void _set_field(VFXEpoch::Grid2DVector2DfField field, VFXEpoch::COMPUTATIONAL_VECTOR_FIELD_2D fieldName);
 			void _set_field_boundary(VFXEpoch::Grid2DfScalarField& field);

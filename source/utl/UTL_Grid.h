@@ -143,7 +143,7 @@ namespace VFXEpoch
 		Grid2D(){ m_xCell = m_yCell = 0; dx = 0.0f; data.clear(); }
 		Grid2D(int x, int y) : m_xCell(x), m_yCell(y){ data.clear(); data.resize(m_xCell * m_yCell); }
 		Grid2D(int x, int y, float _dx, float _dy) : m_xCell(x), m_yCell(y), dx(_dx), dy(_dy){ data.clear(); data.resize(m_xCell * m_yCell); }
-		Grid2D(const Grid2D& source){ m_xCell = source.m_xCell; m_yCell = source.m_yCell; dx = source.dx; dy = source.dx; data.clear(); data = source.data; }
+		Grid2D(const Grid2D& source){ this->m_xCell = source.m_xCell; this->m_yCell = source.m_yCell; this->dx = source.dx; this->dy = source.dy; this->data.clear(); this->data = source.data; }
 		Grid2D<T>& operator=(const Grid2D<T>& source) {
 			m_xCell = source.m_xCell;
 			m_yCell = source.m_yCell;
@@ -211,13 +211,15 @@ namespace VFXEpoch
 			return *this;
 		}
 
+		// TODO: Check the logic for m_xCell & m_yCell
 		const T& operator()(int i, int j) const {
-			assert(i >= 0 && i <= m_xCell - 1 && j >= 0 && j <= m_yCell - 1);
+			assert(i >= 0 && i <= m_yCell - 1 && j >= 0 && j <= m_xCell - 1);
 			return data[IDX2D(i, j)];
 		}
 
+		// TODO: Check the logic for m_xCell & m_yCell
 		T& operator()(int i, int j)	{
-			assert(i >= 0 && i <= m_xCell - 1 && j >= 0 && j <= m_yCell - 1);
+			assert(i >= 0 && i <= m_yCell - 1 && j >= 0 && j <= m_xCell - 1);
 			return data[IDX2D(i, j)];
 		}
 
