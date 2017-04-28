@@ -12,6 +12,7 @@
 #include "utl/PCGSolver/pcg_solver.h"
 #include "fluids/euler/SIM_Gas.h"
 #include "fluids/euler/SIM_EulerGAS.h"
+#include "Eigen/Dense"
 #include <iostream>
 #include <iomanip>
 #include <time.h>

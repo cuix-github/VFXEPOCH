@@ -6,10 +6,14 @@
     All rights reserved. Use of this source code is governed by
     the MIT license as written in the LICENSE file.
 *******************************************************************************/
+
+// This utility is usually used for testing grids within several digits.
+// Higher dimensions could violate the display format.
+
 #include "Helpers.h"
 
-const int Nx = 4;
-const int Ny = 10;
+const int Nx = 5;
+const int Ny = 8;
 const float source = 1.0f;
 const float spacex = 1.0f / (Nx + 1);
 const float spcaey = 1.0f / (Ny + 1);
@@ -33,8 +37,10 @@ int main(int argc, char** argv)
 	displayVectorField(gridv);
 	cout << endl;
 
-	std::cout << '\n' << "The value of gridf at position" << "(2, 3) is " << gridf(2, 3) << '\n';
-	std::cout << '\n' << "The value at gridv at position" << "(2, 1) is VFXEpoch::Vector2Df(" << gridv(2, 1).m_x << ", " << gridv(2, 1).m_y << ")" << '\n';
+	int i = VFXEpoch::RandomI(0, Ny - 1);
+	int j = VFXEpoch::RandomI(0, Nx - 1);
+	std::cout << '\n' << "The value of gridf at position" << "(" << i << ", " << j << ") is " << gridf(i, j) << '\n';
+	std::cout << '\n' << "The value at gridv at position" << "(" << i << ", " << j << ") is " << "Vector2Df(" << gridv(i, j).m_x << ", " << gridv(i, j).m_y << ")" << '\n';
 	cout << endl;
 
 	return 0;

@@ -27,3 +27,4 @@ IF (VFXEPOCH_EXAMPLES)
 ENDIF()
 
 add_subdirectory(source)
+add_subdirectory(external_libs)

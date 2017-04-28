@@ -1,0 +1,4 @@
+INSTALL(
+  DIRECTORY ${CMAKE_SOURCE_DIR}/external_libs/
+  DESTINATION ${CMAKE_SOURCE_DIR}/include
+)
