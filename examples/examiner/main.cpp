@@ -6,7 +6,7 @@
     All rights reserved. Use of this source code is governed by
     the MIT license as written in the LICENSE file.
 *******************************************************************************/
-#include "utl/Common/Helpers.h"
+#include "Helpers.h"
 
 const int Nx = 4;
 const int Ny = 10;

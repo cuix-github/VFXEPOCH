@@ -5,6 +5,7 @@ FILE(
 )
 
 include_directories(${CMAKE_SOURCE_DIR}/source)
+include_directories(${CMAKE_SOURCE_DIR}/source/utl)
 add_library(VFXEpoch STATIC ${VFXEpoch_SRC})
 
 INSTALL(

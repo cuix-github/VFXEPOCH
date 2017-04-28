@@ -1,11 +1,15 @@
 FILE(
   GLOB_RECURSE EXAMPLE_SMOKE
+  "${CMAKE_CURRENT_SOURCE_DIR}/Common/*.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Common/*.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/smoke/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/smoke/*.cpp"
 )
 
 FILE(
   GLOB_RECURSE EXAMPLE_UNIT_TEST
+  "${CMAKE_CURRENT_SOURCE_DIR}/Common/*.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Common/*.cpp"
   "${CMAKE_CURRENT_SOURCE_DIR}/examiner/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/examiner/*.cpp"
 )
@@ -16,6 +20,7 @@ include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} )
 
 #Homemade public headers and libs
 include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/examples/Common)
 link_directories(${CMAKE_SOURCE_DIR}/vfxepoch_libs)
 
 message("WILL INSTALL INCLUDE PATH = ${CMAKE_SOURCE_DIR}/include")

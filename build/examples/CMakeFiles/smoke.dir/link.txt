@@ -1,1 +1,0 @@
-/usr/bin/c++    -std=c++11 -g    CMakeFiles/smoke.dir/smoke/main.cpp.o CMakeFiles/smoke.dir/smoke/Helpers.cpp.o  -o smoke  -L/home/faq/Documents/dev/VFXEPOCH/vfxepoch_libs -rdynamic ../source/libVFXEpoch.a -lGLU -lGL -lSM -lICE -lX11 -lXext -lglut -lXmu -lXi -Wl,-rpath,/home/faq/Documents/dev/VFXEPOCH/vfxepoch_libs 

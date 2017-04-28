@@ -8,10 +8,14 @@
 *******************************************************************************/
 #ifndef _SIM_EULER_GAS_H_
 #define _SIM_EULER_GAS_H_
-#include "../../utl/UTL_Grid.h"
-#include "../../utl/UTL_Matrix.h"
-#include "../../utl/UTL_Vector.h"
-#include "../../utl/UTL_General.h"
-#include "../../utl/UTL_LinearSolvers.h"
+#include "utl/UTL_Grid.h"
+#include "utl/UTL_Matrix.h"
+#include "utl/UTL_Vector.h"
+#include "utl/UTL_General.h"
+#include "utl/UTL_LinearSolvers.h"
+#include "utl/PCGSolver/blas_wrapper.h"
+#include "utl/PCGSolver/pcg_solver.h"
+#include "utl/PCGSolver/sparse_matrix.h"
+#include "utl/PCGSolver/util.h"
 
 #endif
