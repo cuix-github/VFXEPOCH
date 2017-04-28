@@ -6,8 +6,8 @@ FILE(
 
 FILE(
   GLOB_RECURSE EXAMPLE_UNIT_TEST
-  "${CMAKE_CURRENT_SOURCE_DIR}/general_test/*.h"
-  "${CMAKE_CURRENT_SOURCE_DIR}/general_test/*.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/examiner/*.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/examiner/*.cpp"
 )
 
 find_package(OpenGL REQUIRED)
@@ -22,7 +22,7 @@ message("WILL INSTALL INCLUDE PATH = ${CMAKE_SOURCE_DIR}/include")
 message("WILL INSTALL LIB PATH = ${CMAKE_SOURCE_DIR}/vfxepoch_libs")
 
 add_executable(smoke ${EXAMPLE_SMOKE})
-add_executable(general_test ${EXAMPLE_UNIT_TEST})
+add_executable(examiner ${EXAMPLE_UNIT_TEST})
 
 target_link_libraries(smoke VFXEpoch ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
-target_link_libraries(general_test VFXEpoch ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
+target_link_libraries(examiner VFXEpoch ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})

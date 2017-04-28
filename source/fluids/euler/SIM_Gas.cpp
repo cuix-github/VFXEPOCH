@@ -39,7 +39,6 @@ SL2D::SL2D(){
 	temperature.clear();
 	temperaturePrev.clear();
 	particles.clear();
-	staggeredGrid.Reset();
 }
 
 SL2D::SL2D(int dimX, int dimY, int iterations, double timeStep, float diffuseRate, float viscosity, float sourceRate, float spacingX, float spacingY,
@@ -122,12 +121,6 @@ void
 SL2D::SetField(VFXEpoch::Grid2DVector2DfField field, VFXEpoch::COMPUTATIONAL_VECTOR_FIELD_2D fieldName)
 {
 	_set_field(field, fieldName);
-}
-
-void
-SL2D::SetField(VFXEpoch::Mac2D mac)
-{
-	_set_field(mac);
 }
 
 void
@@ -375,18 +368,12 @@ SL2D::_set_field(VFXEpoch::Grid2DVector2DfField field, VFXEpoch::COMPUTATIONAL_V
 }
 
 void
-SL2D::_set_field(VFXEpoch::Mac2D mac)
-{
-	staggeredGrid = mac;
-}
-
-void
 SL2D::_set_source(VFXEpoch::Grid2DfScalarField& scalarField, VFXEpoch::Grid2DfScalarField source)
 {
 	for (int i = 0; i != scalarField.m_yCell; i++)
 	{
 		for (int j = 0; j != scalarField.m_xCell; j++)
-			scalarField.setData(scalarField(i, j) + source(i, j) * (float)timeStep * sourceRate, i, j);
+			scalarField(i, j) = scalarField(i, j) + source(i, j) * (float)timeStep * sourceRate;
 	}
 }
 
@@ -401,7 +388,7 @@ SL2D::_set_source(VFXEpoch::Grid2DVector2DfField& vectorField, VFXEpoch::Grid2DV
 	for (int i = 0; i != vectorField.m_yCell; i++)
 	{
 		for (int j = 0; j != vectorField.m_xCell; j++) {
-			vectorField.setData(vectorField(i, j) + source(i, j) * (float)timeStep * sourceRate, i, j);
+			vectorField(i, j) = vectorField(i, j) + source(i, j) * (float)timeStep * sourceRate;
 		}
 	}
 }
@@ -452,22 +439,22 @@ SL2D::_advect(VFXEpoch::Grid2DVector2DfField& vectorField, VFXEpoch::Grid2DVecto
 
 	for (int i = 1; i <= ny; i++){
 		for (int j = 1; j <= nx; j++){
-			exactx = i - dtx * referenceField(i, j).m_x;
-			exacty = j - dty * referenceField(i, j).m_y;
+			exactx = j - dtx * referenceField(i, j).m_x;
+			exacty = i - dty * referenceField(i, j).m_y;
 
 			if (exactx < 0.5f) exactx = 0.5f;
 			if (exacty < 0.5f) exacty = 0.5f;
 			if (exactx > (nx + 0.5f)) exactx = nx + 0.5f;
 			if (exacty > (ny + 0.5f)) exacty = ny + 0.5f;
 
-			idxi = (int)exactx;
-			idxj = (int)exacty;
+			idxj = (int)exactx;
+			idxi = (int)exacty;
 
 			// Lerp by aixs order
 			// Lerp y direction first and then take the results as
 			// inputs to do the x direction lerp or vice versa.
-			xlerp = exactx - idxi;
-			ylerp = exacty - idxj;
+			xlerp = exactx - idxj;
+			ylerp = exacty - idxi;
 
 			// Lerp x direction first
 			subLerp0 = VFXEpoch::Lerp(ylerp, vectorFieldOirigin(idxi, idxj).m_x, vectorFieldOirigin(idxi, idxj + 1).m_x);
@@ -499,19 +486,19 @@ SL2D::_advect(VFXEpoch::Grid2DfScalarField& scalarField, VFXEpoch::Grid2DfScalar
 	{
 		for (int j = 1; j <= nx; j++)
 		{
-			exactx = i - dtx * referenceField(i, j).m_x;
-			exacty = j - dty * referenceField(i, j).m_y;
+			exactx = j - dtx * referenceField(i, j).m_x;
+			exacty = i - dty * referenceField(i, j).m_y;
 
 			if (exactx < 0.5f) exactx = 0.5f;
 			if (exacty < 0.5f) exacty = 0.5f;
 			if (exactx > nx + 0.5f) exactx = nx + 0.5f;
 			if (exacty > ny + 0.5f) exacty = ny + 0.5f;
 
-			idxi = (int)exactx;
-			idxj = (int)exacty;
+			idxj = (int)exactx;
+			idxi = (int)exacty;
 
-			xlerp = exactx - idxi;
-			ylerp = exacty - idxj;
+			xlerp = exactx - idxj;
+			ylerp = exacty - idxi;
 
 			sublerp0 = VFXEpoch::Lerp(xlerp, scalarFieldOrigin(idxi, idxj), scalarFieldOrigin(idxi + 1, idxj));
 			sublerp1 = VFXEpoch::Lerp(xlerp, scalarFieldOrigin(idxi, idxj + 1), scalarFieldOrigin(idxi + 1, idxj + 1));

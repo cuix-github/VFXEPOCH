@@ -4,6 +4,7 @@ FILE(
   "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 )
 
+include_directories(${CMAKE_SOURCE_DIR}/source)
 add_library(VFXEpoch STATIC ${VFXEpoch_SRC})
 
 INSTALL(

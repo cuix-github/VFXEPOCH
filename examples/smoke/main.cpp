@@ -35,9 +35,9 @@ int width = 640;
 int height = 720;
 int mouse_status[3];
 int mx0, my0, mx, my;
-bool bVel = false;
+bool bVel = true;
 bool bSmoke = false;
-bool bParticles = true;
+bool bParticles = false;
 bool bPause = false;
 int stopFrame = -1;
 int frame_counter = 0;
@@ -68,13 +68,13 @@ void
 Init(int argc, char **argv)
 {
 	// Simulation parameters
-	simParams.nx = 64;	simParams.ny = 32;
+	simParams.nx = 4;	simParams.ny = 8;
 	simParams.dt = 0.01f;
 	simParams.diff = 0.0f; simParams.visc = 0.0f;
 	simParams.src = 100.0f;	simParams.src_rate = 1.0f;
 	simParams.user_force = 0.0f;
 	simParams.heat_source = 2000.0f;
-	simParams.streamer_len = 5.0f;
+	simParams.streamer_len = 0.5f;
 	simParams.num_particles = 10000;
 	simParams.vort_conf_eps = 0.95f;
 	simParams.particle_life_span_rev = 0.9f;
@@ -172,7 +172,7 @@ WindowShowup(int width, int height)
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
 	glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - width) / 2,
 		(glutGet(GLUT_SCREEN_HEIGHT) - height) / 2);
-	glutInitWindowSize(width, height);
+	glutInitWindowSize(simParams.nx * 10, simParams.ny * 10);
 	ID = glutCreateWindow("Smoke Sim VFXEpoch");
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -229,31 +229,19 @@ DisplayVelocityField()
 	glColor3f(0.0f, 0.0f, 0.0f);
 	glLineWidth(1.0f);
 	float x, y;
-	float dx = 1.0f / (simParams.nx), dy = 1.0f / (simParams.nx);
+	float dx = 1.0f / (simParams.nx), dy = 1.0f / (simParams.ny);
 	float streamerxRate = simParams.streamer_len / simParams.nx, streameryRate = simParams.streamer_len / simParams.nx;
 
 	glBegin(GL_LINES);
-	for (int i = 1; i <= simParams.nx + 1; i++){
+	for (int i = 1; i <= simParams.ny + 1; i++){
 		for (int j = 1; j <= simParams.nx + 1; j++){
-			x = (i - 0.5f) * dx;
-			y = (j - 0.5f) * dy;
+			x = (j - 0.5f) * dx;
+			y = (i - 0.5f) * dy;
 			glVertex2f(x, y);
 			glVertex2f(x + v(i, j).m_x * streamerxRate, y + v(i, j).m_y * streameryRate);
 		}
 	}
 	glEnd();
-
-	//glColor3f(0.2f, 0.6f, 1.0f);
-	//glPointSize(1.0f);
-	//glBegin(GL_POINTS);
-	//for (int i = 1; i <= simParams.nx + 1; i++){
-	//	for (int j = 1; j <= simParams.nx + 1; j++){
-	//		x = (j - 0.5f) * dx;
-	//		y = (i - 0.5f) * dy;
-	//		glVertex2f(x, y);
-	//	}
-	//}
-	//glEnd();
 }
 
 void
@@ -265,7 +253,7 @@ DisplayParticles()
 	for (std::vector<VFXEpoch::Particle2D>::iterator ite = particles.begin(); ite != particles.end(); ite++){
 		if (ite->pos.m_x < 0 || ite->pos.m_x > 1 ||
 			ite->pos.m_y < 0 || ite->pos.m_y > 1) {
-			ite->pos.m_x = (simParams.nx / 2 + VFXEpoch::RandomI(-40, 40)) * 1.0f / simParams.nx;
+			ite->pos.m_x = (simParams.nx / 2 + VFXEpoch::RandomI(-10, 10)) * 1.0f / simParams.nx;
 			ite->pos.m_y = (VFXEpoch::RandomI(0, 30)) * 1.0f / simParams.nx;
 		}
 		glColor3f(ite->color.m_x, ite->color.m_y, ite->color.m_z);
@@ -283,7 +271,7 @@ DispolayDensityField()
 	glBegin(GL_QUADS);
 	for (int i = 0; i <= simParams.nx; i++)	{
 		x = (i - 0.5f) * hx;
-		for (int j = 0; j <= simParams.nx; j++)	{
+		for (int j = 0; j <= simParams.ny; j++)	{
 			y = (j - 0.5f) * hy;
 			d00 = d(i, j);
 			d01 = d(i, j + 1);
@@ -558,15 +546,11 @@ Loop()
 void
 KeepSource()
 {
-	int idxi = simParams.nx / 2;
-	int idxj = 10;
+	int idxj = simParams.nx / 2;
+	int idxi = 2;
 	v0(idxi, idxj).m_y	= simParams.user_force;
 	d0(idxi, idxj) = simParams.src;
 	t0(idxi, idxj) = simParams.heat_source;
-	t0(idxi + 1, idxj) = simParams.heat_source;
-	t0(idxi - 1, idxj) = simParams.heat_source;
-	t0(idxi + 2, idxj) = simParams.heat_source;
-	t0(idxi - 2, idxj) = simParams.heat_source;
 }
 
 void

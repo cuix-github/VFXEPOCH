@@ -127,8 +127,8 @@ VFXEpoch::InterpolateGrid(int N, float x, float y, VFXEpoch::Grid2DfScalarField&
 	int i, j;
 	float fx, fy;
 
-	VFXEpoch::get_barycentric(x, i, fx, 0, field.getDimX());
-	VFXEpoch::get_barycentric(y, j, fy, 0, field.getDimY());
+	VFXEpoch::get_barycentric(x, j, fx, 0, field.getDimX());
+	VFXEpoch::get_barycentric(y, i, fy, 0, field.getDimY());
 
 	return VFXEpoch::Bilerp(fx, fy, field.getData(i, j), field.getData(i + 1, j), field.getData(i, j + 1), field.getData(i + 1, j + 1));
 }

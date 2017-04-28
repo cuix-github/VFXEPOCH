@@ -1,0 +1,1 @@
+/usr/bin/c++    -std=c++11 -g    CMakeFiles/examiner.dir/examiner/main.cpp.o  -o examiner  -L/home/faq/Documents/dev/VFXEPOCH/vfxepoch_libs -rdynamic ../source/libVFXEpoch.a -lGLU -lGL -lSM -lICE -lX11 -lXext -lglut -lXmu -lXi -Wl,-rpath,/home/faq/Documents/dev/VFXEPOCH/vfxepoch_libs 
