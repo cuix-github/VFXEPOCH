@@ -68,7 +68,7 @@ void
 Init(int argc, char **argv)
 {
 	// Simulation parameters
-	simParams.nx = 4;	simParams.ny = 8;
+	simParams.nx = 64;	simParams.ny = 128;
 	simParams.dt = 0.01f;
 	simParams.diff = 0.0f; simParams.visc = 0.0f;
 	simParams.src = 100.0f;	simParams.src_rate = 1.0f;
@@ -342,7 +342,6 @@ Advance()
 
 	VFXEpoch::Swap(v, v0);
 
-	// TODO: Bug in ExtractComponents(...)
 	sl2D_solver->_diffuse(v, v0);
 	sl2D_solver->_project(v, pressure, divergence);
 	// VFXEpoch::Swap(v, v0);
@@ -447,8 +446,8 @@ Reset()
 	float r(0.0f), g(0.0f), b(0.0f);
 	float x(0.0f), y(0.0f);
 	for (std::vector<VFXEpoch::Particle2D>::iterator ite = particles.begin(); ite != particles.end(); ite++){
-		x = (simParams.nx / 2 + VFXEpoch::RandomI(-10, 10)) * 1.0f / simParams.nx;
-		y = (VFXEpoch::RandomI(0, 30)) * 1.0f / simParams.nx;
+		x = (simParams.nx / 2 + VFXEpoch::RandomI(-5, 5)) * 1.0f / simParams.nx;
+		y = (VFXEpoch::RandomI(0, 30)) * 1.0f / simParams.ny;
 		ite->pos = VFXEpoch::Vector2Df(x, y);
 		ite->vel = VFXEpoch::Vector2Df(0.0f, 0.0f);
 		ite->color = VFXEpoch::Vector3Df(0.0f, 0.0f, 0.0f);
@@ -547,7 +546,7 @@ void
 KeepSource()
 {
 	int idxj = simParams.nx / 2;
-	int idxi = 2;
+	int idxi = 30;
 	v0(idxi, idxj).m_y	= simParams.user_force;
 	d0(idxi, idxj) = simParams.src;
 	t0(idxi, idxj) = simParams.heat_source;
