@@ -48,6 +48,7 @@ namespace VFXEpoch{
       VFXEpoch::Grid2DfScalarField pressure;
       VFXEpoch::Grid2DfScalarField d, d0;
       VFXEpoch::Grid2DfScalarField t, t0;
+      VFXEpoch::Grid2DfScalarField omega, omega0;
       REAL buoyancy_alpha, buoyancy_beta;
       REAL vort_conf_eps;
       REAL dt;
