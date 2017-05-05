@@ -53,9 +53,53 @@ EulerGAS2D::EulerGAS2D(VFXEpoch::Vector2Di _dimension, REAL _dt, REAL _vort_conf
 
 EulerGAS2D&
 EulerGAS2D::operator=(const EulerGAS2D& rhs){
+  this->dimension = rhs.dimension;
+  this->u = rhs.u; this->u0 = rhs.u0;
+  this->v = rhs.v; this->v0 = rhs.v0;
+  this->d = rhs.v; this->d0 = rhs.v0;
+  this->t = rhs.v; this->t0 = rhs.v0;
+  this->pressure = rhs.pressure;
+  this->omega = rhs.v; this->omega0 = rhs.v0;
+  this->buoyancy_alpha = rhs.buoyancy_alpha;
+  this->buoyancy_beta = rhs.buoyancy_beta;
+  this->vort_conf_eps = rhs.vort_conf_eps;
+  this->dt = rhs.dt;
+  this->tolerance = rhs.tolerance;
+  this->max_iterations = rhs.max_iterations;
+  domain_mask = rhs.domain_mask;
   return *this;
 }
 
 EulerGAS2D::~EulerGAS2D(){
   this->close();
+}
+
+bool
+EulerGAS2D::init(){
+  return true;
+}
+
+void
+EulerGAS2D::step(double dt){
+
+}
+
+void
+EulerGAS2D::advect(){
+
+}
+
+void
+EulerGAS2D::presure_solve(double dt){
+
+}
+
+void
+EulerGAS2D::close(){
+
+}
+
+void
+EulerGAS2D::add_source(){
+
 }

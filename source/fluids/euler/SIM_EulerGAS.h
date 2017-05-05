@@ -36,7 +36,7 @@ namespace VFXEpoch{
       EulerGAS2D& operator=(const EulerGAS2D& rhs);
       ~EulerGAS2D();
     public:
-      // TODO: Ovserride the base functions
+      // TODO: Implement ovserride the base functions
       bool init() override;
       void step(double dt) override;
       void advect() override;

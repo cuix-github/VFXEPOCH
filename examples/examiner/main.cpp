@@ -27,6 +27,9 @@ int main(int argc, char** argv)
 	VFXEpoch::Grid2DfScalarField gridf(Nx, Ny);
 	VFXEpoch::Grid2DVector2DfField gridv(Nx, Ny);
 	VFXEpoch::Grid2DCellTypes domain_mask(Nx, Ny);
+	VFXEpoch::Solvers::Euler_Fluid2D_Base *solver = new VFXEpoch::Solvers::EulerGAS2D();
+	if(!solver) return -1;
+	else cout << "Euler GAS solver has been set up." << '\n' << '\n';
 	Helpers::randomInitScalarField(gridf, -1.0, 1.0);
 	Helpers::randomInitVectorField(gridv, -1.0, 1.0);
 	Helpers::randomInitCellStatus(domain_mask);
@@ -52,5 +55,9 @@ int main(int argc, char** argv)
 	else
 	std::cout << "The value of domain_mask at position" << "(" << i << ", " << j << ") is Boundary" << '\n';
 	cout << endl;
+
+	if(solver) delete solver;
+	solver = NULL;
+
 	return 0;
 }
