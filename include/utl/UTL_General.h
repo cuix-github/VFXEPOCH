@@ -50,11 +50,6 @@ namespace VFXEpoch
 		X, Y, Z
 	};
 
-	enum class BOUNDARY_MASK{
-		SOMETHING,
-		NOTHING
-	};
-
 	// Helpers
 	float RandomF(float min, float max);
 	int RandomI(int min, int max);

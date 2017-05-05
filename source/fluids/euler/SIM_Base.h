@@ -41,6 +41,7 @@ namespace VFXEpoch{
       virtual void advect(){}
       virtual void presure_solve(double dt){}
       virtual void close(){}
+      virtual void add_source(){}
 
     protected:
       std::vector<Particle2D> particles;
@@ -72,6 +73,7 @@ namespace VFXEpoch{
       virtual void advect(){}
       virtual void presure_solve(double dt){}
       virtual void close(){}
+      virtual void add_source(){}
 
     protected:
       std::vector<Particle3D> particles;

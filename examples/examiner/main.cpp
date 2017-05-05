@@ -26,8 +26,10 @@ int main(int argc, char** argv)
 
 	VFXEpoch::Grid2DfScalarField gridf(Nx, Ny);
 	VFXEpoch::Grid2DVector2DfField gridv(Nx, Ny);
+	VFXEpoch::Grid2DCellTypes domain_mask(Nx, Ny);
 	Helpers::randomInitScalarField(gridf, -1.0, 1.0);
 	Helpers::randomInitVectorField(gridv, -1.0, 1.0);
+	Helpers::randomInitCellStatus(domain_mask);
 
 	cout << "2D Scalar field access test:" << endl;
 	displayScalarField(gridf);
@@ -37,11 +39,18 @@ int main(int argc, char** argv)
 	displayVectorField(gridv);
 	cout << endl;
 
-	int i = VFXEpoch::RandomI(0, Ny - 1);
-	int j = VFXEpoch::RandomI(0, Nx - 1);
-	std::cout << '\n' << "The value of gridf at position" << "(" << i << ", " << j << ") is " << gridf(i, j) << '\n';
-	std::cout << '\n' << "The value at gridv at position" << "(" << i << ", " << j << ") is " << "Vector2Df(" << gridv(i, j).m_x << ", " << gridv(i, j).m_y << ")" << '\n';
+	cout << "Domain status (F->NOTHING, B->SOMTHING):" << endl;
+	displayCellStatus(domain_mask);
 	cout << endl;
 
+	int i = VFXEpoch::RandomI(0, Ny - 1);
+	int j = VFXEpoch::RandomI(0, Nx - 1);
+	std::cout << "The value of gridf at position" << "(" << i << ", " << j << ") is " << gridf(i, j) << '\n';
+	std::cout << "The value at gridv at position" << "(" << i << ", " << j << ") is " << "Vector2Df(" << gridv(i, j).m_x << ", " << gridv(i, j).m_y << ")" << '\n';
+	if(VFXEpoch::BOUNDARY_MASK::NOTHING == domain_mask(i, j))
+	std::cout << "The value of domain_mask at position" << "(" << i << ", " << j << ") is Fluid" << '\n';
+	else
+	std::cout << "The value of domain_mask at position" << "(" << i << ", " << j << ") is Boundary" << '\n';
+	cout << endl;
 	return 0;
 }

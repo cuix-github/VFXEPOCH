@@ -61,7 +61,7 @@ Helpers::displayVectorField(VFXEpoch::Grid2DVector2DfField field){
 	int space = 2;
 	int index_space = 17;
 	/*********** DO NOT CHANGE THE RATIO space & index_space ***********/
-	
+
 	for (int i = 0; i != row + 1; i++){
 		for (int j = 0; j != col + 1; j++){
 			float m = (float)i;
@@ -88,6 +88,37 @@ Helpers::displayVectorField(VFXEpoch::Grid2DVector2DfField field){
 		}
 		cout << endl;
 		cout << std::setw(0);
+	}
+}
+
+void
+Helpers::displayCellStatus(VFXEpoch::Grid2DCellTypes field){
+	int row = field.getDimY();
+	int col = field.getDimX();
+	for (int i = 0; i != row + 1; i++){
+		for (int j = 0; j != col + 1; j++){
+			float m = (float)i;
+			float n = (float)j;
+			if (0 == i && 0 == j) continue;
+			else if(0 == i && 1 < j) {
+				cout << std::setprecision(0) << setiosflags(ios::fixed);
+				cout << std::setw(3) << n - 1.f << ": ";
+				continue;
+			}
+			else if(0 == i && 1 == j) {
+				cout << std::setw(8) << "0: ";
+				continue;
+			}
+			else if(0 == j) {
+				cout << std::setprecision(0) << setiosflags(ios::fixed);
+				cout << m - 1.f << ": "; continue;
+			}
+			cout << std::setprecision(4) << setiosflags(ios::fixed);
+			if(VFXEpoch::BOUNDARY_MASK::SOMETHING == field(i - 1, j - 1))
+			cout << std::setw(3) << "B" << ", ";
+			else cout << std::setw(3) << "F" << ", ";
+		}
+		cout << endl;
 	}
 }
 
@@ -126,6 +157,17 @@ Helpers::randomInitVectorField(VFXEpoch::Grid2DVector2DfField& field, float min,
 
 			field(i, j) = VFXEpoch::Vector2Df(VFXEpoch::RandomF(min, max),
 																				VFXEpoch::RandomF(min, max));
+		}
+	}
+}
+
+void
+Helpers::randomInitCellStatus(VFXEpoch::Grid2DCellTypes &field){
+	for (int i = 0; i != field.getDimY() - 1; i++){
+		for(int j = 0; j != field.getDimX() - 1; j++){
+			int flag = VFXEpoch::RandomI(0, 1);
+			if(0 == flag) field(i, j) = VFXEpoch::BOUNDARY_MASK::NOTHING;
+			else field(i, j) = VFXEpoch::BOUNDARY_MASK::SOMETHING;
 		}
 	}
 }

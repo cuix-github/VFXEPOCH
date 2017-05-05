@@ -36,8 +36,10 @@ namespace Helpers
 	void displayFieldf(int row, int col, float* field);
 	void displayScalarField(VFXEpoch::Grid2DfScalarField field);
 	void displayVectorField(VFXEpoch::Grid2DVector2DfField field);
+	void displayCellStatus(VFXEpoch::Grid2DCellTypes field);
 	void randomInitScalarField(VFXEpoch::Grid2DfScalarField& field, float min, float max);
 	void randomInitVectorField(VFXEpoch::Grid2DVector2DfField& field, float min, float max);
+	void randomInitCellStatus(VFXEpoch::Grid2DCellTypes &field);
 }
 
 

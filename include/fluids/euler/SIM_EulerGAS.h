@@ -32,6 +32,7 @@ namespace VFXEpoch{
     public:
       EulerGAS2D();
       EulerGAS2D(const EulerGAS2D& src);
+      EulerGAS2D(VFXEpoch::Vector2Di _dimension, REAL _dt, REAL _vort_conf_update, REAL   _buoyancy_alpha, REAL _buoyancy_beta, int _max_iterations);
       EulerGAS2D& operator=(const EulerGAS2D& rhs);
       ~EulerGAS2D();
     public:
@@ -41,19 +42,21 @@ namespace VFXEpoch{
       void advect() override;
       void presure_solve(double dt) override;
       void close() override;
+      void add_source() override;
     private:
       VFXEpoch::Vector2Di dimension;
       VFXEpoch::Grid2DfScalarField u, u0;
       VFXEpoch::Grid2DfScalarField v, v0;
-      VFXEpoch::Grid2DfScalarField pressure;
       VFXEpoch::Grid2DfScalarField d, d0;
       VFXEpoch::Grid2DfScalarField t, t0;
+      VFXEpoch::Grid2DfScalarField pressure;
+      VFXEpoch::Grid2DfScalarField omega, omega0;
+      VFXEpoch::Grid2DCellTypes domain_mask;
       REAL buoyancy_alpha, buoyancy_beta;
       REAL vort_conf_eps;
       REAL dt;
       REAL tolerance;
       int max_iterations;
-      std::vector<VFXEpoch::BOUNDARY_MASK> domain_mask;
     };
   }
 }

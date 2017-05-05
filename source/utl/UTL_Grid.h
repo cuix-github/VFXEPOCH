@@ -30,11 +30,11 @@
 
 #include "UTL_Matrix.h"
 
-#define LOOP_UNIFORM_GRID2D	for (int i=1; i != m_yCell-1; i++ \
-									 					for (int j=1; j != m_xCell-1; j++)
-#define LOOP_UNIFORM_GRID3D	for (int i=1; i != m_zCell-1; i++) \
-														for (int j=1; j != m_yCell-1; j++) \
-														for (int k=1; k != m_xCell-1; k++)
+#define LOOP_GRID2D	for (int i=1; i != m_yCell-1; i++ \
+									 		for (int j=1; j != m_xCell-1; j++)
+#define LOOP_GRID3D	for (int i=1; i != m_zCell-1; i++) \
+											for (int j=1; j != m_yCell-1; j++) \
+												for (int k=1; k != m_xCell-1; k++)
 
 #define IDX2D(i, j) ((i) * (m_xCell) + (j))
 #define IDX3D(i, j, k) ((i) * (m_xCell * m_yCell) + (j) * (m_xCell) + (k))
@@ -49,6 +49,11 @@ namespace VFXEpoch
 		STREAK,
 		ROBIN,
 		CAUCHY,
+	};
+
+	enum class BOUNDARY_MASK{
+		NOTHING,
+		SOMETHING
 	};
 
 	enum class EDGES_2DSIM
@@ -462,6 +467,7 @@ namespace VFXEpoch
 	typedef Grid2D<VFXEpoch::Vector2Df> Grid2DVector2DfField;
 	typedef Grid2D<VFXEpoch::Vector2Dd> Grid2DVector2DdField;
 	typedef Grid2D<VFXEpoch::Vector2Di> Grid2DVector2DiField;
+	typedef Grid2D<VFXEpoch::BOUNDARY_MASK> Grid2DCellTypes;
 
 	template <class T>
 	class Grid3D
