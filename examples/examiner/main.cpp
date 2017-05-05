@@ -56,6 +56,17 @@ int main(int argc, char** argv)
 	std::cout << "The value of domain_mask at position" << "(" << i << ", " << j << ") is Boundary" << '\n';
 	cout << endl;
 
+	EulerGAS2D::Parameters params;
+	params._dimension = VFXEpoch::Vector2Di(Nx, Ny);
+	params._dt = 0.01;
+	params._buoyancy_alpha = 0.1;
+	params._buoyancy_beta = 0.3;
+	params._vort_conf_eps = 0.55;
+	params._max_iterations = 30;
+
+	// Error cast.
+	solver->set_user_params(params);
+
 	if(solver) delete solver;
 	solver = NULL;
 

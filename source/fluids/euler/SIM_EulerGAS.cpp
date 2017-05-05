@@ -76,30 +76,55 @@ EulerGAS2D::~EulerGAS2D(){
 
 bool
 EulerGAS2D::init(){
+  /* TODO: code */
   return true;
 }
 
 void
 EulerGAS2D::step(double dt){
-
+  /* TODO: code */
 }
 
 void
 EulerGAS2D::advect(){
-
+  /* TODO: code */
 }
 
 void
 EulerGAS2D::presure_solve(double dt){
-
-}
-
-void
-EulerGAS2D::close(){
-
+  /* TODO: code */
 }
 
 void
 EulerGAS2D::add_source(){
+  /* TODO: code */
+}
 
+void
+EulerGAS2D::close(){
+  /* TODO: code */
+}
+
+void
+EulerGAS2D::set_user_params(Parameters params) {
+  this->dimension = params._dimension;
+  this->buoyancy_alpha = params._buoyancy_alpha;
+  this->buoyancy_beta = params._buoyancy_beta;
+  this->vort_conf_eps = params._vort_conf_eps;
+  this->dt = params._dt;
+  this->tolerance = params._tolerance;
+  this->max_iterations = params._max_iterations;
+}
+
+EulerGAS2D::Parameters
+EulerGAS2D::get_user_params(){
+  EulerGAS2D::Parameters p;
+  p._dimension = this->dimension;
+  p._buoyancy_alpha = this->buoyancy_alpha;
+  p._buoyancy_beta = this->buoyancy_beta;
+  p._vort_conf_eps = this->vort_conf_eps;
+  p._dt = this->dt;
+  p._tolerance = this->tolerance;
+  p._max_iterations = this->max_iterations;
+  return p;
 }
