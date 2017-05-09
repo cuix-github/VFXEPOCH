@@ -8,6 +8,7 @@
 *******************************************************************************/
 #include "SIM_EulerGAS.h"
 
+// Public
 EulerGAS2D::EulerGAS2D(){
   dimension.m_x = dimension.m_y = 0.0;
   buoyancy_alpha = buoyancy_beta = 0.0;
@@ -24,6 +25,7 @@ EulerGAS2D::EulerGAS2D(){
   domain_mask.clear();
 }
 
+// Public
 EulerGAS2D::EulerGAS2D(const EulerGAS2D& src){
   this->dimension = src.dimension;
   this->u = src.u; this->u0 = src.u0;
@@ -41,7 +43,8 @@ EulerGAS2D::EulerGAS2D(const EulerGAS2D& src){
   domain_mask = src.domain_mask;
 }
 
-EulerGAS2D::EulerGAS2D(VFXEpoch::Vector2Di _dimension, REAL _dt, REAL _vort_conf_update, REAL _buoyancy_alpha, REAL _buoyancy_beta, int _max_iterations):dimension(_dimension), dt(_dt), tolerance(0.0), vort_conf_eps(_vort_conf_update), buoyancy_alpha(_buoyancy_alpha), buoyancy_beta(_buoyancy_beta), max_iterations(_max_iterations){
+// Public
+EulerGAS2D::EulerGAS2D(Vector2Di _dimension, REAL _dt, REAL _vort_conf_update, REAL _buoyancy_alpha, REAL _buoyancy_beta, int _max_iterations):dimension(_dimension), dt(_dt), tolerance(0.0), vort_conf_eps(_vort_conf_update), buoyancy_alpha(_buoyancy_alpha), buoyancy_beta(_buoyancy_beta), max_iterations(_max_iterations){
   u.ResetDimension(_dimension.m_x + 1, _dimension.m_y); u0 = u;
   v.ResetDimension(_dimension.m_x, _dimension.m_y + 1); v0 = v;
   d.ResetDimension(_dimension.m_x, _dimension.m_y); d0 = d;
@@ -51,6 +54,7 @@ EulerGAS2D::EulerGAS2D(VFXEpoch::Vector2Di _dimension, REAL _dt, REAL _vort_conf
   domain_mask.ResetDimension(_dimension.m_x, _dimension.m_y);
 }
 
+// Public
 EulerGAS2D&
 EulerGAS2D::operator=(const EulerGAS2D& rhs){
   this->dimension = rhs.dimension;
@@ -70,61 +74,94 @@ EulerGAS2D::operator=(const EulerGAS2D& rhs){
   return *this;
 }
 
+// Public
 EulerGAS2D::~EulerGAS2D(){
   this->close();
 }
 
+// Public
+// Overload from SIM_Base.h -> class Euler_Fluid2D_Base
 bool
-EulerGAS2D::init(){
+EulerGAS2D::init(/* arguments */){
   /* TODO: code */
   return true;
 }
 
+// Public
+// Overload from SIM_Base.h -> class Euler_Fluid2D_Base
 void
-EulerGAS2D::step(double dt){
+EulerGAS2D::step(){
   /* TODO: code */
 }
 
-void
-EulerGAS2D::advect(){
-  /* TODO: code */
-}
-
-void
-EulerGAS2D::presure_solve(double dt){
-  /* TODO: code */
-}
-
-void
-EulerGAS2D::add_source(){
-  /* TODO: code */
-}
-
+// Public
+// Overload from SIM_Base.h -> class Euler_Fluid2D_Base
 void
 EulerGAS2D::close(){
   /* TODO: code */
 }
 
+// Public
+// Overload from SIM_Base.h -> class Euler_Fluid2D_Base
+void
+EulerGAS2D::add_source(/* arguments */){
+  /* TODO: code */
+}
+
+// Public
+void
+EulerGAS2D::set_boundary(/* arguments */){
+  /* TODO: */
+}
+
+// Public
 void
 EulerGAS2D::set_user_params(Parameters params) {
-  this->dimension = params._dimension;
-  this->buoyancy_alpha = params._buoyancy_alpha;
-  this->buoyancy_beta = params._buoyancy_beta;
-  this->vort_conf_eps = params._vort_conf_eps;
-  this->dt = params._dt;
-  this->tolerance = params._tolerance;
-  this->max_iterations = params._max_iterations;
+  this->dimension = params.dimension;
+  this->buoyancy_alpha = params.buoyancy_alpha;
+  this->buoyancy_beta = params.buoyancy_beta;
+  this->vort_conf_eps = params.vort_conf_eps;
+  this->dt = params.dt;
+  this->tolerance = params.tolerance;
+  this->max_iterations = params.max_iterations;
 }
 
 EulerGAS2D::Parameters
 EulerGAS2D::get_user_params(){
   EulerGAS2D::Parameters p;
-  p._dimension = this->dimension;
-  p._buoyancy_alpha = this->buoyancy_alpha;
-  p._buoyancy_beta = this->buoyancy_beta;
-  p._vort_conf_eps = this->vort_conf_eps;
-  p._dt = this->dt;
-  p._tolerance = this->tolerance;
-  p._max_iterations = this->max_iterations;
+  p.dimension = this->dimension;
+  p.buoyancy_alpha = this->buoyancy_alpha;
+  p.buoyancy_beta = this->buoyancy_beta;
+  p.vort_conf_eps = this->vort_conf_eps;
+  p.dt = this->dt;
+  p.tolerance = this->tolerance;
+  p.max_iterations = this->max_iterations;
   return p;
+}
+
+// Protected
+void
+EulerGAS2D::diffuse(/* arguments */) {
+  /* TODO: code */
+}
+
+// Protected
+// Overload from SIM_Base.h -> class Euler_Fluid2D_Base
+void
+EulerGAS2D::advect(Grid2DfScalarField& dest, Grid2DfScalarField ref){
+  /* TODO: code */
+}
+
+// Protected
+// Overload from SIM_Base.h -> class Euler_Fluid2D_Base
+void
+EulerGAS2D::advect(Grid2DVector2DfField& dest, Grid2DVector2DfField ref){
+  /* TODO: code */
+}
+
+// Protected
+// Overload from SIM_Base.h -> class Euler_Fluid2D_Base
+void
+EulerGAS2D::presure_solve(double dt){
+  /* TODO: code */
 }
