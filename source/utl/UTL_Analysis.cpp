@@ -130,8 +130,8 @@ namespace VFXEpoch
 				for (int j = 1; j != dest.getDimX() - 1; j++){
 					float du, dv;
 					float curl;
-					du = (u.getData(i, j) - u.getData(i - 1, j)) / u.getDy();
-					dv = (v.getData(i, j) - v.getData(i, j - 1)) / v.getDx();
+					du = (u(i, j) - u.getData(i - 1, j)) / u.getDy();
+					dv = (v(i, j) - v.getData(i, j - 1)) / v.getDx();
 					curl = dv - du;
 					dest(i, j) = curl;
 				}

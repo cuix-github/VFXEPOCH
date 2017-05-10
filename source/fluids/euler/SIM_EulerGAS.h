@@ -91,28 +91,26 @@ namespace VFXEpoch{
 
     public:
       EulerGAS2D();
-      EulerGAS2D(Vector2Di _dimension, REAL _dt, REAL _vort_conf_update, REAL _buoyancy_alpha, REAL _buoyancy_beta, int _max_iterations);
+      EulerGAS2D(Parameters _user_params);
       EulerGAS2D(const EulerGAS2D& src);
       EulerGAS2D& operator=(const EulerGAS2D& rhs);
       ~EulerGAS2D();
     public:
       // TODO: Implement overload functions
-      bool init(/* arguments */);
+      bool init(Parameters params);
       void step();
       void close();
-      void add_source(/* arguments */);
+      void add_source(int i, int j);
     public:
       void set_boundary(/* arguments */);
     public:
       void set_user_params(Parameters params);
       EulerGAS2D::Parameters get_user_params();
     protected:
-      void diffuse(/* arguments */);
+      void diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref);
       void advect(Grid2DfScalarField& dest, Grid2DfScalarField ref);
-      void advect(Grid2DVector2DfField& dest, Grid2DVector2DfField ref);
-      void presure_solve(REAL dt);
+      void presure_solve();
     private:
-      Vector2Di dimension;
       Grid2DfScalarField u, u0;
       Grid2DfScalarField v, v0;
       Grid2DfScalarField d, d0;
@@ -120,11 +118,7 @@ namespace VFXEpoch{
       Grid2DfScalarField pressure;
       Grid2DfScalarField omega, omega0;
       Grid2DCellTypes domain_mask;
-      REAL buoyancy_alpha, buoyancy_beta;
-      REAL vort_conf_eps;
-      REAL dt;
-      REAL tolerance;
-      int max_iterations;
+      Parameters user_params;
     };
   }
 }

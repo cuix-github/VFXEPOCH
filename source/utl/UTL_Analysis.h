@@ -25,7 +25,7 @@ namespace VFXEpoch
 		computeCurl_uniform_LS(VFXEpoch::Grid2DfScalarField& dest, VFXEpoch::Grid2DVector2DfField ref);
 
 		void
-		computeCurl_uniform_Richardson(VFXEpoch::Grid2DfScalarField& dest, 			   VFXEpoch::Grid2DVector2DfField ref);
+		computeCurl_uniform_Richardson(VFXEpoch::Grid2DfScalarField& dest, VFXEpoch::Grid2DVector2DfField ref);
 
 		void
 		computeCurl_uniform(VFXEpoch::Grid3DVector3DfField& dest, VFXEpoch::Grid3DVector3DfField ref);

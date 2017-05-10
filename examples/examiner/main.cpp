@@ -85,6 +85,7 @@ int main(int argc, char** argv)
 	cout << "Simulation User Parameters:" << endl;
 	cout << params;
 
+	gas_solver->close();
 	if(solver) delete solver;
 	solver = NULL;
 
