@@ -115,8 +115,8 @@ namespace VFXEpoch{
     private:
     /*********************** Pressure Solver Parameters ************************/
       struct PressureSolverParams{
-        PCGSolver pcg_solver;
-        SparseMatrix sparse_matrix;
+        PCGSolver<REAL> pcg_solver;
+        SparseMatrixd sparse_matrix;
         vector<REAL> rhs;
         vector<REAL> pressure;
       };
