@@ -8,16 +8,11 @@
 *******************************************************************************/
 #ifndef _SIM_EULER_GAS_H_
 #define _SIM_EULER_GAS_H_
-#include "utl/UTL_Grid.h"
-#include "utl/UTL_Matrix.h"
-#include "utl/UTL_Vector.h"
-#include "utl/UTL_General.h"
-#include "utl/UTL_LinearSolvers.h"
+#include "fluids/euler/SIM_Base.h"
+#include "utl/PCGSolver/util.h"
+#include "utl/PCGSolver/sparse_matrix.h"
 #include "utl/PCGSolver/blas_wrapper.h"
 #include "utl/PCGSolver/pcg_solver.h"
-#include "utl/PCGSolver/sparse_matrix.h"
-#include "utl/PCGSolver/util.h"
-#include "fluids/euler/SIM_Base.h"
 
 using namespace VFXEpoch;
 using namespace VFXEpoch::Solvers;
@@ -39,8 +34,9 @@ namespace VFXEpoch{
           buoyancy_alpha = buoyancy_beta = 0.0;
           tolerance = 0.0;
           max_iterations = 0;
+          num_particles = 0;
         }
-        Parameters(Vector2Di _dimension, REAL _dt, REAL _buoyancy_alpha, REAL _buoyancy_beta, REAL _tolerance, int _max_iterations): dimension(_dimension), dt(_dt),
+        Parameters(Vector2Di _dimension, double _dt, double _buoyancy_alpha, double _buoyancy_beta, double _tolerance, int _max_iterations): dimension(_dimension), dt(_dt),
         buoyancy_alpha(_buoyancy_alpha), buoyancy_beta(_buoyancy_beta), tolerance(_tolerance), max_iterations(_max_iterations){}
         Parameters(const Parameters& src){
           dimension = src.dimension;
@@ -48,6 +44,7 @@ namespace VFXEpoch{
           buoyancy_alpha = src.buoyancy_alpha; buoyancy_beta = src.buoyancy_beta;
           tolerance = src.tolerance;
           max_iterations = src.max_iterations;
+          num_particles = src.num_particles;
         }
         Parameters& operator=(const Parameters& rhs){
           dimension = rhs.dimension;
@@ -55,6 +52,7 @@ namespace VFXEpoch{
           buoyancy_alpha = rhs.buoyancy_alpha; buoyancy_beta = rhs.buoyancy_beta;
           tolerance = rhs.tolerance;
           max_iterations = rhs.max_iterations;
+          num_particles = rhs.num_particles;
           return *this;
         }
         ~Parameters(){ this->clear(); }
@@ -65,6 +63,7 @@ namespace VFXEpoch{
           buoyancy_alpha = buoyancy_beta = 0.0;
           tolerance = 0.0;
           max_iterations = 0;
+          num_particles = 0;
         }
 
         friend inline ostream&
@@ -76,16 +75,18 @@ namespace VFXEpoch{
              << params.buoyancy_alpha << ", "
              << params.buoyancy_beta << endl;
           os << "Vorticity Confinement Epsilon = " << params.vort_conf_eps << endl;
+          os << "Number of particles = " << params.num_particles << endl;
           os << "Iterations in solver = " << params.max_iterations << endl;
           return os;
         }
       public:
         Vector2Di dimension;
-        REAL dt;
-        REAL buoyancy_alpha, buoyancy_beta;
-        REAL vort_conf_eps;
-        REAL tolerance;
+        double dt;
+        double buoyancy_alpha, buoyancy_beta;
+        double vort_conf_eps;
+        double tolerance;
         int max_iterations;
+        int num_particles;
       };
     /***************************** User Parameters END *************************/
 
@@ -101,24 +102,28 @@ namespace VFXEpoch{
       void step();
       void close();
       void add_source(int i, int j);
+      void add_particles(VFXEpoch::Particle2D p);
     public:
-      void set_boundary(/* arguments */);
+      void set_boundary(Grid2DCellTypes boundaries);
     public:
       void set_user_params(Parameters params);
       EulerGAS2D::Parameters get_user_params();
     protected:
       void diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref);
       void advect(Grid2DfScalarField& dest, Grid2DfScalarField ref);
+      void advect_particles();
+      void trace_rkii();
       void compute_curls();
       void compute_buoyancy();
       void presure_solve();
+      VFXEpoch::Vector2Dd get_vel();
     private:
     /*********************** Pressure Solver Parameters ************************/
       struct PressureSolverParams{
-        PCGSolver<REAL> pcg_solver;
+        PCGSolver<double> pcg_solver;
         SparseMatrixd sparse_matrix;
-        vector<REAL> rhs;
-        vector<REAL> pressure;
+        vector<double> rhs;
+        vector<double> pressure;
         
         inline void clear(){
           pcg_solver.clear();
@@ -136,6 +141,7 @@ namespace VFXEpoch{
       Grid2DfScalarField pressure;
       Grid2DfScalarField omega, omega0;
       Grid2DCellTypes domain_mask;
+      vector<VFXEpoch::Particle2D> particles_container;
       Parameters user_params;
       PressureSolverParams pressure_solver_params;
     };

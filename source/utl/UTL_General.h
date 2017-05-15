@@ -15,8 +15,6 @@
 #include <iomanip>
 #include "UTL_Grid.h"
 
-#define REAL double
-
 using namespace std;
 
 namespace VFXEpoch
@@ -37,7 +35,7 @@ namespace VFXEpoch
 		VFXEpoch::Vector3Df vel;
 		VFXEpoch::Vector3Df color;
 		float padding[7];
-	}Particles3D;
+	}Particle3D;
 
 	enum class VORT_METHODS
 	{

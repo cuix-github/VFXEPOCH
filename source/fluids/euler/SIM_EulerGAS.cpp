@@ -19,6 +19,7 @@ EulerGAS2D::EulerGAS2D(){
   this->omega.clear(); this->omega0.clear();
   this->domain_mask.clear();
   this->pressure_solver_params.clear();
+  this->particles_container.clear();
 }
 
 // Public
@@ -31,6 +32,7 @@ EulerGAS2D::EulerGAS2D(const EulerGAS2D& src){
   this->omega = src.v; this->omega0 = src.v0;
   this->user_params = src.user_params;
   this->domain_mask = src.domain_mask;
+  this->particles_container = src.particles_container;
 }
 
 // Public
@@ -43,6 +45,7 @@ EulerGAS2D::EulerGAS2D(Parameters _user_params):user_params(_user_params){
   this->omega.ResetDimension(_user_params.dimension.m_x + 2, _user_params.dimension.m_y + 2);
   this->omega0.ResetDimension(_user_params.dimension.m_x + 2, _user_params.dimension.m_y + 2);
   this->domain_mask.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y);
+  this->particles_container.resize(_user_params.num_particles);
 }
 
 // Public
@@ -56,6 +59,7 @@ EulerGAS2D::operator=(const EulerGAS2D& rhs){
   this->omega = rhs.v; this->omega0 = rhs.v0;
   this->domain_mask = rhs.domain_mask;
   this->user_params = rhs.user_params;
+  this->particles_container = rhs.particles_container;
   return *this;
 }
 
@@ -69,6 +73,15 @@ EulerGAS2D::~EulerGAS2D(){
 bool
 EulerGAS2D::init(Parameters params){
   this->user_params = params;
+  this->v.ResetDimension(this->user_params.dimension.m_x, this->user_params.dimension.m_y + 1); v0 = v;
+  this->u.ResetDimension(this->user_params.dimension.m_x + 1, this->user_params.dimension.m_y); u0 = u;
+  this->d.ResetDimension(this->user_params.dimension.m_x, this->user_params.dimension.m_y); d0 = d;
+  this->t.ResetDimension(this->user_params.dimension.m_x, this->user_params.dimension.m_y); t0 = t;
+  this->pressure.ResetDimension(this->user_params.dimension.m_x, this->user_params.dimension.m_y);
+  this->omega.ResetDimension(this->user_params.dimension.m_x + 2, this->user_params.dimension.m_y + 2);
+  this->omega0.ResetDimension(this->user_params.dimension.m_x + 2, this->user_params.dimension.m_y + 2);
+  this->domain_mask.ResetDimension(this->user_params.dimension.m_x, this->user_params.dimension.m_y);
+  this->particles_container.resize(this->user_params.num_particles);
   return true;
 }
 
@@ -92,6 +105,7 @@ EulerGAS2D::close(){
   this->domain_mask.clear();
   this->user_params.clear();
   this->pressure_solver_params.clear();
+  this->particles_container.clear();
 }
 
 // Public
@@ -103,7 +117,13 @@ EulerGAS2D::add_source(int i, int j){
 
 // Public
 void
-EulerGAS2D::set_boundary(/* arguments */){
+EulerGAS2D::add_particles(VFXEpoch::Particle2D p){
+  particles_container.push_back(p);
+}
+
+// Pub;lic
+void
+EulerGAS2D::set_boundary(Grid2DCellTypes boundaries){
   /* TODO: code */
 }
 
@@ -132,8 +152,28 @@ EulerGAS2D::advect(Grid2DfScalarField& dest, Grid2DfScalarField ref){
 }
 
 // Protected
+void
+EulerGAS2D::advect_particles(){
+  /* TODO: code */
+}
+
+//Protected
+void
+EulerGAS2D::trace_rkii(){
+  /* TODO: code */
+}
+
+// Protected
 // Overload from SIM_Base.h -> class Euler_Fluid2D_Base
 void
 EulerGAS2D::presure_solve(){
   /* TODO: code */
+}
+
+// Protected
+VFXEpoch::Vector2Dd
+get_vel(){
+  VFXEpoch::Vector2Dd result;
+  /* TODO: code */
+  return result;
 }
