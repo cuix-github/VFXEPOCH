@@ -111,6 +111,13 @@ namespace VFXEpoch{
       void advect(Grid2DfScalarField& dest, Grid2DfScalarField ref);
       void presure_solve();
     private:
+      struct PressureSolverParams{
+        PCGSolver pcg_solver;
+        SparseMatrix sparse_matrix;
+        vector<REAL> rhs;
+        vector<REAL> pressure;
+      };
+    private:
       Grid2DfScalarField u, u0;
       Grid2DfScalarField v, v0;
       Grid2DfScalarField d, d0;
@@ -119,6 +126,7 @@ namespace VFXEpoch{
       Grid2DfScalarField omega, omega0;
       Grid2DCellTypes domain_mask;
       Parameters user_params;
+      PressureSolverParams pressure_solver_params;
     };
   }
 }

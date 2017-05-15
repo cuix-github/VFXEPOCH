@@ -17,7 +17,7 @@ EulerGAS2D::EulerGAS2D(){
   this->t.clear(); this->t0.clear();
   this->pressure.clear();
   this->omega.clear(); this->omega0.clear();
-  domain_mask.clear();
+  this->domain_mask.clear();
 }
 
 // Public
