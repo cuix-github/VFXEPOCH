@@ -109,6 +109,8 @@ namespace VFXEpoch{
     protected:
       void diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref);
       void advect(Grid2DfScalarField& dest, Grid2DfScalarField ref);
+      void compute_curls();
+      void compute_buoyancy();
       void presure_solve();
     private:
     /*********************** Pressure Solver Parameters ************************/
