@@ -119,6 +119,13 @@ namespace VFXEpoch{
         SparseMatrixd sparse_matrix;
         vector<REAL> rhs;
         vector<REAL> pressure;
+        
+        inline void clear(){
+          pcg_solver.clear();
+          sparse_matrix.clear();
+          rhs.clear();
+          pressure.clear();
+        }
       };
     /*********************** Pressure Solver Parameters END ********************/
     private:

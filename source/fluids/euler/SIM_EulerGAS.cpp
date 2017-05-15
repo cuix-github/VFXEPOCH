@@ -18,6 +18,7 @@ EulerGAS2D::EulerGAS2D(){
   this->pressure.clear();
   this->omega.clear(); this->omega0.clear();
   this->domain_mask.clear();
+  this->pressure_solver_params.clear();
 }
 
 // Public
@@ -29,19 +30,19 @@ EulerGAS2D::EulerGAS2D(const EulerGAS2D& src){
   this->pressure = src.pressure;
   this->omega = src.v; this->omega0 = src.v0;
   this->user_params = src.user_params;
-  domain_mask = src.domain_mask;
+  this->domain_mask = src.domain_mask;
 }
 
 // Public
 EulerGAS2D::EulerGAS2D(Parameters _user_params):user_params(_user_params){
-  u.ResetDimension(_user_params.dimension.m_x + 1, _user_params.dimension.m_y); u0 = u;
-  v.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y + 1); v0 = v;
-  d.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y); d0 = d;
-  t.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y); t0 = t;
-  pressure.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y);
-  omega.ResetDimension(_user_params.dimension.m_x + 2, _user_params.dimension.m_y + 2);
-  omega0.ResetDimension(_user_params.dimension.m_x + 2, _user_params.dimension.m_y + 2);
-  domain_mask.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y);
+  this->v.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y + 1); v0 = v;
+  this->u.ResetDimension(_user_params.dimension.m_x + 1, _user_params.dimension.m_y); u0 = u;
+  this->d.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y); d0 = d;
+  this->t.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y); t0 = t;
+  this->pressure.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y);
+  this->omega.ResetDimension(_user_params.dimension.m_x + 2, _user_params.dimension.m_y + 2);
+  this->omega0.ResetDimension(_user_params.dimension.m_x + 2, _user_params.dimension.m_y + 2);
+  this->domain_mask.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y);
 }
 
 // Public
@@ -82,14 +83,15 @@ EulerGAS2D::step(){
 // Overload from SIM_Base.h -> class Euler_Fluid2D_Base
 void
 EulerGAS2D::close(){
-  u.clear(); u0.clear();
-  v.clear(); v0.clear();
-  d.clear(); d0.clear();
-  t.clear(); t0.clear();
-  omega.clear(); omega0.clear();
-  pressure.clear();
-  domain_mask.clear();
-  user_params.clear();
+  this->u.clear(); u0.clear();
+  this->v.clear(); v0.clear();
+  this->d.clear(); d0.clear();
+  this->t.clear(); t0.clear();
+  this->omega.clear(); omega0.clear();
+  this->pressure.clear();
+  this->domain_mask.clear();
+  this->user_params.clear();
+  this->pressure_solver_params.clear();
 }
 
 // Public
@@ -102,7 +104,7 @@ EulerGAS2D::add_source(int i, int j){
 // Public
 void
 EulerGAS2D::set_boundary(/* arguments */){
-  /* TODO: */
+  /* TODO: code */
 }
 
 // Public
