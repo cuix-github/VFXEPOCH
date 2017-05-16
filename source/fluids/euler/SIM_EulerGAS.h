@@ -35,9 +35,14 @@ namespace VFXEpoch{
           tolerance = 0.0;
           max_iterations = 0;
           num_particles = 0;
+          density_source = 0.0;
         }
-        Parameters(Vector2Di _dimension, double _dt, double _buoyancy_alpha, double _buoyancy_beta, double _tolerance, int _max_iterations): dimension(_dimension), dt(_dt),
-        buoyancy_alpha(_buoyancy_alpha), buoyancy_beta(_buoyancy_beta), tolerance(_tolerance), max_iterations(_max_iterations){}
+        Parameters(Vector2Di _dimension, double _dt, double _buoyancy_alpha, double _buoyancy_beta, 
+                   double _tolerance, int _max_iterations, int _num_particles, double _density_source): 
+                   dimension(_dimension), dt(_dt), buoyancy_alpha(_buoyancy_alpha), 
+                   buoyancy_beta(_buoyancy_beta), tolerance(_tolerance), 
+                   max_iterations(_max_iterations), num_particles(_num_particles), 
+                   density_source(_density_source){}
         Parameters(const Parameters& src){
           dimension = src.dimension;
           dt = src.dt;
@@ -45,6 +50,7 @@ namespace VFXEpoch{
           tolerance = src.tolerance;
           max_iterations = src.max_iterations;
           num_particles = src.num_particles;
+          density_source = src.density_source;
         }
         Parameters& operator=(const Parameters& rhs){
           dimension = rhs.dimension;
@@ -53,6 +59,7 @@ namespace VFXEpoch{
           tolerance = rhs.tolerance;
           max_iterations = rhs.max_iterations;
           num_particles = rhs.num_particles;
+          density_source = rhs.density_source;
           return *this;
         }
         ~Parameters(){ this->clear(); }
@@ -64,6 +71,7 @@ namespace VFXEpoch{
           tolerance = 0.0;
           max_iterations = 0;
           num_particles = 0;
+          density_source = 0.0;
         }
 
         friend inline ostream&
@@ -76,7 +84,9 @@ namespace VFXEpoch{
              << params.buoyancy_beta << endl;
           os << "Vorticity Confinement Epsilon = " << params.vort_conf_eps << endl;
           os << "Number of particles = " << params.num_particles << endl;
+          os << "Density source = " << params.density_source << endl;
           os << "Iterations in solver = " << params.max_iterations << endl;
+          os << "External force strength = " << params.external_force_strength << endl;
           return os;
         }
       public:
@@ -85,6 +95,8 @@ namespace VFXEpoch{
         double buoyancy_alpha, buoyancy_beta;
         double vort_conf_eps;
         double tolerance;
+        double density_source;
+        double external_force_strength;
         int max_iterations;
         int num_particles;
       };
@@ -102,9 +114,11 @@ namespace VFXEpoch{
       void step();
       void close();
       void add_source(int i, int j);
+      void add_source(VFXEpoch::VECTOR_COMPONENTS component, int i, int j);
       void add_particles(VFXEpoch::Particle2D p);
     public:
-      void set_boundary(Grid2DCellTypes boundaries);
+      void set_inside_boundary(Grid2DCellTypes boundaries);
+      void set_domain_boundary(VFXEpoch::BOUNDARY boundaryType, VFXEpoch::EDGES_2DSIM edge);
     public:
       void set_user_params(Parameters params);
       EulerGAS2D::Parameters get_user_params();
@@ -140,7 +154,8 @@ namespace VFXEpoch{
       Grid2DfScalarField t, t0;
       Grid2DfScalarField pressure;
       Grid2DfScalarField omega, omega0;
-      Grid2DCellTypes domain_mask;
+      Grid2DCellTypes inside_mask;
+      BndConditionPerEdge domain_boundaries[4];
       vector<VFXEpoch::Particle2D> particles_container;
       Parameters user_params;
       PressureSolverParams pressure_solver_params;
