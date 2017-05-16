@@ -40,11 +40,12 @@ namespace VFXEpoch{
           density_source = 0.0;
         }
         Parameters(Vector2Di _dimension, Vector2Df _size, Vector2Dd _space, double _dt, 
-                   double _buoyancy_alpha, double _buoyancy_beta, double _tolerance, 
-                   int _max_iterations, int _num_particles, double _density_source): 
+                   double _buoyancy_alpha, double _buoyancy_beta, double _tolerance,
+                   double _diff, double _visc, int _max_iterations, int _num_particles, 
+                   double _density_source): 
                    dimension(_dimension), size(_size), space(_space), dt(_dt), 
                    buoyancy_alpha(_buoyancy_alpha), buoyancy_beta(_buoyancy_beta), 
-                   tolerance(_tolerance), max_iterations(_max_iterations), 
+                   tolerance(_tolerance), diff(_diff), visc(_visc), max_iterations(_max_iterations), 
                    num_particles(_num_particles), density_source(_density_source){}
         Parameters(const Parameters& src){
           dimension = src.dimension;
@@ -53,6 +54,8 @@ namespace VFXEpoch{
           dt = src.dt;
           buoyancy_alpha = src.buoyancy_alpha; buoyancy_beta = src.buoyancy_beta;
           tolerance = src.tolerance;
+          visc = src.visc;
+          diff = src.diff;
           max_iterations = src.max_iterations;
           num_particles = src.num_particles;
           density_source = src.density_source;
@@ -64,6 +67,8 @@ namespace VFXEpoch{
           dt = rhs.dt;
           buoyancy_alpha = rhs.buoyancy_alpha; buoyancy_beta = rhs.buoyancy_beta;
           tolerance = rhs.tolerance;
+          diff = rhs.diff;
+          visc = rhs.visc;
           max_iterations = rhs.max_iterations;
           num_particles = rhs.num_particles;
           density_source = rhs.density_source;
@@ -78,6 +83,8 @@ namespace VFXEpoch{
           dt = 0.0;
           buoyancy_alpha = buoyancy_beta = 0.0;
           tolerance = 0.0;
+          diff = 0.0;
+          visc = 0.0;
           max_iterations = 0;
           num_particles = 0;
           density_source = 0.0;
@@ -89,6 +96,8 @@ namespace VFXEpoch{
           os << "Dimension = " << params.dimension.m_x << " x " << params.dimension.m_y << endl;
           os << "Width = " << params.size.m_x << ", height = " << params.size.m_y << endl;
           os << "Dx = " << params.space.m_x << ", Dy = " << params.space.m_y << endl;
+          os << "Diffuse rate = " << params.diff << endl;
+          os << "Viscousity = " << params.visc << endl;
           os << "Time step = " << params.dt << endl;
           os << "Buoyancy alpha & beta = "
              << params.buoyancy_alpha << ", "
@@ -110,6 +119,8 @@ namespace VFXEpoch{
         double tolerance;
         double density_source;
         double external_force_strength;
+        double diff;
+        double visc;
         int max_iterations;
         int num_particles;
       };
@@ -138,6 +149,7 @@ namespace VFXEpoch{
     protected:
       void set_domain_boundary_wrapper(Grid2DfScalarField& field);
       void diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref);
+      void dynamic_resistance(Grid2DfScalarField& dest, Grid2DfScalarField ref);
       void advect(Grid2DfScalarField& dest, Grid2DfScalarField ref);
       void advect_particles();
       void trace_rkii(const VFXEpoch::Vector2Df& pos, double dt);
