@@ -125,7 +125,7 @@ EulerGAS2D::add_source(int i, int j){
 
 // Public
 void
-EulerGAS2D::add_source(VFXEpoch::VECTOR_COMPONENTS component, int i, int j){
+EulerGAS2D::add_external_force(VFXEpoch::VECTOR_COMPONENTS component, int i, int j){
   if(VFXEpoch::VECTOR_COMPONENTS::X == component){
     assert(i >= 0 && i <= u.getDimY() && j >= 0 && j <= u.getDimX());
     u(i, j) = user_params.external_force_strength;

@@ -127,7 +127,7 @@ namespace VFXEpoch{
       void step(); // Overload
       void close(); // Overload
       void add_source(int i, int j); // Overload
-      void add_source(VFXEpoch::VECTOR_COMPONENTS component, int i, int j);
+      void add_external_force(VFXEpoch::VECTOR_COMPONENTS component, int i, int j);
       void add_particles(VFXEpoch::Particle2D p);
     public:
       void set_inside_boundary(Grid2DCellTypes boundaries);
