@@ -229,10 +229,10 @@ EulerGAS2D::apply_gradients(){
 }
 
 // Protected
-VFXEpoch::Vector2Dd
+VFXEpoch::Vector2Df
 EulerGAS2D::get_vel(){
-  VFXEpoch::Vector2Dd result;
-  
+  VFXEpoch::Vector2Df result;
+
   /* TODO: code */
   return result;
 }
