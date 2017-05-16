@@ -20,6 +20,14 @@ EulerGAS2D::EulerGAS2D(){
   inside_mask.clear();
   pressure_solver_params.clear();
   particles_container.clear();
+  domain_boundaries[0].side = EDGES_2DSIM::TOP;
+	domain_boundaries[0].boundaryType = BOUNDARY::STREAK;
+	domain_boundaries[1].side = EDGES_2DSIM::BOTTOM;
+	domain_boundaries[1].boundaryType = BOUNDARY::STREAK;
+	domain_boundaries[2].side = EDGES_2DSIM::RIGHT;
+	domain_boundaries[2].boundaryType = BOUNDARY::STREAK;
+	domain_boundaries[3].side = EDGES_2DSIM::LEFT;
+	domain_boundaries[3].boundaryType = BOUNDARY::STREAK;
 }
 
 // Public
@@ -146,15 +154,19 @@ EulerGAS2D::set_inside_boundary(Grid2DCellTypes boundaries){
 
 // Public
 void 
-EulerGAS2D::set_domain_boundary(const VFXEpoch::BOUNDARY boundaryType, const VFXEpoch::EDGES_2DSIM edge){
+EulerGAS2D::set_domain_boundary(const VFXEpoch::BOUNDARY boundary_type, const VFXEpoch::EDGES_2DSIM edge){
   if(VFXEpoch::EDGES_2DSIM::TOP == edge){
-    
+    domain_boundaries[0].side = edge;
+    domain_boundaries[0].boundaryType = boundary_type;
   } else if(VFXEpoch::EDGES_2DSIM::BOTTOM == edge){
-
+    domain_boundaries[1].side = edge;
+    domain_boundaries[1].boundaryType = boundary_type;
   } else if(VFXEpoch::EDGES_2DSIM::LEFT == edge){
-
+    domain_boundaries[2].side = edge;
+    domain_boundaries[2].boundaryType = boundary_type;
   } else{
-    
+    domain_boundaries[3].side = edge;
+    domain_boundaries[3].boundaryType = boundary_type;    
   }
 }
 
@@ -167,6 +179,15 @@ EulerGAS2D::set_user_params(Parameters params){
 EulerGAS2D::Parameters
 EulerGAS2D::get_user_params(){
   return user_params;
+}
+
+// Protected
+void 
+EulerGAS2D::set_domain_boundary_wrapper(Grid2DfScalarField& field){
+  for(int i = 0; i != 4; i++){
+    field.setBoundaries(domain_boundaries[i].boundaryType, domain_boundaries[i].side);
+  }
+  field.setBoundariesOnCorners();
 }
 
 // Protected

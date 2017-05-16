@@ -27,9 +27,6 @@ namespace VFXEpoch{
       virtual void presure_solve(double dt){}
       virtual void close(){}
       virtual void add_source(){}
-
-    protected:
-      std::vector<VFXEpoch::Particle2D> particles;
     };
 
     class Euler_Fluid3D_Base{
@@ -41,9 +38,6 @@ namespace VFXEpoch{
       virtual void presure_solve(double dt){}
       virtual void close(){}
       virtual void add_source(){}
-
-    protected:
-      std::vector<VFXEpoch::Particle3D> particles;
     };
   }
 }

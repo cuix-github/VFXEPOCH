@@ -118,11 +118,12 @@ namespace VFXEpoch{
       void add_particles(VFXEpoch::Particle2D p);
     public:
       void set_inside_boundary(Grid2DCellTypes boundaries);
-      void set_domain_boundary(VFXEpoch::BOUNDARY boundaryType, VFXEpoch::EDGES_2DSIM edge);
+      void set_domain_boundary(VFXEpoch::BOUNDARY boundary_type, VFXEpoch::EDGES_2DSIM edge);
     public:
       void set_user_params(Parameters params);
       EulerGAS2D::Parameters get_user_params();
     protected:
+      void set_domain_boundary_wrapper(Grid2DfScalarField& field);
       void diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref);
       void advect(Grid2DfScalarField& dest, Grid2DfScalarField ref);
       void advect_particles();
