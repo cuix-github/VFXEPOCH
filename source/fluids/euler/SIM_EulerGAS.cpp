@@ -211,7 +211,7 @@ EulerGAS2D::advect_particles(){
 
 //Protected
 void
-EulerGAS2D::trace_rkii(){
+EulerGAS2D::trace_rkii(const VFXEpoch::Vector2Df& pos, double dt){
   /* TODO: code */
 }
 

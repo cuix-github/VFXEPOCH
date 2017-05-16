@@ -29,7 +29,9 @@ namespace VFXEpoch{
       struct Parameters{
       public:
         Parameters(){
-          dimension.m_x = 0; dimension.m_y = 0; dt = 0.0;
+          dimension.m_x = 0; dimension.m_y = 0; dt = 0.0; 
+          size.m_x = 0.0f; size.m_y = 0.0f;
+          space.m_x = space.m_y = 0.0;
           dt = 0.0;
           buoyancy_alpha = buoyancy_beta = 0.0;
           tolerance = 0.0;
@@ -37,14 +39,17 @@ namespace VFXEpoch{
           num_particles = 0;
           density_source = 0.0;
         }
-        Parameters(Vector2Di _dimension, double _dt, double _buoyancy_alpha, double _buoyancy_beta, 
-                   double _tolerance, int _max_iterations, int _num_particles, double _density_source): 
-                   dimension(_dimension), dt(_dt), buoyancy_alpha(_buoyancy_alpha), 
-                   buoyancy_beta(_buoyancy_beta), tolerance(_tolerance), 
-                   max_iterations(_max_iterations), num_particles(_num_particles), 
-                   density_source(_density_source){}
+        Parameters(Vector2Di _dimension, Vector2Df _size, Vector2Dd _space, double _dt, 
+                   double _buoyancy_alpha, double _buoyancy_beta, double _tolerance, 
+                   int _max_iterations, int _num_particles, double _density_source): 
+                   dimension(_dimension), size(_size), space(_space), dt(_dt), 
+                   buoyancy_alpha(_buoyancy_alpha), buoyancy_beta(_buoyancy_beta), 
+                   tolerance(_tolerance), max_iterations(_max_iterations), 
+                   num_particles(_num_particles), density_source(_density_source){}
         Parameters(const Parameters& src){
           dimension = src.dimension;
+          size = src.size;
+          space = src.space;
           dt = src.dt;
           buoyancy_alpha = src.buoyancy_alpha; buoyancy_beta = src.buoyancy_beta;
           tolerance = src.tolerance;
@@ -54,6 +59,8 @@ namespace VFXEpoch{
         }
         Parameters& operator=(const Parameters& rhs){
           dimension = rhs.dimension;
+          size = rhs.size;
+          space = rhs.space;
           dt = rhs.dt;
           buoyancy_alpha = rhs.buoyancy_alpha; buoyancy_beta = rhs.buoyancy_beta;
           tolerance = rhs.tolerance;
@@ -62,10 +69,12 @@ namespace VFXEpoch{
           density_source = rhs.density_source;
           return *this;
         }
-        ~Parameters(){ this->clear(); }
+        ~Parameters(){ clear(); }
       public:
         inline void clear(){
           dimension.m_x = dimension.m_y = 0;
+          size.m_x = size.m_y = 0.0f;
+          space.m_x = space.m_y = 0.0;
           dt = 0.0;
           buoyancy_alpha = buoyancy_beta = 0.0;
           tolerance = 0.0;
@@ -78,6 +87,8 @@ namespace VFXEpoch{
         operator<<(ostream& os, const Parameters& params) {
           os << std::setprecision(4) << setiosflags(ios::fixed);
           os << "Dimension = " << params.dimension.m_x << " x " << params.dimension.m_y << endl;
+          os << "Width = " << params.size.m_x << ", height = " << params.size.m_y << endl;
+          os << "Dx = " << params.space.m_x << ", Dy = " << params.space.m_y << endl;
           os << "Time step = " << params.dt << endl;
           os << "Buoyancy alpha & beta = "
              << params.buoyancy_alpha << ", "
@@ -91,6 +102,8 @@ namespace VFXEpoch{
         }
       public:
         Vector2Di dimension;
+        Vector2Df size;
+        Vector2Dd space;
         double dt;
         double buoyancy_alpha, buoyancy_beta;
         double vort_conf_eps;
@@ -110,10 +123,10 @@ namespace VFXEpoch{
       ~EulerGAS2D();
     public:
       // TODO: Implement overload functions
-      bool init(Parameters params);
-      void step();
-      void close();
-      void add_source(int i, int j);
+      bool init(Parameters params); // Overload
+      void step(); // Overload
+      void close(); // Overload
+      void add_source(int i, int j); // Overload
       void add_source(VFXEpoch::VECTOR_COMPONENTS component, int i, int j);
       void add_particles(VFXEpoch::Particle2D p);
     public:
@@ -127,10 +140,10 @@ namespace VFXEpoch{
       void diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref);
       void advect(Grid2DfScalarField& dest, Grid2DfScalarField ref);
       void advect_particles();
-      void trace_rkii();
+      void trace_rkii(const VFXEpoch::Vector2Df& pos, double dt);
       void compute_curls();
       void compute_buoyancy();
-      void presure_solve();
+      void presure_solve(); // Overload
       VFXEpoch::Vector2Dd get_vel();
     private:
     /*********************** Pressure Solver Parameters ************************/
