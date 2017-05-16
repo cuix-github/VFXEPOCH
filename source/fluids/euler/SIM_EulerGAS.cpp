@@ -223,9 +223,16 @@ EulerGAS2D::presure_solve(){
 }
 
 // Protected
+void
+EulerGAS2D::apply_gradients(){
+  /* TODO: code */
+}
+
+// Protected
 VFXEpoch::Vector2Dd
-get_vel(){
+EulerGAS2D::get_vel(){
   VFXEpoch::Vector2Dd result;
+  
   /* TODO: code */
   return result;
 }

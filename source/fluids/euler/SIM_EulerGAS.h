@@ -144,7 +144,8 @@ namespace VFXEpoch{
       void compute_curls();
       void compute_buoyancy();
       void presure_solve(); // Overload
-      VFXEpoch::Vector2Dd get_vel();
+      void apply_gradients();
+      VFXEpoch::Vector2Df get_vel();
     private:
     /*********************** Pressure Solver Parameters ************************/
       struct PressureSolverParams{
