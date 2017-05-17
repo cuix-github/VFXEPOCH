@@ -63,26 +63,15 @@ namespace VFXEpoch
 		Vector2D& operator-=(const Vector2D& source){ m_x -= source.m_x; m_y -= source.m_y; return *this; }
 		Vector2D& operator*=(T coef){ m_x *= coef; m_y *= coef; return *this; }
 		Vector2D& operator/=(T coef){ m_x / coef; m_y / coef; return *this; }
+		T& operator[](int i) { assert(i < 0 || i > 1); if (0 == i) return m_x; else return m_y;	}
 
-		T& operator[](int i)
-		{
-			assert(i < 0 || i > 1);
-
-			if (0 == i)
-				return m_x;
-			else
-				return m_y;
-		}
-
-		inline bool operator==(const Vector2D& source) const
-		{
+		inline bool operator==(const Vector2D& source) const {
 			ROUND(m_x); ROUND(m_y);
 			ROUND(source.m_x); ROUND(source.m_y);
 			return m_x == source.m_x && m_y == source.m_y ? true : false;
 		}
 
-		inline bool operator!=(const Vector2D& source) const
-		{
+		inline bool operator!=(const Vector2D& source) const {
 			ROUND(m_x); ROUND(m_y);
 			ROUND(source.m_x); ROUND(source.m_y);
 			return m_x != source.m_x || m_y != source.m_y ? true : false;
@@ -93,8 +82,7 @@ namespace VFXEpoch
 		}
 
 		// Clockwise is positive while Counterclockwise is negtive
-		void rotate(T degree)
-		{
+		void rotate(T degree) {
 			T theta = T(-degree / UTL_PI_DEGREE * UTL_PI);
 			T cosTheta = cos(theta);
 			T sinTheta = sin(theta);

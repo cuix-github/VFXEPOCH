@@ -193,7 +193,6 @@ EulerGAS2D::set_domain_boundary_wrapper(Grid2DfScalarField& field){
 // Protected
 void
 EulerGAS2D::diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref){
-  /* TODO: code */
   float a = user_params.diff * user_params.dt * user_params.dimension.m_x * user_params.dimension.m_y;
   VFXEpoch::LinearSolver::GSSolve(dest, ref, domain_boundaries, a, 1+4*a, user_params.max_iterations);
 }
@@ -239,9 +238,11 @@ EulerGAS2D::apply_gradients(){
 
 // Protected
 VFXEpoch::Vector2Df
-EulerGAS2D::get_vel(){
+EulerGAS2D::get_vel(const Vector2Df& pos){
   VFXEpoch::Vector2Df result;
-
+  assert(user_params.size.m_x != 0 && user_params.size.m_y != 0);
+  // result.m_x = VFXEpoch::InterpolateGrid(pos / user_params.size.m_x - Vector2Df(0.5f, 0.0f), u);
+  // result.m_y = VFXEpoch::InterpolateGrid(position / user_params.size.m_y - Vector2Df(0.0f, 0.5f), v);
   /* TODO: code */
   return result;
 }

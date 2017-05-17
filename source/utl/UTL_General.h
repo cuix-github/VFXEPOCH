@@ -58,7 +58,8 @@ namespace VFXEpoch
 	void ExtractComponents(VFXEpoch::Grid2DfScalarField& component, VFXEpoch::Grid3DVector3DfField vectorField, VECTOR_COMPONENTS axis);
 	void InsertComponents(VFXEpoch::Grid2DfScalarField component, VFXEpoch::Grid2DVector2DfField& vectorField, VECTOR_COMPONENTS axis);
 	void InsertComponents(VFXEpoch::Grid2DfScalarField component, VFXEpoch::Grid3DVector3DfField& vectorField, VECTOR_COMPONENTS axis);
-	float InterpolateGrid(int N, float x, float y, VFXEpoch::Grid2DfScalarField& field);
+	float InterpolateGrid(float x, float y, VFXEpoch::Grid2DfScalarField& field);
+	float InterpolateGrid(Vector2Df pos, VFXEpoch::Grid2DfScalarField& field);
 	void Zeros(VFXEpoch::Grid2DfScalarField& field);
 	void Zeros(VFXEpoch::Grid2DVector2DfField& field);
 	void Zeros(VFXEpoch::Grid2DiScalarField& field);

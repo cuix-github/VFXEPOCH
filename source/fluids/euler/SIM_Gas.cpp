@@ -667,8 +667,8 @@ VFXEpoch::Vector2Df
 SL2D::_get_vel(int dimX, int dimY, const VFXEpoch::Vector2Df& position, VFXEpoch::Grid2DfScalarField& u, VFXEpoch::Grid2DfScalarField& v)
 {
 	float u0, v0;
-	u0 = VFXEpoch::InterpolateGrid(dimX, position.m_x * this->dimX - 0.0f, position.m_y * this->dimX - 0.5f, u);
-	v0 = VFXEpoch::InterpolateGrid(dimY, position.m_x * this->dimY - 0.5f, position.m_y * this->dimY - 0.0f, v);
+	u0 = VFXEpoch::InterpolateGrid(position.m_x * this->dimX - 0.0f, position.m_y * this->dimX - 0.5f, u);
+	v0 = VFXEpoch::InterpolateGrid(position.m_x * this->dimY - 0.5f, position.m_y * this->dimY - 0.0f, v);
 	return VFXEpoch::Vector2Df(u0, v0);
 }
 

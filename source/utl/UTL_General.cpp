@@ -122,15 +122,23 @@ VFXEpoch::InsertComponents(VFXEpoch::Grid2DfScalarField component, VFXEpoch::Gri
 }
 
 float
-VFXEpoch::InterpolateGrid(int N, float x, float y, VFXEpoch::Grid2DfScalarField& field)
+VFXEpoch::InterpolateGrid(float x, float y, VFXEpoch::Grid2DfScalarField& field)
 {
 	int i, j;
 	float fx, fy;
 
 	VFXEpoch::get_barycentric(x, j, fx, 0, field.getDimX());
 	VFXEpoch::get_barycentric(y, i, fy, 0, field.getDimY());
+	return VFXEpoch::Bilerp(fx, fy, field(i, j), field(i + 1, j), field(i, j + 1), field(i + 1, j + 1));
+}
 
-	return VFXEpoch::Bilerp(fx, fy, field.getData(i, j), field.getData(i + 1, j), field.getData(i, j + 1), field.getData(i + 1, j + 1));
+float
+VFXEpoch::InterpolateGrid(Vector2Df pos, Grid2DfScalarField& field){
+	int i, j;
+	float fx, fy;
+	VFXEpoch::get_barycentric(pos.m_x, j, fx, 0, field.getDimX());
+	VFXEpoch::get_barycentric(pos.m_y, i, fy, 0, field.getDimY());
+	return VFXEpoch::Bilerp(fx, fy, field(i, j), field(i + 1, j), field(i, j + 1), field(i + 1, j + 1));
 }
 
 void

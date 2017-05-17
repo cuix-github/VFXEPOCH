@@ -157,7 +157,7 @@ namespace VFXEpoch{
       void compute_buoyancy();
       void presure_solve(); // Overload
       void apply_gradients();
-      VFXEpoch::Vector2Df get_vel();
+      VFXEpoch::Vector2Df get_vel(const Vector2Df& pos);
     private:
     /*********************** Pressure Solver Parameters ************************/
       struct PressureSolverParams{

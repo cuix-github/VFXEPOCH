@@ -41,7 +41,6 @@ int main(int argc, char** argv)
 		cout << endl;
 	}
 
-
 	else cout << "Euler GAS solver has been set up." << '\n' << '\n';
 	Helpers::randomInitScalarField(gridf, -1.0, 1.0);
 	Helpers::randomInitVectorField(gridv, -1.0, 1.0);
@@ -55,7 +54,7 @@ int main(int argc, char** argv)
 	displayVectorField(gridv);
 	cout << endl;
 
-	cout << "Domain status (F->NOTHING, B->SOMTHING):" << endl;
+	cout << "Domain status (F->Fluid, B->Boundary):" << endl;
 	displayCellStatus(domain_mask);
 	cout << endl;
 
