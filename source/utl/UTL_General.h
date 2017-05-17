@@ -14,7 +14,6 @@
 #include <random>
 #include <iomanip>
 #include "UTL_Grid.h"
-#include "PCGSolver/vec.h"
 
 using namespace std;
 

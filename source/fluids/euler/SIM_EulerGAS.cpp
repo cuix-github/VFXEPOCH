@@ -220,8 +220,9 @@ EulerGAS2D::advect_particles(){
 //Protected
 Vector2Df
 EulerGAS2D::trace_rk2(const Vector2Df& pos, float dt){
-  Vector2Df result;
-  return result;
+  Vector2Df vel = get_vel(pos);
+  vel = get_vel(pos + 0.5f * dt * vel);
+  return Vector2Df(pos + dt * vel);
 }
 
 // Protected
@@ -240,7 +241,8 @@ EulerGAS2D::apply_gradients(){
 // Protected
 Vector2Df
 EulerGAS2D::get_vel(const Vector2Df& pos){
-  Vector2Df result;
   assert(user_params.size.m_x != 0 && user_params.size.m_y != 0);
-  return result;
+  float _u = VFXEpoch::InterpolateGrid(pos / user_params.size.m_x - Vector2Df(0.5f, 0.0f), u);
+  float _v = VFXEpoch::InterpolateGrid(pos / user_params.size.m_y - Vector2Df(0.0f, 0.5f), v);
+  return Vector2Df(_u, _v);
 }
