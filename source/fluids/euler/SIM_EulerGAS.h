@@ -152,12 +152,12 @@ namespace VFXEpoch{
       void dynamic_resistance(Grid2DfScalarField& dest, Grid2DfScalarField ref);
       void advect(Grid2DfScalarField& dest, Grid2DfScalarField ref);
       void advect_particles();
-      void trace_rkii(const VFXEpoch::Vector2Df& pos, double dt);
       void compute_curls();
       void compute_buoyancy();
       void presure_solve(); // Overload
       void apply_gradients();
-      VFXEpoch::Vector2Df get_vel(const Vector2Df& pos);
+      Vector2Df trace_rk2(const Vector2Df& pos, float dt);
+      Vector2Df get_vel(const Vector2Df& pos);
     private:
     /*********************** Pressure Solver Parameters ************************/
       struct PressureSolverParams{

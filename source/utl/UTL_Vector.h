@@ -54,11 +54,11 @@ namespace VFXEpoch
 		Vector2D& operator=(const Vector2D& rhs){ this->m_x = rhs.m_x; this->m_y = rhs.m_y; return *this; }
 		Vector2D operator+(Vector2D& source){ return Vector2D(m_x + source.m_x, m_y + source.m_y); }
 		Vector2D operator+(Vector2D&& source){ return Vector2D(m_x + source.m_x, m_y + source.m_y); }
-		Vector2D operator-(Vector2D& source){ return Vector2D(m_x - source.m_x, m_y - source.m_y); }
-		Vector2D operator-(Vector2D&& source){ return Vector2D(m_x - source.m_x, m_y - source.m_y); }
-		Vector2D operator-(){ return Vector2D(-m_x, -m_y); }
+		Vector2D operator-(const Vector2D& source) const { return Vector2D(m_x - source.m_x, m_y - source.m_y); }
+		Vector2D operator-(const Vector2D&& source) const { return Vector2D(m_x - source.m_x, m_y - source.m_y); }
+		Vector2D operator-()const { return Vector2D(-m_x, -m_y); }
 		Vector2D operator*(T coef){ return Vector2D(m_x * coef, m_y * coef); }
-		Vector2D operator/(T coef){ return Vector2D(m_x / coef, m_y / coef); }
+		Vector2D operator/(const T coef) const { return Vector2D(m_x / coef, m_y / coef); }
 		Vector2D& operator+=(const Vector2D& source){ m_x += source.m_x; m_y += source.m_y; return *this; }
 		Vector2D& operator-=(const Vector2D& source){ m_x -= source.m_x; m_y -= source.m_y; return *this; }
 		Vector2D& operator*=(T coef){ m_x *= coef; m_y *= coef; return *this; }

@@ -277,20 +277,20 @@ inline int intlog2(int x)
    return exp;
 }
 
-template<class T>
-inline void get_barycentric(T x, int& i, T& f, int i_low, int i_high)
-{
-   T s=std::floor(x);
-   i=(int)s;
-   if(i<i_low){
-      i=i_low;
-      f=0;
-   }else if(i>i_high-2){
-      i=i_high-2;
-      f=1;
-   }else
-      f=(T)(x-s);
-}
+// template<class T>
+// inline void get_barycentric(T x, int& i, T& f, int i_low, int i_high)
+// {
+//    T s=std::floor(x);
+//    i=(int)s;
+//    if(i<i_low){
+//       i=i_low;
+//       f=0;
+//    }else if(i>i_high-2){
+//       i=i_high-2;
+//       f=1;
+//    }else
+//       f=(T)(x-s);
+// }
 
 template<class S, class T>
 inline S lerp(const S& value0, const S& value1, T f)
