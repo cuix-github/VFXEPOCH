@@ -154,8 +154,7 @@ namespace VFXEpoch{
       void advect_curl();
       void advect_den();
       void advect_particles();
-      void compute_curls();
-      void compute_buoyancy();
+      void apply_buoyancy();
       void presure_solve(); // Overload
       void apply_gradients();
       void extrapolate();
@@ -163,6 +162,7 @@ namespace VFXEpoch{
       Vector2Df trace_rk2(const Vector2Df& pos, float dt);
       Vector2Df get_vel(const Vector2Df& pos);
       float get_den(const Vector2Df& pos);
+      float get_curl(const Vector2Df& pos);
     private:
     /*********************** Pressure Solver Parameters ************************/
       struct PressureSolverParams{

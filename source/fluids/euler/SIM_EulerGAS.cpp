@@ -247,12 +247,25 @@ EulerGAS2D::advect_den(){
 // Protected
 void
 EulerGAS2D::advect_curl(){
-  /* TODO: code */
+  // Using RK2 method time integration
+  // advect curl field
+  LOOP_GRID2D(omega0){
+    VFXEpoch::Vector2Df pos((j+0.5f) * user_params.size.m_x, (i+0.5f) * user_params.size.m_y);
+    pos = trace_rk2(pos, -user_params.dt);
+    omega0(i, j) = get_curl(pos);
+  }
+  omega = omega0;
 }
 
 // Protected
 void
 EulerGAS2D::advect_particles(){
+  /* TODO: code */
+}
+
+// Public
+void
+EulerGAS2D::apply_buoyancy(){
   /* TODO: code */
 }
 
@@ -292,4 +305,12 @@ EulerGAS2D::get_den(const Vector2Df& pos){
   assert(user_params.size.m_x != 0 && user_params.size.m_y != 0 && user_params.size.m_x == user_params.size.m_y);
   float h = user_params.size.m_x;
   return VFXEpoch::InterpolateGrid(pos / h - Vector2Df(0.5f, 0.5f), d);
+}
+
+// Protected
+float
+EulerGAS2D::get_curl(const Vector2Df& pos){
+  assert(user_params.size.m_x != 0 && user_params.size.m_y != 0 && user_params.size.m_x == user_params.size.m_y);
+  float h = user_params.size.m_x;
+  return VFXEpoch::InterpolateGrid(pos / h - Vector2Df(0.5f, 0.5f), omega);
 }
