@@ -190,14 +190,14 @@ EulerGAS2D::set_domain_boundary_wrapper(Grid2DfScalarField& field){
 
 // Protected
 void
-EulerGAS2D::diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref){
+EulerGAS2D::density_diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref){
   float a = user_params.diff * user_params.dt * user_params.dimension.m_x * user_params.dimension.m_y;
   VFXEpoch::LinearSolver::GSSolve(dest, ref, domain_boundaries, a, 1+4*a, user_params.max_iterations);
 }
 
 // Protected
 void 
-EulerGAS2D::dynamic_resistance(Grid2DfScalarField& dest, Grid2DfScalarField ref){
+EulerGAS2D::dynamic_diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref){
   float a = user_params.visc * user_params.dt * user_params.dimension.m_x * user_params.dimension.m_y;
   VFXEpoch::LinearSolver::GSSolve(dest, ref, domain_boundaries, a, 1+4*a, user_params.max_iterations);
 }

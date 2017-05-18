@@ -148,8 +148,8 @@ namespace VFXEpoch{
       EulerGAS2D::Parameters get_user_params();
     protected:
       void set_domain_boundary_wrapper(Grid2DfScalarField& field);
-      void diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref);
-      void dynamic_resistance(Grid2DfScalarField& dest, Grid2DfScalarField ref);
+      void density_diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref);
+      void dynamic_diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref);
       void advect_vel();
       void advect_curl();
       void advect_den();
