@@ -8,7 +8,7 @@
 *******************************************************************************/
 #ifndef _SIM_EULER_GAS_H_
 #define _SIM_EULER_GAS_H_
-#include "fluids/euler/SIM_Base.h"
+#include "fluids/euler/SIM_FluidBase.h"
 #include "utl/PCGSolver/util.h"
 #include "utl/PCGSolver/sparse_matrix.h"
 #include "utl/PCGSolver/blas_wrapper.h"
@@ -150,7 +150,8 @@ namespace VFXEpoch{
       void set_domain_boundary_wrapper(Grid2DfScalarField& field);
       void diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref);
       void dynamic_resistance(Grid2DfScalarField& dest, Grid2DfScalarField ref);
-      void advect(Grid2DfScalarField& dest, Grid2DfScalarField ref);
+      void advect_vel();
+      void advect_den();
       void advect_particles();
       void compute_curls();
       void compute_buoyancy();
@@ -158,6 +159,7 @@ namespace VFXEpoch{
       void apply_gradients();
       Vector2Df trace_rk2(const Vector2Df& pos, float dt);
       Vector2Df get_vel(const Vector2Df& pos);
+      float get_den(const Vector2Df& pos);
     private:
     /*********************** Pressure Solver Parameters ************************/
       struct PressureSolverParams{

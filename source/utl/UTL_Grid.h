@@ -30,11 +30,11 @@
 
 #include "UTL_Matrix.h"
 
-#define LOOP_GRID2D	for (int i=1; i != m_yCell-1; i++ \
-									 		for (int j=1; j != m_xCell-1; j++)
-#define LOOP_GRID3D	for (int i=1; i != m_zCell-1; i++) \
-											for (int j=1; j != m_yCell-1; j++) \
-												for (int k=1; k != m_xCell-1; k++)
+#define LOOP_GRID2D(grid)	for(int i=0; i != grid.getDimY(); i++) \
+								for (int j=0; j != grid.getDimX(); j++)
+#define LOOP_GRID3D(grid)	for(int i=0; i != grid.getDimZ(); i++) \
+								for(int j=0; j != grid.getDimY(); j++) \
+									for(int k=0; k != grid.getDimX(); k++)
 
 #define IDX2D(i, j) ((i) * (m_xCell) + (j))
 #define IDX3D(i, j, k) ((i) * (m_xCell * m_yCell) + (j) * (m_xCell) + (k))

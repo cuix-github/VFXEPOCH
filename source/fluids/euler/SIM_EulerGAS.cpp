@@ -207,8 +207,41 @@ EulerGAS2D::dynamic_resistance(Grid2DfScalarField& dest, Grid2DfScalarField ref)
 // Protected
 // Overload from SIM_Base.h -> class Euler_Fluid2D_Base
 void
-EulerGAS2D::advect(Grid2DfScalarField& dest, Grid2DfScalarField ref){
-  /* TODO: code */
+EulerGAS2D::advect_vel(){
+  // Using RK2 method time integration
+  // advect u component of velocity field
+  LOOP_GRID2D(u0){
+    VFXEpoch::Vector2Df pos((j+0.5f) * user_params.size.m_x, i * user_params.size.m_y);
+    pos = trace_rk2(pos, -user_params.dt);
+    u0(i, j) = get_vel(pos).m_x;
+  }
+
+  // advect v component of velocity field
+  LOOP_GRID2D(v0){
+    VFXEpoch::Vector2Df pos(j * user_params.size.m_x, (i+0.5f) * user_params.size.m_y);
+    pos = trace_rk2(pos, -user_params.dt);
+    v0(i, j) = get_vel(pos).m_y;
+  }
+  u = u0;
+  v = v0;
+}
+
+// Protected
+void 
+EulerGAS2D::advect_den(){
+  // Using RK2 method time integration
+  // advect density field
+  // Brutal turning over the boundaries
+  assert(d0.getDimX() == inside_mask.getDimX() && d0.getDimY() == inside_mask.getDimY());
+  LOOP_GRID2D(d0){
+    if(inside_mask(i, j) == VFXEpoch::BOUNDARY_MASK::SOMETHING) continue;
+    else{
+      VFXEpoch::Vector2Df pos((j+0.5f) * user_params.size.m_x, (i+0.5f) * user_params.size.m_y);
+      pos = trace_rk2(pos, -user_params.dt);
+      d0(i, j) = get_den(pos);
+    }    
+  }
+  d = d0;
 }
 
 // Protected
@@ -245,4 +278,12 @@ EulerGAS2D::get_vel(const Vector2Df& pos){
   float _u = VFXEpoch::InterpolateGrid(pos / user_params.size.m_x - Vector2Df(0.5f, 0.0f), u);
   float _v = VFXEpoch::InterpolateGrid(pos / user_params.size.m_y - Vector2Df(0.0f, 0.5f), v);
   return Vector2Df(_u, _v);
+}
+
+// Protected
+float
+EulerGAS2D::get_den(const Vector2Df& pos){
+  assert(user_params.size.m_x != 0 && user_params.size.m_y != 0 && user_params.size.m_x == user_params.size.m_y);
+  float h = user_params.size.m_x;
+  return VFXEpoch::InterpolateGrid(pos / h - Vector2Df(0.5f, 0.5f), d);
 }
