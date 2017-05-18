@@ -246,6 +246,12 @@ EulerGAS2D::advect_den(){
 
 // Protected
 void
+EulerGAS2D::advect_curl(){
+  /* TODO: code */
+}
+
+// Protected
+void
 EulerGAS2D::advect_particles(){
   /* TODO: code */
 }
