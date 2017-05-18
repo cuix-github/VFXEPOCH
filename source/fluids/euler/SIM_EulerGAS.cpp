@@ -13,10 +13,11 @@ EulerGAS2D::EulerGAS2D(){
   user_params.clear();
   u.clear(); u0.clear();
   v.clear(); v0.clear();
+  uw.clear(); vw.clear();
   d.clear(); d0.clear();
   t.clear(); t0.clear();
   omega.clear(); omega0.clear();
-  inside_mask.clear();
+  inside_mask.clear(); inside_mask0.clear();
   nodal_solid_phi.clear();
   pressure_solver_params.clear();
   particles_container.clear();
@@ -34,11 +35,12 @@ EulerGAS2D::EulerGAS2D(){
 EulerGAS2D::EulerGAS2D(const EulerGAS2D& src){
   u = src.u; u0 = src.u0;
   v = src.v; v0 = src.v0;
+  uw = src.uw; vw = src.vw;
   d = src.v; d0 = src.v0;
   t = src.v; t0 = src.v0;
   omega = src.v; omega0 = src.v0;
   user_params = src.user_params;
-  inside_mask = src.inside_mask;
+  inside_mask = src.inside_mask; inside_mask0 = src.inside_mask0;
   nodal_solid_phi = src.nodal_solid_phi;
   particles_container = src.particles_container;
 }
@@ -47,12 +49,14 @@ EulerGAS2D::EulerGAS2D(const EulerGAS2D& src){
 EulerGAS2D::EulerGAS2D(Parameters _user_params):user_params(_user_params){
   v.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y + 1); v0 = v;
   u.ResetDimension(_user_params.dimension.m_x + 1, _user_params.dimension.m_y); u0 = u;
+  uw.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y + 1);
+  vw.ResetDimension(_user_params.dimension.m_x + 1, _user_params.dimension.m_y + 1);
   d.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y); d0 = d;
   t.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y); t0 = t;
   omega.ResetDimension(_user_params.dimension.m_x + 2, _user_params.dimension.m_y + 2);
   omega0.ResetDimension(_user_params.dimension.m_x + 2, _user_params.dimension.m_y + 2);
   nodal_solid_phi.ResetDimension(_user_params.dimension.m_x + 1, _user_params.dimension.m_y + 1);
-  inside_mask.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y);
+  inside_mask.ResetDimension(_user_params.dimension.m_x + 1, _user_params.dimension.m_y + 1); inside_mask0 = inside_mask;
   particles_container.resize(_user_params.num_particles);
 }
 
@@ -61,10 +65,11 @@ EulerGAS2D&
 EulerGAS2D::operator=(const EulerGAS2D& rhs){
   u = rhs.u; u0 = rhs.u0;
   v = rhs.v; v0 = rhs.v0;
+  uw = rhs.uw; vw = rhs.vw;
   d = rhs.v; d0 = rhs.v0;
   t = rhs.v; t0 = rhs.v0;
   omega = rhs.v; omega0 = rhs.v0;
-  inside_mask = rhs.inside_mask;
+  inside_mask = rhs.inside_mask; inside_mask0 = rhs.inside_mask0;
   user_params = rhs.user_params;
   particles_container = rhs.particles_container;
   return *this;
@@ -82,6 +87,8 @@ EulerGAS2D::init(Parameters params){
   user_params = params;
   v.ResetDimension(user_params.dimension.m_x, user_params.dimension.m_y + 1); v0 = v;
   u.ResetDimension(user_params.dimension.m_x + 1, user_params.dimension.m_y); u0 = u;
+  uw.ResetDimension(user_params.dimension.m_x, user_params.dimension.m_y + 1);
+  vw.ResetDimension(user_params.dimension.m_x + 1, user_params.dimension.m_x);
   d.ResetDimension(user_params.dimension.m_x, user_params.dimension.m_y); d0 = d;
   t.ResetDimension(user_params.dimension.m_x, user_params.dimension.m_y); t0 = t;
   omega.ResetDimension(user_params.dimension.m_x + 2, user_params.dimension.m_y + 2); omega0 = omega;
@@ -107,7 +114,7 @@ EulerGAS2D::close(){
   d.clear(); d0.clear();
   t.clear(); t0.clear();
   omega.clear(); omega0.clear();
-  inside_mask.clear();
+  inside_mask.clear(); inside_mask0.clear();
   nodal_solid_phi.clear();
   user_params.clear();
   particles_container.clear();
@@ -288,6 +295,48 @@ EulerGAS2D::presure_solve(){
 // Protected
 void
 EulerGAS2D::apply_gradients(){
+  /* TODO: code */
+}
+
+// Protected
+void
+EulerGAS2D::extrapolate(Grid2DfScalarField& grid, 
+                        const Grid2DfScalarField& weights, 
+                        Grid2DCellTypes& mask, 
+                        Grid2DCellTypes& mask0){
+  LOOP_GRID2D(grid){
+    mask(i, j) = weights(i, j) > 0.0f ? BOUNDARY_MASK::NOTHING : BOUNDARY_MASK::SOMETHING;
+  }
+
+  for(int i = 0; i != 5; i++){
+    mask0 = mask;
+    LOOP_GRID2D(grid){
+      float sum = 0;
+      int count = 0;
+
+      if(BOUNDARY_MASK::SOMETHING == mask0(i, j)){
+        if(BOUNDARY_MASK::NOTHING == mask0(i, j+1)){
+        } else if(BOUNDARY_MASK::NOTHING == mask0(i, j-1)){
+          /* TODO: ... */
+        } else if(BOUNDARY_MASK::NOTHING == mask0(i+1, j)){
+          /* TODO: ... */
+        } else if(BOUNDARY_MASK::NOTHING == mask0(i-1, j)){
+          /* TODO: ... */
+        } else {
+          /* TODO: ... */
+        }
+
+        if(count > 0){
+          /* TODO: ... */
+        }
+      }
+    }
+  }                       
+}
+
+// Protected
+void
+EulerGAS2D::constraint_vel(){
   /* TODO: code */
 }
 

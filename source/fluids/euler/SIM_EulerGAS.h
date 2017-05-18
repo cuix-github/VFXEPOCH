@@ -157,7 +157,8 @@ namespace VFXEpoch{
       void apply_buoyancy();
       void presure_solve(); // Overload
       void apply_gradients();
-      void extrapolate();
+      void extrapolate(Grid2DfScalarField& grid, const Grid2DfScalarField& weights, 
+                       Grid2DCellTypes& mask, Grid2DCellTypes& mask0);
       void constraint_vel();
       Vector2Df trace_rk2(const Vector2Df& pos, float dt);
       Vector2Df get_vel(const Vector2Df& pos);
@@ -182,12 +183,13 @@ namespace VFXEpoch{
     private:
       Grid2DfScalarField u, u0;
       Grid2DfScalarField v, v0;
+      Grid2DfScalarField uw, vw;
       Grid2DfScalarField d, d0;
       Grid2DfScalarField t, t0;
       Grid2DfScalarField pressure;
       Grid2DfScalarField omega, omega0;
       Grid2DfScalarField nodal_solid_phi;
-      Grid2DCellTypes inside_mask;
+      Grid2DCellTypes inside_mask, inside_mask0;
       BndConditionPerEdge domain_boundaries[4];
       vector<VFXEpoch::Particle2D> particles_container;
       Parameters user_params;
