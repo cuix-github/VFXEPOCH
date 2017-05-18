@@ -186,6 +186,7 @@ namespace VFXEpoch{
       Grid2DfScalarField t, t0;
       Grid2DfScalarField pressure;
       Grid2DfScalarField omega, omega0;
+      Grid2DfScalarField nodal_solid_phi;
       Grid2DCellTypes inside_mask;
       BndConditionPerEdge domain_boundaries[4];
       vector<VFXEpoch::Particle2D> particles_container;

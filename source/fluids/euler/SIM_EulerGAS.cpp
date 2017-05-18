@@ -15,9 +15,9 @@ EulerGAS2D::EulerGAS2D(){
   v.clear(); v0.clear();
   d.clear(); d0.clear();
   t.clear(); t0.clear();
-  pressure.clear();
   omega.clear(); omega0.clear();
   inside_mask.clear();
+  nodal_solid_phi.clear();
   pressure_solver_params.clear();
   particles_container.clear();
   domain_boundaries[0].side = EDGES_2DSIM::TOP;
@@ -36,10 +36,10 @@ EulerGAS2D::EulerGAS2D(const EulerGAS2D& src){
   v = src.v; v0 = src.v0;
   d = src.v; d0 = src.v0;
   t = src.v; t0 = src.v0;
-  pressure = src.pressure;
   omega = src.v; omega0 = src.v0;
   user_params = src.user_params;
   inside_mask = src.inside_mask;
+  nodal_solid_phi = src.nodal_solid_phi;
   particles_container = src.particles_container;
 }
 
@@ -49,9 +49,9 @@ EulerGAS2D::EulerGAS2D(Parameters _user_params):user_params(_user_params){
   u.ResetDimension(_user_params.dimension.m_x + 1, _user_params.dimension.m_y); u0 = u;
   d.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y); d0 = d;
   t.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y); t0 = t;
-  pressure.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y);
   omega.ResetDimension(_user_params.dimension.m_x + 2, _user_params.dimension.m_y + 2);
   omega0.ResetDimension(_user_params.dimension.m_x + 2, _user_params.dimension.m_y + 2);
+  nodal_solid_phi.ResetDimension(_user_params.dimension.m_x + 1, _user_params.dimension.m_y + 1);
   inside_mask.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y);
   particles_container.resize(_user_params.num_particles);
 }
@@ -63,7 +63,6 @@ EulerGAS2D::operator=(const EulerGAS2D& rhs){
   v = rhs.v; v0 = rhs.v0;
   d = rhs.v; d0 = rhs.v0;
   t = rhs.v; t0 = rhs.v0;
-  pressure = rhs.pressure;
   omega = rhs.v; omega0 = rhs.v0;
   inside_mask = rhs.inside_mask;
   user_params = rhs.user_params;
@@ -85,9 +84,9 @@ EulerGAS2D::init(Parameters params){
   u.ResetDimension(user_params.dimension.m_x + 1, user_params.dimension.m_y); u0 = u;
   d.ResetDimension(user_params.dimension.m_x, user_params.dimension.m_y); d0 = d;
   t.ResetDimension(user_params.dimension.m_x, user_params.dimension.m_y); t0 = t;
-  pressure.ResetDimension(user_params.dimension.m_x, user_params.dimension.m_y);
   omega.ResetDimension(user_params.dimension.m_x + 2, user_params.dimension.m_y + 2); omega0 = omega;
   inside_mask.ResetDimension(user_params.dimension.m_x, user_params.dimension.m_y);
+  nodal_solid_phi.ResetDimension(user_params.dimension.m_x + 1, user_params.dimension.m_y + 1);
   particles_container.resize(user_params.num_particles);
   return true;
 }
@@ -108,10 +107,9 @@ EulerGAS2D::close(){
   d.clear(); d0.clear();
   t.clear(); t0.clear();
   omega.clear(); omega0.clear();
-  pressure.clear();
   inside_mask.clear();
+  nodal_solid_phi.clear();
   user_params.clear();
-  pressure_solver_params.clear();
   particles_container.clear();
 }
 
@@ -260,7 +258,10 @@ EulerGAS2D::advect_curl(){
 // Protected
 void
 EulerGAS2D::advect_particles(){
-  /* TODO: code */
+  std::vector<VFXEpoch::Particle2D>::iterator ite(0);
+  for(ite = particles_container.begin(); ite != particles_container.end(); ite++){
+    ite->pos = trace_rk2(ite->pos, user_params.dt);
+  }
 }
 
 // Public

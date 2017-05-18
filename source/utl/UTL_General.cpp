@@ -141,6 +141,11 @@ VFXEpoch::InterpolateGrid(Vector2Df pos, Grid2DfScalarField& field){
 	return VFXEpoch::Bilerp(fx, fy, field(i, j), field(i + 1, j), field(i, j + 1), field(i + 1, j + 1));
 }
 
+float 
+VFXEpoch::InterpolateGrid(Vector2Df pos, VFXEpoch::Grid2DCellTypes& field){
+	
+}
+
 void
 VFXEpoch::Zeros(VFXEpoch::Grid2DfScalarField& field)
 {
