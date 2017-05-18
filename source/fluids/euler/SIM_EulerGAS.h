@@ -159,6 +159,7 @@ namespace VFXEpoch{
       void apply_gradients();
       void extrapolate(Grid2DfScalarField& grid, const Grid2DfScalarField& weights, 
                        Grid2DCellTypes& mask, Grid2DCellTypes& mask0);
+      void get_grid_weights();
       void constraint_vel();
       Vector2Df trace_rk2(const Vector2Df& pos, float dt);
       Vector2Df get_vel(const Vector2Df& pos);

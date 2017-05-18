@@ -61,6 +61,7 @@ namespace VFXEpoch
 	float InterpolateGrid(float x, float y, VFXEpoch::Grid2DfScalarField& field);
 	float InterpolateGrid(Vector2Df pos, VFXEpoch::Grid2DfScalarField& field);
 	float InterpolateGradient(Vector2Df gradient, Vector2Df pos, VFXEpoch::Grid2DfScalarField& field);
+	float InteralFrac(float left, float right);
 	void Zeros(VFXEpoch::Grid2DfScalarField& field);
 	void Zeros(VFXEpoch::Grid2DVector2DfField& field);
 	void Zeros(VFXEpoch::Grid2DiScalarField& field);

@@ -146,6 +146,18 @@ VFXEpoch::InterpolateGradient(Vector2Df gradient, Vector2Df pos, VFXEpoch::Grid2
 	/* TODO: code */
 }
 
+float
+VFXEpoch::InteralFrac(float left, float right){
+	if(left < 0 && right < 0)
+      return 1.0f;
+   	if (left < 0 && right >= 0)
+      return left / (left - right);
+  	if(left >= 0 && right < 0)
+      return right / (right - left);
+   	else
+      return 0;
+}
+
 void
 VFXEpoch::Zeros(VFXEpoch::Grid2DfScalarField& field)
 {

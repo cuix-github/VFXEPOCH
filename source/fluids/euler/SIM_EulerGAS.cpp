@@ -316,22 +316,40 @@ EulerGAS2D::extrapolate(Grid2DfScalarField& grid,
 
       if(BOUNDARY_MASK::SOMETHING == mask0(i, j)){
         if(BOUNDARY_MASK::NOTHING == mask0(i, j+1)){
+          sum += grid(i, j+1);
+          ++count;
         } else if(BOUNDARY_MASK::NOTHING == mask0(i, j-1)){
-          /* TODO: ... */
+          sum += grid(i, j-1);
+          ++count;
         } else if(BOUNDARY_MASK::NOTHING == mask0(i+1, j)){
-          /* TODO: ... */
+          sum += grid(i+1, j);
+          ++count;
         } else if(BOUNDARY_MASK::NOTHING == mask0(i-1, j)){
-          /* TODO: ... */
+          sum += grid(i-1, j);
+          ++count;
         } else {
           /* TODO: ... */
         }
 
         if(count > 0){
-          /* TODO: ... */
+          grid(i, j) = sum / (float)count;
+          mask(i, j) = BOUNDARY_MASK::NOTHING;
         }
       }
     }
   }                       
+}
+
+// Protected
+void
+EulerGAS2D::get_grid_weights(){
+  LOOP_GRID2D(uw){
+    /* TODO: Compute u weights */
+  }
+
+  LOOP_GRID2D(vw){
+    /* TODO: Compute v weights */
+  }
 }
 
 // Protected
