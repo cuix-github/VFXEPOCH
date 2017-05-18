@@ -142,8 +142,8 @@ VFXEpoch::InterpolateGrid(Vector2Df pos, Grid2DfScalarField& field){
 }
 
 float 
-VFXEpoch::InterpolateGrid(Vector2Df pos, VFXEpoch::Grid2DCellTypes& field){
-	
+VFXEpoch::InterpolateGradient(Vector2Df gradient, Vector2Df pos, VFXEpoch::Grid2DfScalarField& field){
+	/* TODO: code */
 }
 
 void
