@@ -30,8 +30,12 @@
 
 #include "UTL_Matrix.h"
 
-#define FOR_EACH_2DCELL for(int i = 1; i <= m_yCell; i++) { for(int j = 1; j <= m_xCell; j++){
-#define END_FOR_2DCELL }}
+#define LOOP_GRID2D(grid)	for(int i=0; i != grid.getDimY(); i++) \
+								for (int j=0; j != grid.getDimX(); j++)
+#define LOOP_GRID3D(grid)	for(int i=0; i != grid.getDimZ(); i++) \
+								for(int j=0; j != grid.getDimY(); j++) \
+									for(int k=0; k != grid.getDimX(); k++)
+
 #define IDX2D(i, j) ((i) * (m_xCell) + (j))
 #define IDX3D(i, j, k) ((i) * (m_xCell * m_yCell) + (j) * (m_xCell) + (k))
 
@@ -45,6 +49,11 @@ namespace VFXEpoch
 		STREAK,
 		ROBIN,
 		CAUCHY,
+	};
+
+	enum class BOUNDARY_MASK{
+		NOTHING,
+		SOMETHING
 	};
 
 	enum class EDGES_2DSIM
@@ -143,7 +152,7 @@ namespace VFXEpoch
 		Grid2D(){ m_xCell = m_yCell = 0; dx = 0.0f; data.clear(); }
 		Grid2D(int x, int y) : m_xCell(x), m_yCell(y){ data.clear(); data.resize(m_xCell * m_yCell); }
 		Grid2D(int x, int y, float _dx, float _dy) : m_xCell(x), m_yCell(y), dx(_dx), dy(_dy){ data.clear(); data.resize(m_xCell * m_yCell); }
-		Grid2D(const Grid2D& source){ m_xCell = source.m_xCell; m_yCell = source.m_yCell; dx = source.dx; dy = source.dx; data.clear(); data = source.data; }
+		Grid2D(const Grid2D& source){ this->m_xCell = source.m_xCell; this->m_yCell = source.m_yCell; this->dx = source.dx; this->dy = source.dy; this->data.clear(); this->data = source.data; }
 		Grid2D<T>& operator=(const Grid2D<T>& source) {
 			m_xCell = source.m_xCell;
 			m_yCell = source.m_yCell;
@@ -211,13 +220,15 @@ namespace VFXEpoch
 			return *this;
 		}
 
+		// TODO: Check the logic for m_xCell & m_yCell
 		const T& operator()(int i, int j) const {
-			assert(i >= 0 && i <= m_xCell - 1 && j >= 0 && j <= m_yCell - 1);
+			assert(i >= 0 && i <= m_yCell - 1 && j >= 0 && j <= m_xCell - 1);
 			return data[IDX2D(i, j)];
 		}
 
+		// TODO: Check the logic for m_xCell & m_yCell
 		T& operator()(int i, int j)	{
-			assert(i >= 0 && i <= m_xCell - 1 && j >= 0 && j <= m_yCell - 1);
+			assert(i >= 0 && i <= m_yCell - 1 && j >= 0 && j <= m_xCell - 1);
 			return data[IDX2D(i, j)];
 		}
 
@@ -240,11 +251,11 @@ namespace VFXEpoch
 			}
 		}
 
-		void ResetDimension(int yCell, int xCell){
+		void ResetDimension(int xCell, int yCell){
 			data.clear();
 			m_xCell = xCell;
 			m_yCell = yCell;
-			data.resize(yCell * xCell);
+			data.resize(xCell * yCell);
 		}
 
 		void setData(T _data, int i, int j) {
@@ -456,6 +467,7 @@ namespace VFXEpoch
 	typedef Grid2D<VFXEpoch::Vector2Df> Grid2DVector2DfField;
 	typedef Grid2D<VFXEpoch::Vector2Dd> Grid2DVector2DdField;
 	typedef Grid2D<VFXEpoch::Vector2Di> Grid2DVector2DiField;
+	typedef Grid2D<VFXEpoch::BOUNDARY_MASK> Grid2DCellTypes;
 
 	template <class T>
 	class Grid3D

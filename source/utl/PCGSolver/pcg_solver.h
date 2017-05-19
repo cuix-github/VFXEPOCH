@@ -284,6 +284,14 @@ struct PCGSolver
       return false;
    }
 
+   inline void clear(void){
+       m.clear();
+       z.clear();
+       s.clear();
+       r.clear();
+       fixed_matrix.clear();
+   }
+
    protected:
 
    // internal structures

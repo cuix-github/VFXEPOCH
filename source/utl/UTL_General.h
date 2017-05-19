@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <random>
+#include <iomanip>
 #include "UTL_Grid.h"
 
 using namespace std;
@@ -34,7 +35,7 @@ namespace VFXEpoch
 		VFXEpoch::Vector3Df vel;
 		VFXEpoch::Vector3Df color;
 		float padding[7];
-	}Particles3D;
+	}Particle3D;
 
 	enum class VORT_METHODS
 	{
@@ -48,11 +49,6 @@ namespace VFXEpoch
 		X, Y, Z
 	};
 
-	enum class BOUNDARY_MASK{
-		SOMETHING,
-		NOTHING
-	};
-
 	// Helpers
 	float RandomF(float min, float max);
 	int RandomI(int min, int max);
@@ -62,7 +58,10 @@ namespace VFXEpoch
 	void ExtractComponents(VFXEpoch::Grid2DfScalarField& component, VFXEpoch::Grid3DVector3DfField vectorField, VECTOR_COMPONENTS axis);
 	void InsertComponents(VFXEpoch::Grid2DfScalarField component, VFXEpoch::Grid2DVector2DfField& vectorField, VECTOR_COMPONENTS axis);
 	void InsertComponents(VFXEpoch::Grid2DfScalarField component, VFXEpoch::Grid3DVector3DfField& vectorField, VECTOR_COMPONENTS axis);
-	float InterpolateGrid(int N, float x, float y, VFXEpoch::Grid2DfScalarField& field);
+	float InterpolateGrid(float x, float y, VFXEpoch::Grid2DfScalarField& field);
+	float InterpolateGrid(Vector2Df pos, VFXEpoch::Grid2DfScalarField& field);
+	float InterpolateGradient(Vector2Df gradient, Vector2Df pos, VFXEpoch::Grid2DfScalarField& field);
+	float InteralFrac(float left, float right);
 	void Zeros(VFXEpoch::Grid2DfScalarField& field);
 	void Zeros(VFXEpoch::Grid2DVector2DfField& field);
 	void Zeros(VFXEpoch::Grid2DiScalarField& field);

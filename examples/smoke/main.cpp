@@ -35,9 +35,9 @@ int width = 640;
 int height = 720;
 int mouse_status[3];
 int mx0, my0, mx, my;
-bool bVel = false;
+bool bVel = true;
 bool bSmoke = false;
-bool bParticles = true;
+bool bParticles = false;
 bool bPause = false;
 int stopFrame = -1;
 int frame_counter = 0;
@@ -68,13 +68,13 @@ void
 Init(int argc, char **argv)
 {
 	// Simulation parameters
-	simParams.nx = 166;	simParams.ny = 166;
+	simParams.nx = 64;	simParams.ny = 128;
 	simParams.dt = 0.01f;
 	simParams.diff = 0.0f; simParams.visc = 0.0f;
 	simParams.src = 100.0f;	simParams.src_rate = 1.0f;
 	simParams.user_force = 0.0f;
 	simParams.heat_source = 2000.0f;
-	simParams.streamer_len = 5.0f;
+	simParams.streamer_len = 0.5f;
 	simParams.num_particles = 10000;
 	simParams.vort_conf_eps = 0.95f;
 	simParams.particle_life_span_rev = 0.9f;
@@ -83,22 +83,22 @@ Init(int argc, char **argv)
 
 	// Related field
 	particles.resize(simParams.num_particles);
-	v.ResetDimension(simParams.ny + 2, simParams.nx + 2);
-	v0.ResetDimension(simParams.ny + 2, simParams.nx + 2);
-	grav.ResetDimension(simParams.ny + 2, simParams.nx + 2);
-	buoy.ResetDimension(simParams.ny + 2, simParams.nx + 2);
-	d.ResetDimension(simParams.ny + 2, simParams.nx + 2);
-	d0.ResetDimension(simParams.ny + 2, simParams.nx + 2);
-	t.ResetDimension(simParams.ny + 2, simParams.nx + 2);
-	t0.ResetDimension(simParams.ny + 2, simParams.nx + 2);
-	wn.ResetDimension(simParams.ny + 2, simParams.nx + 2);
-	psi.ResetDimension(simParams.ny + 2, simParams.nx + 2);
-	dw.ResetDimension(simParams.ny + 2, simParams.nx + 2);
-	wBar.ResetDimension(simParams.ny + 2, simParams.nx + 2);
-	wStar.ResetDimension(simParams.ny + 2, simParams.nx + 2);
-	dvel.ResetDimension(simParams.ny + 2, simParams.nx + 2);
-	pressure.ResetDimension(simParams.ny + 2, simParams.nx + 2);
-	divergence.ResetDimension(simParams.ny + 2, simParams.nx + 2);
+	v.ResetDimension(simParams.nx + 2, simParams.ny + 2);
+	v0.ResetDimension(simParams.nx + 2, simParams.ny + 2);
+	grav.ResetDimension(simParams.nx + 2, simParams.ny + 2);
+	buoy.ResetDimension(simParams.nx + 2, simParams.ny + 2);
+	d.ResetDimension(simParams.nx + 2, simParams.ny + 2);
+	d0.ResetDimension(simParams.nx + 2, simParams.ny + 2);
+	t.ResetDimension(simParams.nx + 2, simParams.ny + 2);
+	t0.ResetDimension(simParams.nx + 2, simParams.ny + 2);
+	wn.ResetDimension(simParams.nx + 2, simParams.ny + 2);
+	psi.ResetDimension(simParams.nx + 2, simParams.ny + 2);
+	dw.ResetDimension(simParams.nx + 2, simParams.ny + 2);
+	wBar.ResetDimension(simParams.nx + 2, simParams.ny + 2);
+	wStar.ResetDimension(simParams.nx + 2, simParams.ny + 2);
+	dvel.ResetDimension(simParams.nx + 2, simParams.ny + 2);
+	pressure.ResetDimension(simParams.nx + 2, simParams.ny + 2);
+	divergence.ResetDimension(simParams.nx + 2, simParams.ny + 2);
 
 	VFXEpoch::Zeros(v);
 	VFXEpoch::Zeros(v0);
@@ -124,7 +124,7 @@ Init(int argc, char **argv)
 	float r(0.0f), g(0.0f), b(0.0f);
 	float x(0.0f), y(0.0f);
 	for (std::vector<VFXEpoch::Particle2D>::iterator ite = particles.begin(); ite != particles.end(); ite++){
-		x = (simParams.nx / 2 + VFXEpoch::RandomI(-40, 40)) * 1.0f / simParams.nx;
+		x = (simParams.nx / 2 + VFXEpoch::RandomI(-10, 10)) * 1.0f / simParams.nx;
 		y = (VFXEpoch::RandomI(0, 30)) * 1.0f / simParams.nx;
 		ite->pos = VFXEpoch::Vector2Df(x, y);
 		ite->vel = VFXEpoch::Vector2Df(0.0f, 0.0f);
@@ -132,17 +132,16 @@ Init(int argc, char **argv)
 	}
 
 	// Initialize gas solver
-	if (!sl2D_solver->Initialize(VFXEpoch::Vector2Di(simParams.ny + 2, simParams.nx + 2), VFXEpoch::Vector2Df(1.0f / simParams.ny, 1.0f / simParams.nx),
+	if (!sl2D_solver->Initialize(VFXEpoch::Vector2Di(simParams.nx + 2, simParams.ny + 2), VFXEpoch::Vector2Df(1.0f / simParams.nx, 1.0f / simParams.nx),
 		simParams.linear_solver_iterations, simParams.dt, simParams.diff, simParams.visc, simParams.src_rate)) {
 		cout << "Solver initialization failed" << endl;
-		system("Pause");
-		exit(0);
+		exit(-1);
 	}
 	else {
 		cout << "Solver was initialized successfully" << endl;
 	}
 
-	// If any field get new value, it requires call the following
+	// If anx field get new value, it requires call the following
 	// interfaces to transport data to the solver.
 	sl2D_solver->SetField(v, VFXEpoch::COMPUTATIONAL_VECTOR_FIELD_2D::VEL);
 	sl2D_solver->SetField(v0, VFXEpoch::COMPUTATIONAL_VECTOR_FIELD_2D::VEL_PREV);
@@ -173,7 +172,7 @@ WindowShowup(int width, int height)
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
 	glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - width) / 2,
 		(glutGet(GLUT_SCREEN_HEIGHT) - height) / 2);
-	glutInitWindowSize(width, height);
+	glutInitWindowSize(simParams.nx * 10, simParams.ny * 10);
 	ID = glutCreateWindow("Smoke Sim VFXEpoch");
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -231,30 +230,18 @@ DisplayVelocityField()
 	glLineWidth(1.0f);
 	float x, y;
 	float dx = 1.0f / (simParams.nx), dy = 1.0f / (simParams.ny);
-	float streamerxRate = simParams.streamer_len / simParams.nx, streameryRate = simParams.streamer_len / simParams.ny;
+	float streamerxRate = simParams.streamer_len / simParams.nx, streameryRate = simParams.streamer_len / simParams.nx;
 
 	glBegin(GL_LINES);
 	for (int i = 1; i <= simParams.ny + 1; i++){
 		for (int j = 1; j <= simParams.nx + 1; j++){
-			x = (i - 0.5f) * dx;
-			y = (j - 0.5f) * dy;
+			x = (j - 0.5f) * dx;
+			y = (i - 0.5f) * dy;
 			glVertex2f(x, y);
 			glVertex2f(x + v(i, j).m_x * streamerxRate, y + v(i, j).m_y * streameryRate);
 		}
 	}
 	glEnd();
-
-	//glColor3f(0.2f, 0.6f, 1.0f);
-	//glPointSize(1.0f);
-	//glBegin(GL_POINTS);
-	//for (int i = 1; i <= simParams.ny + 1; i++){
-	//	for (int j = 1; j <= simParams.nx + 1; j++){
-	//		x = (j - 0.5f) * dx;
-	//		y = (i - 0.5f) * dy;
-	//		glVertex2f(x, y);
-	//	}
-	//}
-	//glEnd();
 }
 
 void
@@ -266,7 +253,7 @@ DisplayParticles()
 	for (std::vector<VFXEpoch::Particle2D>::iterator ite = particles.begin(); ite != particles.end(); ite++){
 		if (ite->pos.m_x < 0 || ite->pos.m_x > 1 ||
 			ite->pos.m_y < 0 || ite->pos.m_y > 1) {
-			ite->pos.m_x = (simParams.nx / 2 + VFXEpoch::RandomI(-40, 40)) * 1.0f / simParams.nx;
+			ite->pos.m_x = (simParams.nx / 2 + VFXEpoch::RandomI(-10, 10)) * 1.0f / simParams.nx;
 			ite->pos.m_y = (VFXEpoch::RandomI(0, 30)) * 1.0f / simParams.nx;
 		}
 		glColor3f(ite->color.m_x, ite->color.m_y, ite->color.m_z);
@@ -280,11 +267,11 @@ DispolayDensityField()
 {
 	float x, y, hx, hy, d00, d01, d10, d11;
 	hx = 1.0f / simParams.nx;
-	hy = 1.0f / simParams.ny;
+	hy = 1.0f / simParams.nx;
 	glBegin(GL_QUADS);
-	for (int i = 0; i <= simParams.ny; i++)	{
+	for (int i = 0; i <= simParams.nx; i++)	{
 		x = (i - 0.5f) * hx;
-		for (int j = 0; j <= simParams.nx; j++)	{
+		for (int j = 0; j <= simParams.ny; j++)	{
 			y = (j - 0.5f) * hy;
 			d00 = d(i, j);
 			d01 = d(i, j + 1);
@@ -309,8 +296,8 @@ GetUserOperations(VFXEpoch::Grid2DfScalarField& density, VFXEpoch::Grid2DVector2
 	if (!mouse_status[0] && !mouse_status[2]) return;
 
 	int i = (int)((mx / (float)width) * simParams.nx + 1);
-	int j = (int)(((height - my) / (float)height) * simParams.ny + 1);
-	if (i < 1 || i > simParams.nx || j < 1 || j > simParams.ny) return;
+	int j = (int)(((height - my) / (float)height) * simParams.nx + 1);
+	if (i < 1 || i > simParams.nx || j < 1 || j > simParams.nx) return;
 	if (mouse_status[0]) {
 		//vec.m_x = simParams.user_force * (mx - mx0);
 		//vec.m_y = simParams.user_force * (my0 - my);
@@ -327,8 +314,8 @@ GetUserOperations(VFXEpoch::Grid2DfScalarField& density, VFXEpoch::Grid2DVector2
 void
 ParticlesAdvector_RKII()
 {
-	VFXEpoch::Grid2DfScalarField du(v.getDimY(), v.getDimX(), 1.0f / v.getDimX(), 1.0f / v.getDimY());
-	VFXEpoch::Grid2DfScalarField dv(v.getDimY(), v.getDimX(), 1.0f / v.getDimX(), 1.0f / v.getDimY());
+	VFXEpoch::Grid2DfScalarField du(v.getDimX(), v.getDimY(), 1.0f / v.getDimX(), 1.0f / v.getDimY());
+	VFXEpoch::Grid2DfScalarField dv(v.getDimX(), v.getDimY(), 1.0f / v.getDimX(), 1.0f / v.getDimY());
 	VFXEpoch::ExtractComponents(du, v, VFXEpoch::VECTOR_COMPONENTS::X);
 	VFXEpoch::ExtractComponents(dv, v, VFXEpoch::VECTOR_COMPONENTS::Y);
 	sl2D_solver->_advect_particles_rk2(du, dv, particles);
@@ -354,6 +341,7 @@ Advance()
 	ParticlesAdvector_RKII();
 
 	VFXEpoch::Swap(v, v0);
+
 	sl2D_solver->_diffuse(v, v0);
 	sl2D_solver->_project(v, pressure, divergence);
 	// VFXEpoch::Swap(v, v0);
@@ -398,6 +386,8 @@ IVOCKAdvance()
 
 	VFXEpoch::Swap(v, v0);
 	sl2D_solver->_diffuse(v, v0);
+
+	// TODO: Bugs
 	sl2D_solver->_project(v, pressure, divergence);
 	VFXEpoch::Swap(v, v0);
 
@@ -423,7 +413,7 @@ IVOCKAdvance()
 	// Linearly solve the psi and deduce velocity from vorticity
 	//VFXEpoch::LinearSolver::GSSolve(psi, dw, sl2D_solver->getFieldBoundaries(), 1, 4, simParams.linear_solver_iterations);
 	VFXEpoch::LinearSolver::JacobiSolve(psi, dw, sl2D_solver->getFieldBoundaries(), 1, 4, simParams.linear_solver_iterations);
-	//VFXEpoch::LinearSolver::MultigridSolve_V_Cycle(1.f / (simParams.ny - 1), psi, dw, sl2D_solver->getFieldBoundaries(), 1, 4, 30);
+	//VFXEpoch::LinearSolver::MultigridSolve_V_Cycle(1.f / (simParams.nx - 1), psi, dw, sl2D_solver->getFieldBoundaries(), 1, 4, 30);
 	VFXEpoch::Analysis::find_vector_from_vector_potential_2D(dvel, psi);
 	// Combine the differences
 	v += dvel;
@@ -456,8 +446,8 @@ Reset()
 	float r(0.0f), g(0.0f), b(0.0f);
 	float x(0.0f), y(0.0f);
 	for (std::vector<VFXEpoch::Particle2D>::iterator ite = particles.begin(); ite != particles.end(); ite++){
-		x = (simParams.nx / 2 + VFXEpoch::RandomI(-40, 40)) * 1.0f / simParams.nx;
-		y = (VFXEpoch::RandomI(0, 30)) * 1.0f / simParams.nx;
+		x = (simParams.nx / 2 + VFXEpoch::RandomI(-5, 5)) * 1.0f / simParams.nx;
+		y = (VFXEpoch::RandomI(0, 30)) * 1.0f / simParams.ny;
 		ite->pos = VFXEpoch::Vector2Df(x, y);
 		ite->vel = VFXEpoch::Vector2Df(0.0f, 0.0f);
 		ite->color = VFXEpoch::Vector3Df(0.0f, 0.0f, 0.0f);
@@ -555,15 +545,11 @@ Loop()
 void
 KeepSource()
 {
-	int idxi = simParams.nx / 2;
-	int idxj = 10;
+	int idxj = simParams.nx / 2;
+	int idxi = 30;
 	v0(idxi, idxj).m_y	= simParams.user_force;
 	d0(idxi, idxj) = simParams.src;
 	t0(idxi, idxj) = simParams.heat_source;
-	t0(idxi + 1, idxj) = simParams.heat_source;
-	t0(idxi - 1, idxj) = simParams.heat_source;
-	t0(idxi + 2, idxj) = simParams.heat_source;
-	t0(idxi - 2, idxj) = simParams.heat_source;
 }
 
 void

@@ -9,12 +9,11 @@
 #ifndef _SIM_GAS_H_
 #define _SIM_GAS_H_
 
-#include "../../utl/UTL_Grid.h"
-#include "../../utl/UTL_Matrix.h"
-#include "../../utl/UTL_Vector.h"
-#include "../../utl/UTL_General.h"
-#include "../../utl/UTL_LinearSolvers.h"
-#include "SIM_Mac.h"
+#include "utl/UTL_Grid.h"
+#include "utl/UTL_Matrix.h"
+#include "utl/UTL_Vector.h"
+#include "utl/UTL_General.h"
+#include "utl/UTL_LinearSolvers.h"
 
 namespace VFXEpoch
 {
@@ -56,9 +55,6 @@ namespace VFXEpoch
 			VFXEpoch::Grid2DfScalarField temperaturePrev;
 			std::vector<VFXEpoch::Particle2D> particles;
 
-			// If using staggered scheme, use following variable to store fluid variables
-			VFXEpoch::Mac2D staggeredGrid;
-
 		public:
 			SL2D();
 			SL2D(int dimX, int dimY, int iterations, double timeStep, float diffuseRate, float viscosity, float sourceRate, float spacingX, float spacingY,
@@ -74,7 +70,6 @@ namespace VFXEpoch
 			bool Initialize(VFXEpoch::Vector2Di dimension, VFXEpoch::Vector2Df spacing, int iterations, float timeStep, float diffuseRate, float viscosity, float sourceRate);
 			void SetField(VFXEpoch::Grid2DfScalarField field, VFXEpoch::COMPUTATIONAL_SCALAR_FIELD_2D fieldName);
 			void SetField(VFXEpoch::Grid2DVector2DfField field, VFXEpoch::COMPUTATIONAL_VECTOR_FIELD_2D fieldName);
-			void SetField(VFXEpoch::Mac2D mac);
 			void SetFieldBoundary(VFXEpoch::BOUNDARY boundaryType, VFXEpoch::EDGES_2DSIM edge);
 			void AddSource(VFXEpoch::Grid2DfScalarField& target, VFXEpoch::Grid2DfScalarField source);
 			void AddSource(VFXEpoch::Grid2DVector2DfField& target, VFXEpoch::Grid2DVector2DfField source);
@@ -106,12 +101,11 @@ namespace VFXEpoch
 			// For test, make the microsolvers as public members.
 		public:
 			// TODO: Micro-Solvers
-			bool _init(int dimY, int dimX, int iterations, double timeStep, float diffuseRate, float viscosity, float sourceRate, float spacingX, float spacingY);
+			bool _init(int dimX, int dimY, int iterations, double timeStep, float diffuseRate, float viscosity, float sourceRate, float spacingX, float spacingY);
 			void _set_field(VFXEpoch::Grid2DfScalarField field, VFXEpoch::COMPUTATIONAL_SCALAR_FIELD_2D fieldName);
 			void _set_field(VFXEpoch::Grid2DVector2DfField field, VFXEpoch::COMPUTATIONAL_VECTOR_FIELD_2D fieldName);
 			void _set_field_boundary(VFXEpoch::Grid2DfScalarField& field);
 			void _set_field_boundary(VFXEpoch::Grid2DVector2DfField& field);
-			void _set_field(VFXEpoch::Mac2D mac);
 			void _set_source(VFXEpoch::Grid2DfScalarField& scalarField, VFXEpoch::Grid2DfScalarField source);
 			void _set_source(VFXEpoch::Grid2DVector2DfField& vectorField, VFXEpoch::Grid2DVector2DfField source);
 

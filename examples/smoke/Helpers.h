@@ -9,7 +9,6 @@
 #ifndef _HELPERS_H_
 #define _HELPERS_H_
 #include "fluids/euler/SIM_Gas.h"
-#include "fluids/euler/SIM_Mac.h"
 #include "utl/UTL_General.h"
 #include "utl/PCGSolver/pcg_solver.h"
 #include <iostream>

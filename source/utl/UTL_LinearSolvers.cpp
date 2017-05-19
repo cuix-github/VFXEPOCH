@@ -13,14 +13,10 @@ namespace VFXEpoch
 	namespace LinearSolver
 	{
 		void
-		GSSolve(VFXEpoch::Grid2DfScalarField& x, VFXEpoch::Grid2DfScalarField x0, VFXEpoch::BndConditionPerEdge b[], float coefMatrixAElement, float c, int iterations)
-		{
-			for (int m = 0; m != iterations; m++)
-			{
-				for (int i = 1; i != x.getDimY() - 1; i++)
-				{
-					for (int j = 1; j != x.getDimX() - 1; j++)
-					{
+		GSSolve(VFXEpoch::Grid2DfScalarField& x, VFXEpoch::Grid2DfScalarField x0, VFXEpoch::BndConditionPerEdge b[], float coefMatrixAElement, float c, int iterations)	{
+			for (int m = 0; m != iterations; m++)	{
+				for (int i = 1; i != x.getDimY() - 1; i++)	{
+					for (int j = 1; j != x.getDimX() - 1; j++)	{
 						float sumFluxout = x(i + 1, j) + x(i - 1, j) + x(i, j + 1) + x(i, j - 1);
 						sumFluxout *= coefMatrixAElement;
 						float curApproximation = x0(i, j) + sumFluxout;
@@ -38,16 +34,11 @@ namespace VFXEpoch
 		}
 
 		void
-		RBGSSolve(float h, VFXEpoch::Grid2DfScalarField& x, VFXEpoch::Grid2DfScalarField x0, VFXEpoch::BndConditionPerEdge b[], float coefMatrixAElement, float c)
-		{
-			for (int rb = 0; rb != 2; rb++)
-			{
-				for (int i = 1; i != x.getDimY() - 1; i++)
-				{
-					for (int j = 1; j != x.getDimX() - 1; j++)
-					{
-						if ((i + j) % 2 == rb)
-						{
+		RBGSSolve(float h, VFXEpoch::Grid2DfScalarField& x, VFXEpoch::Grid2DfScalarField x0, VFXEpoch::BndConditionPerEdge b[], float coefMatrixAElement, float c) {
+			for (int rb = 0; rb != 2; rb++)	{
+				for (int i = 1; i != x.getDimY() - 1; i++) {
+					for (int j = 1; j != x.getDimX() - 1; j++) {
+						if ((i + j) % 2 == rb)	{
 							float sumFluxout = x(i + 1, j) + x(i - 1, j) + x(i, j + 1) + x(i, j - 1);
 							sumFluxout *= coefMatrixAElement;
 							float curApproximation = x0(i, j) + sumFluxout;
@@ -66,19 +57,18 @@ namespace VFXEpoch
 		}
 
 		void
-		JacobiSolve(VFXEpoch::Grid2DfScalarField& x, VFXEpoch::Grid2DfScalarField x0, VFXEpoch::BndConditionPerEdge b[], float coefMatrixAElement, float c, int iterations)
-		{
+		JacobiSolve(VFXEpoch::Grid2DfScalarField& x, VFXEpoch::Grid2DfScalarField x0, VFXEpoch::BndConditionPerEdge b[], float coefMatrixAElement, float c, int iterations)	{
 				// Extra memory to avoid covering previous value
-				VFXEpoch::Grid2DfScalarField auxiliary(x0.getDimY(), x0.getDimX(), (float)(1 / (x0.getDimX() - 1)), (float)(1 / (x0.getDimY() - 1)));
+				VFXEpoch::Grid2DfScalarField auxiliary(x0.getDimX(), x0.getDimY(), (float)(1 / (x0.getDimX() - 1)), (float)(1 / (x0.getDimY() - 1)));
+
+				int xCells = x0.getDimX();
+				int yCells = x0.getDimY();
 
 				float h = 1.0f / (float)(x0.getDimY() - 1);
 
-				for (int m = 0; m != iterations; m++)
-				{
-					for (int i = 1; i != x.getDimY() - 1; i++)
-					{
-						for (int j = 1; j != x.getDimX() - 1; j++)
-						{
+				for (int m = 0; m != iterations; m++)	{
+					for (int i = 1; i != yCells - 1; i++)	{
+						for (int j = 1; j != xCells - 1; j++)	{
 							float sumFluxout = x(i + 1, j) + x(i - 1, j) + x(i, j + 1) + x(i, j - 1);
 							sumFluxout *= coefMatrixAElement;
 							float curApproximation = x0(i, j) * h * h + sumFluxout;
@@ -87,13 +77,9 @@ namespace VFXEpoch
 						}
 					}
 
-					for (int i = 1; i != x.getDimY() - 1; i++)
-					{
-						for (int j = 1; j != x.getDimX() - 1; j++)
-						{
+					for (int i = 1; i != yCells - 1; i++)
+						for (int j = 1; j != xCells - 1; j++)
 							x(i, j) = auxiliary(i, j);
-						}
-					}
 
 					x.setBoundaries(b[0].boundaryType, b[0].side);
 					x.setBoundaries(b[1].boundaryType, b[1].side);
@@ -106,8 +92,7 @@ namespace VFXEpoch
 
 		// TODO: Fix bugs in V-Cycle Multigrid algorithm
 		void
-		MultigridSolve_V_Cycle(float h, VFXEpoch::Grid2DfScalarField& x, VFXEpoch::Grid2DfScalarField x0, VFXEpoch::BndConditionPerEdge b[], float coefMatrixAElement, float c, int nSmooth)
-		{
+		MultigridSolve_V_Cycle(float h, VFXEpoch::Grid2DfScalarField& x, VFXEpoch::Grid2DfScalarField x0, VFXEpoch::BndConditionPerEdge b[], float coefMatrixAElement, float c, int nSmooth) {
 			int L = x.getDimY() - 2;
 			if (L == 1){
 				x(1, 1) = 0.25f * (x(0, 1) + x(1, 0) + x(1, 2) + x(2, 1) + x0(1, 1));
@@ -125,9 +110,9 @@ namespace VFXEpoch
 
 			int L2 = L / 2;
 			VFXEpoch::Grid2DfScalarField R(L2 + 2, L2 + 2);
-			for (int i = 1; i <= L2; i++){
+			for (int i = 1; i <= L2; i++) {
 				int m = 2 * i - 1;
-				for (int j = 1; j <= L2; j++){
+				for (int j = 1; j <= L2; j++) {
 					int n = 2 * j - 1;
 					R(i, j) = 0.25f * (r(m, n) + r(m + 1, n) + r(m, n + 1) + r(m + 1, n + 1));
 				}
@@ -148,7 +133,6 @@ namespace VFXEpoch
 			}
 
 			x += v;
-
 			for (int i = 0; i != nSmooth; i++)
 				//VFXEpoch::LinearSolver::JacobiSolve(x, x0, b, 1, 4, 30);
 				VFXEpoch::LinearSolver::RBGSSolve(h, x, x0, b, 1, 4);

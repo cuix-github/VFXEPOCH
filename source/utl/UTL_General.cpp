@@ -40,14 +40,11 @@ VFXEpoch::Bilerp(float t, float s, float x0, float x1, float y0, float y1) {
 void
 VFXEpoch::ExtractComponents(VFXEpoch::Grid2DfScalarField& component, VFXEpoch::Grid2DVector2DfField vectorField, VECTOR_COMPONENTS axis) {
 	if (component.getDimY() != vectorField.getDimY() ||
-		component.getDimX() != vectorField.getDimX())
-	{
-		assert(component.getDimY() == vectorField.getDimY() && component.getDimX() != vectorField.getDimX());
+		component.getDimX() != vectorField.getDimX()) {
+		assert(component.getDimY() == vectorField.getDimY() && component.getDimX() == vectorField.getDimX());
 	}
-	else
-	{
-		switch (axis)
-		{
+	else {
+		switch (axis)	{
 		case VFXEpoch::VECTOR_COMPONENTS::X:
 			for (int i = 0; i != component.getDimY(); i++){
 				for (int j = 0; j != component.getDimX(); j++){
@@ -125,15 +122,52 @@ VFXEpoch::InsertComponents(VFXEpoch::Grid2DfScalarField component, VFXEpoch::Gri
 }
 
 float
-VFXEpoch::InterpolateGrid(int N, float x, float y, VFXEpoch::Grid2DfScalarField& field)
+VFXEpoch::InterpolateGrid(float x, float y, VFXEpoch::Grid2DfScalarField& field)
 {
 	int i, j;
 	float fx, fy;
 
-	VFXEpoch::get_barycentric(x, i, fx, 0, field.getDimX());
-	VFXEpoch::get_barycentric(y, j, fy, 0, field.getDimY());
+	VFXEpoch::get_barycentric(x, j, fx, 0, field.getDimX());
+	VFXEpoch::get_barycentric(y, i, fy, 0, field.getDimY());
+	return VFXEpoch::Bilerp(fx, fy, field(i, j), field(i + 1, j), field(i, j + 1), field(i + 1, j + 1));
+}
 
-	return VFXEpoch::Bilerp(fx, fy, field.getData(i, j), field.getData(i + 1, j), field.getData(i, j + 1), field.getData(i + 1, j + 1));
+float
+VFXEpoch::InterpolateGrid(Vector2Df pos, Grid2DfScalarField& field){
+	int i, j;
+	float fx, fy;
+	VFXEpoch::get_barycentric(pos.m_x, j, fx, 0, field.getDimX());
+	VFXEpoch::get_barycentric(pos.m_y, i, fy, 0, field.getDimY());
+	return VFXEpoch::Bilerp(fx, fy, field(i, j), field(i + 1, j), field(i, j + 1), field(i + 1, j + 1));
+}
+
+float 
+VFXEpoch::InterpolateGradient(Vector2Df gradient, Vector2Df pos, VFXEpoch::Grid2DfScalarField& field){
+	int i, j;
+	float fx, fy;
+	VFXEpoch::get_barycentric(pos.m_x, j, fx, 0, field.getDimX());
+	VFXEpoch::get_barycentric(pos.m_y, i, fy, 0, field.getDimY());
+
+	assert(i >= 0 && i < field.getDimY() && j >= 0 && j < field.getDimX());
+	float dy0 = field(i+1, j) - field(i, j);
+	float dy1 = field(i+1, j+1) - field(i, j+1);
+	float dx0 = field(i, j+1) - field(i, j);
+	float dx1 = field(i+1, j+1) - field(i+1, j);
+
+	gradient.m_x = VFXEpoch::Lerp(fy, dx0, dx1);
+	gradient.m_y = VFXEpoch::Lerp(fx, dy0, dy1);
+}
+
+float
+VFXEpoch::InteralFrac(float left, float right){
+	if(left < 0 && right < 0)
+      return 1.0f;
+   	if (left < 0 && right >= 0)
+      return left / (left - right);
+  	if(left >= 0 && right < 0)
+      return right / (right - left);
+   	else
+      return 0;
 }
 
 void

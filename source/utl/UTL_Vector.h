@@ -52,37 +52,24 @@ namespace VFXEpoch
 		Vector2D(const Vector2D& source) : m_x(source.m_x), m_y(source.m_y){}
 		~Vector2D(){}
 		Vector2D& operator=(const Vector2D& rhs){ this->m_x = rhs.m_x; this->m_y = rhs.m_y; return *this; }
-		Vector2D operator+(Vector2D& source){ return Vector2D(m_x + source.m_x, m_y + source.m_y); }
-		Vector2D operator+(Vector2D&& source){ return Vector2D(m_x + source.m_x, m_y + source.m_y); }
-		Vector2D operator-(Vector2D& source){ return Vector2D(m_x - source.m_x, m_y - source.m_y); }
-		Vector2D operator-(Vector2D&& source){ return Vector2D(m_x - source.m_x, m_y - source.m_y); }
-		Vector2D operator-(){ return Vector2D(-m_x, -m_y); }
-		Vector2D operator*(T coef){ return Vector2D(m_x * coef, m_y * coef); }
-		Vector2D operator/(T coef){ return Vector2D(m_x / coef, m_y / coef); }
+		Vector2D operator+(Vector2D& source) const { return Vector2D(m_x + source.m_x, m_y + source.m_y); }
+		Vector2D operator+(Vector2D&& source) const { return Vector2D(m_x + source.m_x, m_y + source.m_y); }
+		Vector2D operator-(const Vector2D& source) const { return Vector2D(m_x - source.m_x, m_y - source.m_y); }
+		Vector2D operator-(const Vector2D&& source) const { return Vector2D(m_x - source.m_x, m_y - source.m_y); }
+		Vector2D operator-()const { return Vector2D(-m_x, -m_y); }
 		Vector2D& operator+=(const Vector2D& source){ m_x += source.m_x; m_y += source.m_y; return *this; }
 		Vector2D& operator-=(const Vector2D& source){ m_x -= source.m_x; m_y -= source.m_y; return *this; }
-		Vector2D& operator*=(T coef){ m_x *= coef; m_y *= coef; return *this; }
-		Vector2D& operator/=(T coef){ m_x / coef; m_y / coef; return *this; }
+		Vector2D& operator*=(const T& coef){ m_x *= coef; m_y *= coef; return *this; }
+		Vector2D& operator/=(const T& coef){ m_x / coef; m_y / coef; return *this; }
+		T& operator[](int i) { assert(i < 0 || i > 1); if (0 == i) return m_x; else return m_y;	}
 
-		T& operator[](int i)
-		{
-			assert(i < 0 || i > 1);
-
-			if (0 == i)
-				return m_x;
-			else
-				return m_y;
-		}
-
-		inline bool operator==(const Vector2D& source) const
-		{
+		inline bool operator==(const Vector2D& source) const {
 			ROUND(m_x); ROUND(m_y);
 			ROUND(source.m_x); ROUND(source.m_y);
 			return m_x == source.m_x && m_y == source.m_y ? true : false;
 		}
 
-		inline bool operator!=(const Vector2D& source) const
-		{
+		inline bool operator!=(const Vector2D& source) const {
 			ROUND(m_x); ROUND(m_y);
 			ROUND(source.m_x); ROUND(source.m_y);
 			return m_x != source.m_x || m_y != source.m_y ? true : false;
@@ -93,8 +80,7 @@ namespace VFXEpoch
 		}
 
 		// Clockwise is positive while Counterclockwise is negtive
-		void rotate(T degree)
-		{
+		void rotate(T degree) {
 			T theta = T(-degree / UTL_PI_DEGREE * UTL_PI);
 			T cosTheta = cos(theta);
 			T sinTheta = sin(theta);
@@ -146,6 +132,12 @@ namespace VFXEpoch
 				return -std::acos(dot(v1, v2) / (v1.length() * v2.length())) * T(UTL_PI_DEGREE / UTL_PI);
 		}
 	};
+
+	template<class T> Vector2D<T> operator*(const T& s, const Vector2D<T>& v) { return Vector2D<T>(v) *= s; }
+	template<class T> Vector2D<T> operator*(const Vector2D<T>& v, const T& s) { return Vector2D<T>(v) *= s; }
+	template<class T> Vector2D<T> operator/(const T& s, const Vector2D<T>& v) { return Vector2D<T>(v) /= s; }
+	template<class T> Vector2D<T> operator/(const Vector2D<T>& v, const T& s) { return Vector2D<T>(v) /= s; }
+
 
 	typedef Vector2D<float> Vector2Df;
 	typedef Vector2D<double> Vector2Dd;
