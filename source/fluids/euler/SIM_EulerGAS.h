@@ -160,7 +160,7 @@ namespace VFXEpoch{
       void extrapolate(Grid2DfScalarField& grid, const Grid2DfScalarField& weights, 
                        Grid2DCellTypes& mask, Grid2DCellTypes& mask0);
       void get_grid_weights();
-      void constraint_vel();
+      void clamp_vel();
       Vector2Df trace_rk2(const Vector2Df& pos, float dt);
       Vector2Df get_vel(const Vector2Df& pos);
       float get_den(const Vector2Df& pos);

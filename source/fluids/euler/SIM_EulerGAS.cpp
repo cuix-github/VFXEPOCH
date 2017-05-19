@@ -268,6 +268,16 @@ EulerGAS2D::advect_particles(){
   std::vector<VFXEpoch::Particle2D>::iterator ite(0);
   for(ite = particles_container.begin(); ite != particles_container.end(); ite++){
     ite->pos = trace_rk2(ite->pos, user_params.dt);
+
+    // Correction particles at the boundaries
+    float h = user_params.size.m_x;
+    float corrections = VFXEpoch::InterpolateGrid(ite->pos / h, nodal_solid_phi);
+    if(corrections < 0.0f){
+      VFXEpoch::Vector2Df normal;
+      VFXEpoch::InterpolateGradient(normal, ite->pos / h, nodal_solid_phi);
+      normal.normalize();
+      ite->pos -= corrections * normal;
+    }
   }
 }
 
@@ -344,18 +354,45 @@ EulerGAS2D::extrapolate(Grid2DfScalarField& grid,
 void
 EulerGAS2D::get_grid_weights(){
   LOOP_GRID2D(uw){
-    /* TODO: Compute u weights */
+    uw(i, j) = 1 - VFXEpoch::InteralFrac(nodal_solid_phi(i+1, j), nodal_solid_phi(i, j));
   }
 
   LOOP_GRID2D(vw){
-    /* TODO: Compute v weights */
+    vw(i, j) = 1 - VFXEpoch::InteralFrac(nodal_solid_phi(i, j+1), nodal_solid_phi(i, j));
   }
 }
 
 // Protected
 void
-EulerGAS2D::constraint_vel(){
-  /* TODO: code */
+EulerGAS2D::clamp_vel(){
+  u0 = u; v0 = v;
+  float h = user_params.size.m_x;
+  LOOP_GRID2D(u){
+    if(uw(i, j) == 0.0f){
+      VFXEpoch::Vector2Df pos((i+0.5f) * h, j * h);
+      VFXEpoch::Vector2Df vel = get_vel(pos);
+      VFXEpoch::Vector2Df normal(0.0f, 0.0f);
+      normal.normalize();
+      VFXEpoch::InterpolateGradient(normal, pos / h, nodal_solid_phi);
+      float correction_component = VFXEpoch::Vector2Df::dot(vel, normal);
+      vel -= correction_component * normal;
+      u0(i, j) = vel.m_x;
+    }
+  }
+
+  LOOP_GRID2D(v){
+    if(vw(i, j) == 0.0f){
+      VFXEpoch::Vector2Df pos((i) * h, (j+0.5f) * h);
+      VFXEpoch::Vector2Df vel = get_vel(pos);
+      VFXEpoch::Vector2Df normal(0.0f, 0.0f);
+      VFXEpoch::InterpolateGradient(normal, pos / h, nodal_solid_phi);
+      normal.normalize();
+      float correction_component = VFXEpoch::Vector2Df::dot(vel, normal);
+      vel -= correction_component * normal;
+      v0(i, j) = vel.m_y;
+    }
+  }
+  u = u0; v = v0;
 }
 
 // Protected
