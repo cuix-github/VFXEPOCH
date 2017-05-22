@@ -30,19 +30,45 @@
 
 #include "UTL_Matrix.h"
 
-#define LOOP_GRID2D(grid)	for(int i=0; i != grid.getDimY(); i++) \
+#define LOOPER2D(_1, _2, NAME, ...) NAME
+#define LOOP_GRID2D(...) LOOPER2D(__VA_ARGS__, LOOP_GRID2D_2, LOOP_GRID2D_1, ...)(__VA_ARGS__)
+#define LOOP_GRID2D_1(grid)	for(int i=0; i != grid.getDimY(); i++) \
 								for (int j=0; j != grid.getDimX(); j++)
 
-#define LOOP_GRID2D_WITH_OUT_DOMAIN_BOUNDARY(grid)	for(int i=1; i != grid.getDimY()-1; i++) \
+#define LOOP_GRID2D_2(row, col)	for(int i=0; i != row; i++) \
+									for (int j=0; j != col; j++)						
+
+#define LOOPER2D_WITHOUT_BOUNDARY(_1, _2, NAME, ...) NAME
+#define LOOP_GRID2D_WITHOUT_DOMAIN_BOUNDARY(...) LOOPER2D_WITHOUT_BOUNDARY(__VA_ARGS__, LOOP_GRID2D_WITHOUT_DOMAIN_BOUNDARY_2, \
+																						LOOP_GRID2D_WITHOUT_DOMAIN_BOUNDARY_1, ...)(__VA_ARGS__)
+
+#define LOOP_GRID2D_WITHOUT_DOMAIN_BOUNDARY_1(grid)	for(int i=1; i != grid.getDimY()-1; i++) \
 														for (int j=1; j != grid.getDimX()-1; j++)
 
-#define LOOP_GRID3D(grid)	for(int i=0; i != grid.getDimZ(); i++) \
+#define LOOP_GRID2D_WITHOUT_DOMAIN_BOUNDARY_2(row, col)	for(int i=1; i != row-1; i++) \
+															for (int j=1; j != col-1; j++)														
+
+#define LOOPER3D(_1, _2, NAME, ...) NAME
+#define LOOP_GRID3D(...) LOOPER3D(__VA_ARGS__, LOOP_GRID3D_2, LOOP_GRID3D_1, ...)(__VA_ARGS__)
+#define LOOP_GRID3D_1(grid)	for(int i=0; i != grid.getDimZ(); i++) \
 								for(int j=0; j != grid.getDimY(); j++) \
 									for(int k=0; k != grid.getDimX(); k++)
 
-#define LOOP_GRID3D_WITH_OUT_DOMAIN_BOUNDARY(grid)	for(int i=1; i != grid.getDimZ()-1; i++) \
+#define LOOP_GRID3D_2(depth, row, col)	for(int i=0; i != depth; i++) \
+											for(int j=0; j != row; j++) \
+												for(int k=0; k != col; k++)									
+
+#define LOOPER3D_WITHOUT_BOUNDARY(_1, _2, NAME, ...) NAME
+#define LOOP_GRID3D_WITHOUT_DOMAIN_BOUNDARY(...) LOOPER3D_WITHOUT_BOUNDARY(__VA_ARGS__, LOOP_GRID3D_WITHOUT_DOMAIN_BOUNDARY_2, \
+																						LOOP_GRID3D_WITHOUT_DOMAIN_BOUNDARY_1, ...)(__VA_ARGS__)
+#define LOOP_GRID3D_WITHOUT_DOMAIN_BOUNDARY_1(grid)	for(int i=1; i != grid.getDimZ()-1; i++) \
 														for(int j=1; j != grid.getDimY()-1; j++) \
 															for(int k=1; k != grid.getDimX()-1 ; k++)
+
+#define LOOP_GRID3D_WITHOUT_DOMAIN_BOUNDARY_2(depth, row, col)	for(int i=1; i != depth-1; i++) \
+																	for(int j=1; j != row-1; j++) \
+																		for(int k=1; k != col-1 ; k++)
+
 
 #define IDX2D(i, j) ((i) * (m_xCell) + (j))
 #define IDX3D(i, j, k) ((i) * (m_xCell * m_yCell) + (j) * (m_xCell) + (k))
@@ -163,11 +189,8 @@ namespace VFXEpoch
 		Grid2D(int x, int y, float _dx, float _dy) : m_xCell(x), m_yCell(y), dx(_dx), dy(_dy){ data.clear(); data.resize(m_xCell * m_yCell); }
 		Grid2D(const Grid2D& source){ this->m_xCell = source.m_xCell; this->m_yCell = source.m_yCell; this->dx = source.dx; this->dy = source.dy; this->data.clear(); this->data = source.data; }
 		Grid2D<T>& operator=(const Grid2D<T>& source) {
-			m_xCell = source.m_xCell;
-			m_yCell = source.m_yCell;
-			dx = source.dx;
-			dy = source.dy;
-
+			m_xCell = source.m_xCell; m_yCell = source.m_yCell;
+			dx = source.dx;	dy = source.dy;
 			data.clear();
 			data = source.data;
 			return *this;

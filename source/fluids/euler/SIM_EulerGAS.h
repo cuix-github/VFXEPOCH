@@ -191,7 +191,6 @@ namespace VFXEpoch{
       Grid2DfScalarField uw, vw;
       Grid2DfScalarField d, d0;
       Grid2DfScalarField t, t0;
-      Grid2DfScalarField pressure;
       Grid2DfScalarField omega, omega0;
       Grid2DfScalarField nodal_solid_phi;
       Grid2DCellTypes inside_mask, inside_mask0;
