@@ -158,7 +158,7 @@ namespace VFXEpoch
 		BoundaryState2D boundaryState[4];
 
 	public:
-		Grid2D(){ m_xCell = m_yCell = 0; dx = 0.0f; data.clear(); }
+		Grid2D(){ m_xCell = m_yCell = 0; dx = dy = 0.0f; data.clear(); }
 		Grid2D(int x, int y) : m_xCell(x), m_yCell(y){ data.clear(); data.resize(m_xCell * m_yCell); }
 		Grid2D(int x, int y, float _dx, float _dy) : m_xCell(x), m_yCell(y), dx(_dx), dy(_dy){ data.clear(); data.resize(m_xCell * m_yCell); }
 		Grid2D(const Grid2D& source){ this->m_xCell = source.m_xCell; this->m_yCell = source.m_yCell; this->dx = source.dx; this->dy = source.dy; this->data.clear(); this->data = source.data; }
