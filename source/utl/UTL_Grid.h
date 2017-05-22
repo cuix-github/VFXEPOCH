@@ -489,7 +489,9 @@ namespace VFXEpoch
 		void clear(){
 			m_xCell = 0;
 			m_yCell = 0;
+			dx = dy = 0.0f;
 			data.clear();
+			data.resize(0);
 		}
 	};
 
@@ -885,6 +887,7 @@ namespace VFXEpoch
 			m_xCell = 0;
 			m_yCell = 0;
 			m_zCell = 0;
+			dx = dy = dz = 0.0f;
 			data.clear();
 			data.resize(0);
 		}
