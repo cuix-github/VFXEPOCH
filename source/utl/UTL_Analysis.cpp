@@ -209,6 +209,22 @@ namespace VFXEpoch
 		}
 
 		void
+		computeDivergence_with_weights_mac(VFXEpoch::Grid2DfScalarField& dest, VFXEpoch::Grid2DfScalarField u, VFXEpoch::Grid2DfScalarField v, 
+										   VFXEpoch::Grid2DfScalarField _uw, VFXEpoch::Grid2DfScalarField _vw) {
+			assert(u.getDimY() == _uw.getDimY() && u.getDimX() == _uw.getDimX() &&
+				   v.getDimY() == _vw.getDimY() && v.getDimX() == _vw.getDimX() &&
+				   u.getDimY() == v.getDimX() && u.getDimX() == v.getDimY());
+			dest.clear();
+			float h = u.getDx();
+			LOOP_GRID2D_WITH_OUT_DOMAIN_BOUNDARY(dest){
+				dest(i, j) -= _uw(i, j+1) * u(i, j+1) / h;
+				dest(i, j) += _uw(i, j) * u(i, j) / h;
+				dest(i, j) -= _vw(i+1, j) * v(i, j) / h;
+				dest(i, j) += _vw(i, j) * v(i, j) / h;
+			}
+		}
+
+		void
 		computeDivergence_mac(VFXEpoch::Grid2DfScalarField& dest, VFXEpoch::Grid2DfScalarField u, VFXEpoch::Grid2DfScalarField v) {
 			// TODO: Compute divergence on staggered grid
 		}

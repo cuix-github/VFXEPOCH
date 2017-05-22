@@ -32,9 +32,17 @@
 
 #define LOOP_GRID2D(grid)	for(int i=0; i != grid.getDimY(); i++) \
 								for (int j=0; j != grid.getDimX(); j++)
+
+#define LOOP_GRID2D_WITH_OUT_DOMAIN_BOUNDARY(grid)	for(int i=1; i != grid.getDimY()-1; i++) \
+														for (int j=1; j != grid.getDimX()-1; j++)
+
 #define LOOP_GRID3D(grid)	for(int i=0; i != grid.getDimZ(); i++) \
 								for(int j=0; j != grid.getDimY(); j++) \
 									for(int k=0; k != grid.getDimX(); k++)
+
+#define LOOP_GRID3D_WITH_OUT_DOMAIN_BOUNDARY(grid)	for(int i=1; i != grid.getDimZ()-1; i++) \
+														for(int j=1; j != grid.getDimY()-1; j++) \
+															for(int k=1; k != grid.getDimX()-1 ; k++)
 
 #define IDX2D(i, j) ((i) * (m_xCell) + (j))
 #define IDX3D(i, j, k) ((i) * (m_xCell * m_yCell) + (j) * (m_xCell) + (k))
@@ -146,6 +154,7 @@ namespace VFXEpoch
 		int m_xCell, m_yCell;
 		float dx, dy;
 		std::vector<T> data;
+	private:
 		BoundaryState2D boundaryState[4];
 
 	public:
@@ -251,11 +260,34 @@ namespace VFXEpoch
 			}
 		}
 
+		std::vector<T> toVector(){
+			return data;
+		}
+
 		void ResetDimension(int xCell, int yCell){
 			data.clear();
 			m_xCell = xCell;
 			m_yCell = yCell;
 			data.resize(xCell * yCell);
+		}
+
+		void Reset(int xCell, int yCell){
+			data.clear();
+			m_xCell = xCell;
+			m_yCell = yCell;
+			data.resize(xCell * yCell);
+		}
+
+		void Reset(float _dx, float _dy){
+			dx = _dx; dy = _dy;
+		}
+
+		void Reset( int xCell, int yCell, float _dx, float _dy){
+			data.clear();
+			m_xCell = xCell;
+			m_yCell = yCell;
+			data.resize(xCell * yCell);
+			dx = _dx; dy = _dy;			
 		}
 
 		void setData(T _data, int i, int j) {
@@ -476,7 +508,6 @@ namespace VFXEpoch
 		int m_xCell, m_yCell, m_zCell;
 		float dx, dy, dz;
 		std::vector<T> data;
-
 	private:
 		BoundaryState3D boundaryState[6];
 
@@ -507,6 +538,10 @@ namespace VFXEpoch
 			}
 		}
 
+		std::vector<T> toVector(){
+			return data;
+		}
+
 		void zeroScalars(){
 			int size = m_xCell * m_yCell * m_zCell;
 			for (int i = 0; i != size; i++) {
@@ -514,12 +549,33 @@ namespace VFXEpoch
 			}
 		}
 
-		void ResetDimension(int yCell, int xCell, int zCell) {
+		void ResetDimension(int xCell, int yCell, int zCell) {
 			data.clear();
 			m_xCell = xCell;
 			m_yCell = yCell;
 			m_zCell = zCell;
 			data.resize(yCell * xCell * zCell);
+		}
+
+		void Reset(int xCell, int yCell, int zCell){
+			data.clear();
+			m_xCell = xCell;
+			m_yCell = yCell;
+			m_zCell = zCell;
+			data.resize(yCell * xCell * zCell);
+		}
+
+		void Reset(float _dx, float _dy, float _dz){
+			dx = _dx; dy = _dy; dz = _dz;
+		}
+
+		void Reset(int xCell, int yCell, int zCell, float _dx, float _dy, float _dz){
+			data.clear();
+			m_xCell = xCell;
+			m_yCell = yCell;
+			m_zCell = zCell;
+			data.resize(yCell * xCell * zCell);
+			dx = _dx; dy = _dy; dz = _dz;
 		}
 
 		void setData(T _data, int i, int j, int k) {
