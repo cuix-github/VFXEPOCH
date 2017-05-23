@@ -406,7 +406,13 @@ EulerGAS2D::clamp_vel(){
 // Protected
 void
 EulerGAS2D::setup_pressure_coef_matrix(){
-  /* TODO: code */
+  row = user_params.dimension.m_y - 1;
+  col = user_params.dimension.m_x - 1;
+  int idx = 0;
+  float val = 0.0f;
+  LOOP_GRID2D_WITHOUT_DOMAIN_BOUNDARY(row, col){
+    /* TODO: code */
+  }
 }
 
 // Protected

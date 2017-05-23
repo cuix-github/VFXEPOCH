@@ -217,6 +217,7 @@ namespace VFXEpoch
 			dest.clear();
 			float h = u.getDx();
 			LOOP_GRID2D_WITHOUT_DOMAIN_BOUNDARY(dest){
+				dest(i, j) = 0.0f;
 				dest(i, j) -= _uw(i, j+1) * u(i, j+1) / h;
 				dest(i, j) += _uw(i, j) * u(i, j) / h;
 				dest(i, j) -= _vw(i+1, j) * v(i, j) / h;
