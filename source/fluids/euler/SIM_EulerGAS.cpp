@@ -286,7 +286,7 @@ EulerGAS2D::advect_particles(){
 // Protected
 void
 EulerGAS2D::project(){
-  /* TODO: code */
+  
 }
 
 // Protected
@@ -307,7 +307,18 @@ EulerGAS2D::trace_rk2(const Vector2Df& pos, float dt){
 // Overload from SIM_Base.h -> class Euler_Fluid2D_Base
 void
 EulerGAS2D::presure_solve(){
-  /* TODO: code */
+  // System size check and resize;
+  int system_size = user_params.dimension.m_x * user_params.dimension.m_y;
+  if(pressure_solver_params.pressure.size() != system_size){
+    pressure_solver_params.rhs.resize(system_size);
+    pressure_solver_params.pressure.resize(system_size);
+    pressure_solver_params.sparse_matrix.resize(system_size);
+  }
+
+  VFXEpoch::Grid2DfScalarField div(user_params.dimension.m_x, user_params.dimension.m_x, user_params.h, user_params.h);
+  get_grid_weights();
+  VFXEpoch::Analysis::computeDivergence_with_weights_mac(div, u, v, uw, vw);
+  pressure_solver_params.rhs = div.toVector();
 }
 
 // Protected
@@ -406,12 +417,27 @@ EulerGAS2D::clamp_vel(){
 // Protected
 void
 EulerGAS2D::setup_pressure_coef_matrix(){
-  row = user_params.dimension.m_y - 1;
-  col = user_params.dimension.m_x - 1;
+  int row = user_params.dimension.m_y - 1;
+  int col = user_params.dimension.m_x - 1;
   int idx = 0;
   float val = 0.0f;
+  float dx = user_params.h;
+  float dt = user_params.dt;
+  int grid_each_row_elements = user_params.dimension.m_x;
   LOOP_GRID2D_WITHOUT_DOMAIN_BOUNDARY(row, col){
-    /* TODO: code */
+    idx = i * user_params.dimension.m_x + j;
+    val = uw(i, j+1) * dt / sqrt(dx);
+    pressure_solver_params.sparse_matrix.add_to_element(idx, idx,val);
+    pressure_solver_params.sparse_matrix.add_to_element(idx, idx + 1, -val);
+    val = uw(i, j) * dt / sqrt(dx);
+    pressure_solver_params.sparse_matrix.add_to_element(idx, idx, val);
+    pressure_solver_params.sparse_matrix.add_to_element(idx, idx - 1, -val);
+    val = vw(i+1, j) * dt / sqrt(dx);
+    pressure_solver_params.sparse_matrix.add_to_element(idx, idx, val);
+    pressure_solver_params.sparse_matrix.add_to_element(idx, idx + grid_each_row_elements, -val);
+    val = vw(i, j) * dt / sqrt(dx);
+    pressure_solver_params.sparse_matrix.add_to_element(idx, idx, val);
+    pressure_solver_params.sparse_matrix.add_to_element(idx, idx - grid_each_row_elements, -val);
   }
 }
 
