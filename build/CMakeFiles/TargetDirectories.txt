@@ -1,0 +1,3 @@
+/home/faq/Documents/dev/VFXEPOCH/build/source/CMakeFiles/VFXEpoch.dir
+/home/faq/Documents/dev/VFXEPOCH/build/examples/CMakeFiles/examiner.dir
+/home/faq/Documents/dev/VFXEPOCH/build/examples/CMakeFiles/smoke.dir

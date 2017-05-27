@@ -332,12 +332,25 @@ EulerGAS2D::presure_solve(){
 // Protected
 void
 EulerGAS2D::apply_gradients(){
+  VFXEpoch::Grid2DfScalarField _pressure(user_params.dimension.m_x, user_params.dimension.m_y);
+  std::vector<float> solvedPressure(pressure_solver_params.pressure.begin(), pressure_solver_params.pressure.end());
+  VFXEpoch::DataFromVectorToGrid(solvedPressure, _pressure);
+  double dt = user_params.dt;
+  double dx = user_params.h;
   LOOP_GRID2D(u){
-    
+    if(uw(i, j) > 0){
+      /* TODO: code */
+    } else {
+      u(i, j) = 0.0f;
+    }
   }
 
   LOOP_GRID2D(v){
-
+    if(vw(i, j) > 0){
+      /* TODO: code */
+    } else {
+      v(i, j) = 0;
+    }
   }
 }
 

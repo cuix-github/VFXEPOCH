@@ -11,7 +11,7 @@
 using namespace VFXEpoch;
 
 float
-VFXEpoch::RandomF(float min, float max) {
+VFXEpoch::RandomF(float min, float max){
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_real_distribution<float> range(min, max);
@@ -19,8 +19,7 @@ VFXEpoch::RandomF(float min, float max) {
 }
 
 int
-VFXEpoch::RandomI(int min, int max)
-{
+VFXEpoch::RandomI(int min, int max){
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	std::uniform_int_distribution<int> range(min, max);
@@ -28,17 +27,17 @@ VFXEpoch::RandomI(int min, int max)
 }
 
 float
-VFXEpoch::Lerp(float t, float x0, float x1) {
+VFXEpoch::Lerp(float t, float x0, float x1){
 	return (1.0f - t) * x0 + t * x1;
 }
 
 float
-VFXEpoch::Bilerp(float t, float s, float x0, float x1, float y0, float y1) {
+VFXEpoch::Bilerp(float t, float s, float x0, float x1, float y0, float y1){
 	return VFXEpoch::Lerp(s, VFXEpoch::Lerp(t, x0, x1), VFXEpoch::Lerp(t, y0, y1));
 }
 
 void
-VFXEpoch::ExtractComponents(VFXEpoch::Grid2DfScalarField& component, VFXEpoch::Grid2DVector2DfField vectorField, VECTOR_COMPONENTS axis) {
+VFXEpoch::ExtractComponents(VFXEpoch::Grid2DfScalarField& component, VFXEpoch::Grid2DVector2DfField vectorField, VECTOR_COMPONENTS axis){
 	if (component.getDimY() != vectorField.getDimY() ||
 		component.getDimX() != vectorField.getDimX()) {
 		assert(component.getDimY() == vectorField.getDimY() && component.getDimX() == vectorField.getDimX());
@@ -73,13 +72,12 @@ VFXEpoch::ExtractComponents(VFXEpoch::Grid2DfScalarField& component, VFXEpoch::G
 }
 
 void
-VFXEpoch::ExtractComponents(VFXEpoch::Grid2DfScalarField& component, VFXEpoch::Grid3DVector3DfField vectorField, VECTOR_COMPONENTS axis) {
+VFXEpoch::ExtractComponents(VFXEpoch::Grid2DfScalarField& component, VFXEpoch::Grid3DVector3DfField vectorField, VECTOR_COMPONENTS axis){
 	// TODO: Coming soon
 }
 
 void
-VFXEpoch::InsertComponents(VFXEpoch::Grid2DfScalarField component, VFXEpoch::Grid2DVector2DfField& vectorField, VECTOR_COMPONENTS axis)
-{
+VFXEpoch::InsertComponents(VFXEpoch::Grid2DfScalarField component, VFXEpoch::Grid2DVector2DfField& vectorField, VECTOR_COMPONENTS axis){
 	if (component.getDimY() != vectorField.getDimY() ||
 		component.getDimX() != vectorField.getDimX())
 	{
@@ -117,13 +115,12 @@ VFXEpoch::InsertComponents(VFXEpoch::Grid2DfScalarField component, VFXEpoch::Gri
 }
 
 void
-VFXEpoch::InsertComponents(VFXEpoch::Grid2DfScalarField component, VFXEpoch::Grid3DVector3DfField& vectorField, VECTOR_COMPONENTS axis) {
+VFXEpoch::InsertComponents(VFXEpoch::Grid2DfScalarField component, VFXEpoch::Grid3DVector3DfField& vectorField, VECTOR_COMPONENTS axis){
 	// TODO: Coming soon
 }
 
 float
-VFXEpoch::InterpolateGrid(float x, float y, VFXEpoch::Grid2DfScalarField& field)
-{
+VFXEpoch::InterpolateGrid(float x, float y, VFXEpoch::Grid2DfScalarField& field){
 	int i, j;
 	float fx, fy;
 
@@ -167,18 +164,25 @@ VFXEpoch::InteralFrac(float left, float right){
 }
 
 void 
-VFXEpoch::fromVectorToGrid(const std::vector<float> vec, VFXEpoch::Grid2DfScalarField grid){
-	/* TODO: code */
+VFXEpoch::DataFromVectorToGrid(const std::vector<float> vec, VFXEpoch::Grid2DfScalarField grid){
+	assert(vec.size() == grid.getVectorSize());
+	LOOP_GRID2D(grid){
+		int idx = i * grid.getDimX() + j;
+		grid(i, j) = vec[idx];
+	}
 }
 
 void 
-VFXEpoch::fromVectorToGrid(const std::vector<double> vec, VFXEpoch::Grid2DdScalarField grid){
-	/* TODO: code */
+VFXEpoch::DataFromVectorToGrid(const std::vector<double> vec, VFXEpoch::Grid2DdScalarField grid){
+	assert(vec.size() == grid.getVectorSize());
+	LOOP_GRID2D(grid){
+		int idx = i * grid.getDimX() + j;
+		grid(i, j) = vec[idx];
+	}
 }
 
 void
-VFXEpoch::Zeros(VFXEpoch::Grid2DfScalarField& field)
-{
+VFXEpoch::Zeros(VFXEpoch::Grid2DfScalarField& field){
 	for (int i = 0; i != field.getDimY(); i++)
 	{
 		for (int j = 0; j != field.getDimX(); j++)
@@ -189,8 +193,7 @@ VFXEpoch::Zeros(VFXEpoch::Grid2DfScalarField& field)
 }
 
 void
-VFXEpoch::Zeros(VFXEpoch::Grid2DVector2DfField& field)
-{
+VFXEpoch::Zeros(VFXEpoch::Grid2DVector2DfField& field){
 	for (int i = 0; i != field.getDimY(); i++)
 	{
 		for (int j = 0; j != field.getDimX(); j++)
@@ -201,8 +204,7 @@ VFXEpoch::Zeros(VFXEpoch::Grid2DVector2DfField& field)
 }
 
 void
-VFXEpoch::Zeros(VFXEpoch::Grid2DiScalarField& field)
-{
+VFXEpoch::Zeros(VFXEpoch::Grid2DiScalarField& field){
 	for (int i = 0; i != field.getDimY(); i++){
 		for (int j = 0; j != field.getDimX(); j++){
 			field(i, j) = 0;
@@ -211,8 +213,7 @@ VFXEpoch::Zeros(VFXEpoch::Grid2DiScalarField& field)
 }
 
 void
-VFXEpoch::Zeros(VFXEpoch::Grid2DVector2DiField& field)
-{
+VFXEpoch::Zeros(VFXEpoch::Grid2DVector2DiField& field){
 	for (int i = 0; i != field.getDimY(); i++){
 		for (int j = 0; j != field.getDimX(); j++){
 			field(i, j) = VFXEpoch::Vector2Di(0, 0);
