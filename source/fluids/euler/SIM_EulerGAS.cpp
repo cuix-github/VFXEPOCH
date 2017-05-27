@@ -315,16 +315,30 @@ EulerGAS2D::presure_solve(){
     pressure_solver_params.sparse_matrix.resize(system_size);
   }
 
-  VFXEpoch::Grid2DfScalarField div(user_params.dimension.m_x, user_params.dimension.m_x, user_params.h, user_params.h);
+  VFXEpoch::Grid2DdScalarField div(user_params.dimension.m_x, user_params.dimension.m_x, user_params.h, user_params.h);
   get_grid_weights();
   VFXEpoch::Analysis::computeDivergence_with_weights_mac(div, u, v, uw, vw);
   pressure_solver_params.rhs = div.toVector();
+  bool success = pressure_solver_params.pcg_solver.solve(pressure_solver_params.sparse_matrix,
+                                                         pressure_solver_params.rhs,
+                                                         pressure_solver_params.pressure,
+                                                         user_params.tolerance,
+                                                         user_params.max_iterations);
+  if(!success){
+    std::cout << "Pressure solve failed!" << endl;
+  }                                                         
 }
 
 // Protected
 void
 EulerGAS2D::apply_gradients(){
-  /* TODO: code */
+  LOOP_GRID2D(u){
+    
+  }
+
+  LOOP_GRID2D(v){
+
+  }
 }
 
 // Protected

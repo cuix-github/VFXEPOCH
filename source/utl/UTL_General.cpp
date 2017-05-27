@@ -166,6 +166,16 @@ VFXEpoch::InteralFrac(float left, float right){
    	else return 0;
 }
 
+void 
+VFXEpoch::fromVectorToGrid(const std::vector<float> vec, VFXEpoch::Grid2DfScalarField grid){
+	/* TODO: code */
+}
+
+void 
+VFXEpoch::fromVectorToGrid(const std::vector<double> vec, VFXEpoch::Grid2DdScalarField grid){
+	/* TODO: code */
+}
+
 void
 VFXEpoch::Zeros(VFXEpoch::Grid2DfScalarField& field)
 {
