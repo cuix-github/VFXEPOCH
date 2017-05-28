@@ -83,6 +83,12 @@ int main(int argc, char** argv)
 
 	cout << "Simulation User Parameters:" << endl;
 	cout << params;
+	
+	// TODO: A small size simulation for unit test
+	int total_frames = 300;
+	for(int i = 0; i != total_frames; i++){
+		/* TODO: Solver steps */
+	}
 
 	gas_solver->close();
 	if(solver) delete solver;

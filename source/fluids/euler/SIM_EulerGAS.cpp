@@ -21,6 +21,7 @@ EulerGAS2D::EulerGAS2D(){
   nodal_solid_phi.clear();
   pressure_solver_params.clear();
   particles_container.clear();
+  source_locations.clear();
   domain_boundaries[0].side = EDGES_2DSIM::TOP;
 	domain_boundaries[0].boundaryType = BOUNDARY::STREAK;
 	domain_boundaries[1].side = EDGES_2DSIM::BOTTOM;
@@ -43,6 +44,7 @@ EulerGAS2D::EulerGAS2D(const EulerGAS2D& src){
   inside_mask = src.inside_mask; inside_mask0 = src.inside_mask0;
   nodal_solid_phi = src.nodal_solid_phi;
   particles_container = src.particles_container;
+  source_locations = src.source_locations;
 }
 
 // Public
@@ -58,6 +60,7 @@ EulerGAS2D::EulerGAS2D(Parameters _user_params):user_params(_user_params){
   nodal_solid_phi.Reset(_user_params.dimension.m_x + 1, _user_params.dimension.m_y + 1, _user_params.h, _user_params.h);
   inside_mask.Reset(_user_params.dimension.m_x + 1, _user_params.dimension.m_y + 1, _user_params.h, _user_params.h); inside_mask0 = inside_mask;
   particles_container.resize(_user_params.num_particles);
+  source_locations.resize(0);
 }
 
 // Public
@@ -72,6 +75,7 @@ EulerGAS2D::operator=(const EulerGAS2D& rhs){
   inside_mask = rhs.inside_mask; inside_mask0 = rhs.inside_mask0;
   user_params = rhs.user_params;
   particles_container = rhs.particles_container;
+  source_locations = rhs.source_locations;
   return *this;
 }
 
@@ -118,6 +122,13 @@ EulerGAS2D::close(){
   nodal_solid_phi.clear();
   user_params.clear();
   particles_container.clear();
+  source_locations.clear();
+}
+
+// Public
+void
+EulerGAS2D::set_source_location(int i, int j){
+  /* TODO: Try c++11 set function*/
 }
 
 // Public
@@ -241,12 +252,9 @@ EulerGAS2D::advect_den(){
   // Brutal turning over the boundaries
   assert(d0.getDimX() == inside_mask.getDimX() && d0.getDimY() == inside_mask.getDimY());
   LOOP_GRID2D(d0){
-    if(inside_mask(i, j) == VFXEpoch::BOUNDARY_MASK::SOMETHING) continue;
-    else{
       VFXEpoch::Vector2Df pos((j+0.5f) * user_params.h, (i+0.5f) * user_params.h);
       pos = trace_rk2(pos, -user_params.dt);
       d0(i, j) = get_den(pos);
-    }    
   }
   d = d0;
 }
@@ -256,13 +264,11 @@ void
 EulerGAS2D::advect_tmp(){
   assert(t0.getDimX() == inside_mask.getDimX() && t0.getDimY() == inside_mask.getDimY());
   LOOP_GRID2D(t0){
-    if(inside_mask(i, j) == VFXEpoch::BOUNDARY_MASK::SOMETHING) continue;
-    else{
       VFXEpoch::Vector2Df pos((j+0.5f) * user_params.h, (i+0.5f) * user_params.h);
       pos = trace_rk2(pos, -user_params.dt);
       t0(i, j) = get_tmp(pos);
-    }
   }
+  t = t0;
 }
 
 // Protected
@@ -270,6 +276,7 @@ void
 EulerGAS2D::advect_curl(){
   // Using RK2 method time integration
   // advect curl field
+  assert(omega0.getDimX() == omega.getDimX() && omega0.getDimY() == omega0.getDimY());
   LOOP_GRID2D(omega0){
     VFXEpoch::Vector2Df pos((j+0.5f) * user_params.h, (i+0.5f) * user_params.h);
     pos = trace_rk2(pos, -user_params.dt);
