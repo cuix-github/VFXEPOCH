@@ -253,6 +253,20 @@ EulerGAS2D::advect_den(){
 
 // Protected
 void
+EulerGAS2D::advect_tmp(){
+  assert(t0.getDimX() == inside_mask.getDimX() && t0.getDimY() == inside_mask.getDimY());
+  LOOP_GRID2D(t0){
+    if(inside_mask(i, j) == VFXEpoch::BOUNDARY_MASK::SOMETHING) continue;
+    else{
+      VFXEpoch::Vector2Df pos((j+0.5f) * user_params.h, (i+0.5f) * user_params.h);
+      pos = trace_rk2(pos, -user_params.dt);
+      t0(i, j) = get_tmp(pos);
+    }
+  }
+}
+
+// Protected
+void
 EulerGAS2D::advect_curl(){
   // Using RK2 method time integration
   // advect curl field
@@ -286,13 +300,27 @@ EulerGAS2D::advect_particles(){
 // Protected
 void
 EulerGAS2D::project(){
-  
+  pressure_solve();
+  apply_gradients();
 }
 
 // Protected
 void
 EulerGAS2D::apply_buoyancy(){
-  /* TODO: code */
+  // Dimension check
+  assert(v0.getDimX() == v.getDimX() && v0.getDimY() == v.getDimY());
+
+  float a = user_params.buoyancy_alpha;
+  float b = user_params.buoyancy_beta;
+  int row = user_params.dimension.m_y;
+  int col = user_params.dimension.m_x;
+  LOOP_GRID2D(v0){
+    if(0 == i || j == 0) continue;
+    float average_temperature = (t(i, j) + t(i, j - 1)) * 0.5f;
+    float average_density = (d(i, j) + d(i, j - 1)) * 0.5f;
+    v0(i, j) = v(i, j) - a * average_density + b * average_temperature;
+  }
+  v = v0;
 }
 
 //Protected
@@ -306,7 +334,7 @@ EulerGAS2D::trace_rk2(const Vector2Df& pos, float dt){
 // Protected
 // Overload from SIM_Base.h -> class Euler_Fluid2D_Base
 void
-EulerGAS2D::presure_solve(){
+EulerGAS2D::pressure_solve(){
   // System size check and resize;
   int system_size = user_params.dimension.m_x * user_params.dimension.m_y;
   if(pressure_solver_params.pressure.size() != system_size){
@@ -319,6 +347,7 @@ EulerGAS2D::presure_solve(){
   get_grid_weights();
   VFXEpoch::Analysis::computeDivergence_with_weights_mac(div, u, v, uw, vw);
   pressure_solver_params.rhs = div.toVector();
+  setup_pressure_coef_matrix();
   bool success = pressure_solver_params.pcg_solver.solve(pressure_solver_params.sparse_matrix,
                                                          pressure_solver_params.rhs,
                                                          pressure_solver_params.pressure,
@@ -338,18 +367,18 @@ EulerGAS2D::apply_gradients(){
   double dt = user_params.dt;
   double dx = user_params.h;
   LOOP_GRID2D(u){
-    if(uw(i, j) > 0){
-      /* TODO: code */
+    if(uw(i, j) > 0 && j > 0){
+      u(i, j) -= dt * (_pressure(i, j) - _pressure(i, j - 1)) / dx;
     } else {
       u(i, j) = 0.0f;
     }
   }
 
   LOOP_GRID2D(v){
-    if(vw(i, j) > 0){
-      /* TODO: code */
+    if(vw(i, j) > 0 && i > 0){
+      v(i, j) -= dt * (_pressure(i, j) - _pressure(i - 1, j)) / dx;
     } else {
-      v(i, j) = 0;
+      v(i, j) = 0.0f;
     }
   }
 }
@@ -471,7 +500,7 @@ EulerGAS2D::setup_pressure_coef_matrix(){
 // Protected
 Vector2Df
 EulerGAS2D::get_vel(const Vector2Df& pos){
-  assert(user_params.h != 0 && user_params.h != 0);
+  assert(user_params.h != 0);
   float _u = VFXEpoch::InterpolateGrid(pos / (float)user_params.h - Vector2Df(0.5f, 0.0f), u);
   float _v = VFXEpoch::InterpolateGrid(pos / (float)user_params.h - Vector2Df(0.0f, 0.5f), v);
   return Vector2Df(_u, _v);
@@ -480,7 +509,7 @@ EulerGAS2D::get_vel(const Vector2Df& pos){
 // Protected
 float
 EulerGAS2D::get_den(const Vector2Df& pos){
-  assert(user_params.h != 0 && user_params.h != 0 && user_params.h == user_params.h);
+  assert(user_params.h != 0);
   float h = user_params.h;
   return VFXEpoch::InterpolateGrid(pos / h - Vector2Df(0.5f, 0.5f), d);
 }
@@ -488,7 +517,15 @@ EulerGAS2D::get_den(const Vector2Df& pos){
 // Protected
 float
 EulerGAS2D::get_curl(const Vector2Df& pos){
-  assert(user_params.h != 0 && user_params.h != 0 && user_params.h == user_params.h);
+  assert(user_params.h != 0);
   float h = user_params.h;
   return VFXEpoch::InterpolateGrid(pos / h - Vector2Df(0.5f, 0.5f), omega);
+}
+
+// Protected
+float
+EulerGAS2D::get_tmp(const Vector2Df& pos){
+  assert(user_params.h != 0);
+  float h = user_params.h;
+  return VFXEpoch::InterpolateGrid(pos / h - Vector2Df(0.5f, 0.5f), t);
 }

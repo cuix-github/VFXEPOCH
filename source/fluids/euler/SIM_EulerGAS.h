@@ -154,11 +154,12 @@ namespace VFXEpoch{
       void advect_vel();
       void advect_curl();
       void advect_den();
+      void advect_tmp();
       void advect_particles();
       void project();
     protected:
       void apply_buoyancy();
-      void presure_solve(); // Overload
+      void pressure_solve(); // Overload
       void apply_gradients();
       void extrapolate(Grid2DfScalarField& grid, const Grid2DfScalarField& weights, 
                        Grid2DCellTypes& mask, Grid2DCellTypes& mask0);
@@ -169,6 +170,7 @@ namespace VFXEpoch{
       Vector2Df get_vel(const Vector2Df& pos);
       float get_den(const Vector2Df& pos);
       float get_curl(const Vector2Df& pos);
+      float get_tmp(const Vector2Df& pos);
     private:
     /*********************** Pressure Solver Parameters ************************/
       struct PressureSolverParams{
