@@ -129,6 +129,9 @@ EulerGAS2D::close(){
 void
 EulerGAS2D::set_source_location(int i, int j){
   /* TODO: Try c++11 set function*/
+  // Duplicates checking to avoid adding source at the same location
+  assert(i >= 0 && j >= 0 && i < user_params.dimension.m_y && j < user_params.dimension.m_x);
+  source_locations.push_back(VFXEpoch::Vector2Di(i, j));
 }
 
 // Public
