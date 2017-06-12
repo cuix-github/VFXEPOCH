@@ -83,6 +83,10 @@ int main(int argc, char** argv)
 
 	cout << "Simulation User Parameters:" << endl;
 	cout << params;
+
+	// Setup the solver
+	bool isInit = gas_solver->init(params);
+	if(!isInit) return -1;
 	
 	// TODO: A small size simulation for unit test
 	int total_frames = 300;
