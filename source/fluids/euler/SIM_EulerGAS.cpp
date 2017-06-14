@@ -406,7 +406,7 @@ EulerGAS2D::apply_gradients(){
   double dt = user_params.dt;
   double dx = user_params.h;
   LOOP_GRID2D(u){
-    if(uw(i, j) > 0 && j > 0){
+    if(uw(i, j) > 0){
       u(i, j) -= dt * (_pressure(i, j) - _pressure(i, j - 1)) / dx;
     } else {
       u(i, j) = 0.0f;
@@ -414,7 +414,7 @@ EulerGAS2D::apply_gradients(){
   }
 
   LOOP_GRID2D(v){
-    if(vw(i, j) > 0 && i > 0){
+    if(vw(i, j) > 0){
       v(i, j) -= dt * (_pressure(i, j) - _pressure(i - 1, j)) / dx;
     } else {
       v(i, j) = 0.0f;

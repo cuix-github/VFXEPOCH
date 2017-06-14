@@ -135,6 +135,7 @@ namespace VFXEpoch{
       ~EulerGAS2D();
     public:
       // TODO: Implement overload functions
+      // TODO: Need to set nodal_solid_boundary
       bool init(Parameters params); // Overload
       void step(); // Overload
       void close(); // Overload
