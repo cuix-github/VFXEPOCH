@@ -193,6 +193,17 @@ VFXEpoch::Zeros(VFXEpoch::Grid2DfScalarField& field){
 }
 
 void
+VFXEpoch::Zeros(VFXEpoch::Grid2DdScalarField& field){
+	for (int i = 0; i != field.getDimY(); i++)
+	{
+		for (int j = 0; j != field.getDimX(); j++)
+		{
+			field(i, j) = 0.0;
+		}
+	}
+}
+
+void
 VFXEpoch::Zeros(VFXEpoch::Grid2DVector2DfField& field){
 	for (int i = 0; i != field.getDimY(); i++)
 	{

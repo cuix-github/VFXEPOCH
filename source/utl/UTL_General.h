@@ -65,7 +65,10 @@ namespace VFXEpoch
 	void DataFromVectorToGrid(const std::vector<float> vec, VFXEpoch::Grid2DfScalarField grid);
 	void DataFromVectorToGrid(const std::vector<double> vec, VFXEpoch::Grid2DdScalarField grid);
 	void Zeros(VFXEpoch::Grid2DfScalarField& field);
+	void Zeros(VFXEpoch::Grid2DdScalarField& field);
 	void Zeros(VFXEpoch::Grid2DVector2DfField& field);
+	
+	// TODO: Add Grid2D<double> Zeros functions
 	void Zeros(VFXEpoch::Grid2DiScalarField& field);
 	void Zeros(VFXEpoch::Grid2DVector2DiField& field);
 

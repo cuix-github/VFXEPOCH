@@ -139,6 +139,7 @@ namespace VFXEpoch{
       void step(); // Overload
       void close(); // Overload
       void set_source_location(int i, int j);
+      void set_external_force_location(VFXEpoch::VECTOR_COMPONENTS component, int i, int j);
       void add_particles(VFXEpoch::Particle2D p);
     public:
       void set_inside_boundary(Grid2DCellTypes boundaries);
@@ -147,8 +148,8 @@ namespace VFXEpoch{
       void set_user_params(Parameters params);
       EulerGAS2D::Parameters get_user_params();
     protected:
-      void add_source(int i, int j); // Overload
-      void add_external_force(VFXEpoch::VECTOR_COMPONENTS component, int i, int j);
+      void add_source(); // Overload
+      void add_force();
       void set_domain_boundary_wrapper(Grid2DfScalarField& field);
       void density_diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref);
       void dynamic_diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref);
@@ -200,6 +201,11 @@ namespace VFXEpoch{
       BndConditionPerEdge domain_boundaries[4];
       vector<VFXEpoch::Particle2D> particles_container;
       vector<VFXEpoch::Vector2Di> source_locations;
+
+      // The last component is used to specify velocity component
+      // 1 represents vertical component, 0 is the horizontal
+      vector<VFXEpoch::Vector3Di> external_force_locations;
+      
       Parameters user_params;
       PressureSolverParams pressure_solver_params;
     };

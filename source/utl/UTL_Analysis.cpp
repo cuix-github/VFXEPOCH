@@ -20,17 +20,17 @@ namespace VFXEpoch
 		// Omega = dv - du;
 		/*
 			-------------------------
-			|				| 			| 			|
+			|		| 		| 		|
 			| Cell1	| Cell2 | Cell3 |
-			|				|				|				|
+			|		|		|		|
 			-------------------------
-			|				|				|				|
+			|		|		|		|
 			| Cell4	|  Curl | Cell6	|
-			|				|				|				|
+			|		|		|		|
 			-------------------------
-			|				|				|				|
+			|		|		|		|
 			| Cell7 | Cell8 | Cell9 |
-			|				|				|				|
+			|		|		|		|
 			-------------------------
 		*/
 		void
@@ -208,13 +208,14 @@ namespace VFXEpoch
 			}
 		}
 
+		// TODO: Fix the bugs inside
+		// Access out of range
 		void
 		computeDivergence_with_weights_mac(VFXEpoch::Grid2DdScalarField& dest, VFXEpoch::Grid2DfScalarField u, VFXEpoch::Grid2DfScalarField v, 
 										   VFXEpoch::Grid2DfScalarField _uw, VFXEpoch::Grid2DfScalarField _vw) {
 			assert(u.getDimY() == _uw.getDimY() && u.getDimX() == _uw.getDimX() &&
-				   v.getDimY() == _vw.getDimY() && v.getDimX() == _vw.getDimX() &&
-				   u.getDimY() == v.getDimX() && u.getDimX() == v.getDimY());
-			dest.clear();
+				   v.getDimY() == _vw.getDimY() && v.getDimX() == _vw.getDimX());
+			VFXEpoch::Zeros(dest);
 			float h = u.getDx();
 			LOOP_GRID2D_WITHOUT_DOMAIN_BOUNDARY(dest){
 				dest(i, j) = 0.0;

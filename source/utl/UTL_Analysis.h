@@ -10,6 +10,7 @@
 #define _UTL_ANALYSIS_H_
 
 #include "UTL_Grid.h"
+#include "UTL_General.h"
 #include <vector>
 
 using namespace std;

@@ -15,8 +15,7 @@
 const int Nx = 5;
 const int Ny = 4;
 const float source = 1.0f;
-const float spacex = 1.0f / (Nx + 1);
-const float spcaey = 1.0f / (Ny + 1);
+const float h = 1.f / Nx;
 
 using namespace Helpers;
 
@@ -24,8 +23,8 @@ int main(int argc, char** argv)
 {
 	std::cout << '\n' << "VFXEpoch Lib - Ubuntu v14.04 Unit Test" << '\n' << '\n';
 
-	VFXEpoch::Grid2DfScalarField gridf(Nx, Ny);
-	VFXEpoch::Grid2DVector2DfField gridv(Nx, Ny);
+	VFXEpoch::Grid2DfScalarField gridf(Nx, Ny, h, h);
+	VFXEpoch::Grid2DVector2DfField gridv(Nx, Ny, h, h);
 	VFXEpoch::Grid2DCellTypes domain_mask(Nx, Ny);
 	VFXEpoch::Solvers::Euler_Fluid2D_Base *solver = new VFXEpoch::Solvers::EulerGAS2D();
 	VFXEpoch::Solvers::EulerGAS2D* gas_solver = dynamic_cast<VFXEpoch::Solvers::EulerGAS2D*>(solver);
@@ -70,11 +69,15 @@ int main(int argc, char** argv)
 
 	EulerGAS2D::Parameters params;
 	params.dimension = VFXEpoch::Vector2Di(Nx, Ny);
+	params.h = h;
 	params.dt = 0.01;
 	params.buoyancy_alpha = 0.1;
 	params.buoyancy_beta = 0.3;
 	params.vort_conf_eps = 0.55;
 	params.max_iterations = 30;
+	params.density_source = 20;
+	params.diff = 0.01;
+	params.visc = 0.01;
 
 	// Error cast.
 	gas_solver->set_user_params(params);
@@ -84,19 +87,21 @@ int main(int argc, char** argv)
 	cout << "Simulation User Parameters:" << endl;
 	cout << params;
 
-	// Setup the solver
+	/************************************ Test solver functions ************************************/
 	bool isInit = gas_solver->init(params);
 	if(!isInit) return -1;
+	gas_solver->set_source_location(2, 2);
 	
 	// TODO: A small size simulation for unit test
 	int total_frames = 300;
 	for(int i = 0; i != total_frames; i++){
-		/* TODO: Solver steps */
+		gas_solver->step();
 	}
 
 	gas_solver->close();
 	if(solver) delete solver;
 	solver = NULL;
+	/************************************ Test solver functions ************************************/
 
 	return 0;
 }
