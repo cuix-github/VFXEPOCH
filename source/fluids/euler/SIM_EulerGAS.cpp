@@ -218,6 +218,15 @@ EulerGAS2D::set_domain_boundary(const VFXEpoch::BOUNDARY boundary_type, const VF
 
 // Public
 void
+EulerGAS2D::set_static_boundary(float (*phi)(const VFXEpoch::Vector2Df&)){
+  LOOP_GRID2D(nodal_solid_phi){
+    VFXEpoch::Vector2Df position(i * user_params.h, j * user_params.h);
+    nodal_solid_phi(i, j) = phi(position);
+  }
+}
+
+// Public
+void
 EulerGAS2D::set_user_params(Parameters params){
   user_params = params;
 }

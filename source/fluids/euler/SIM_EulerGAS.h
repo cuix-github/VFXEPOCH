@@ -142,9 +142,13 @@ namespace VFXEpoch{
       void set_source_location(int i, int j);
       void set_external_force_location(VFXEpoch::VECTOR_COMPONENTS component, int i, int j);
       void add_particles(VFXEpoch::Particle2D p);
+      
+      // About boundaries
     public:
       void set_inside_boundary(Grid2DCellTypes boundaries);
       void set_domain_boundary(VFXEpoch::BOUNDARY boundary_type, VFXEpoch::EDGES_2DSIM edge);
+      void set_static_boundary(float (*phi)(const VFXEpoch::Vector2Df&));
+
     public:
       void set_user_params(Parameters params);
       EulerGAS2D::Parameters get_user_params();
