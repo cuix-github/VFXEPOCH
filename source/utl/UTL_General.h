@@ -66,11 +66,14 @@ namespace VFXEpoch
 	void DataFromVectorToGrid(const std::vector<double> vec, VFXEpoch::Grid2DdScalarField grid);
 	void Zeros(VFXEpoch::Grid2DfScalarField& field);
 	void Zeros(VFXEpoch::Grid2DdScalarField& field);
-	void Zeros(VFXEpoch::Grid2DVector2DfField& field);
-	
-	// TODO: Add Grid2D<double> Zeros functions
 	void Zeros(VFXEpoch::Grid2DiScalarField& field);
+	void Zeros(VFXEpoch::Grid2DVector2DfField& field);
 	void Zeros(VFXEpoch::Grid2DVector2DiField& field);
+	void Zeros(VFXEpoch::Grid2DVector2DdField& field);
+	float Dist2D(VFXEpoch::Vector2Df p0, VFXEpoch::Vector2Df p1);
+	double Dist2D(VFXEpoch::Vector2Dd p0, VFXEpoch::Vector2Dd p1);
+	float Dist3D(VFXEpoch::Vector3Df p0, VFXEpoch::Vector3Df p1);
+	double Dist3D(VFXEpoch::Vector3Dd p0, VFXEpoch::Vector3Dd p1);
 
 	// Template Helpers
 	template <class T>
@@ -109,7 +112,7 @@ namespace VFXEpoch
 	const T& _min(const T& a, const T& b)
 	{
 		return (b < a) ? b : a;
-	}
+	}	
 
 	template <typename T>
 	T clamp(const T& n, const T& lower, const T& upper) {

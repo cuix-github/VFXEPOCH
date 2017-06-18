@@ -39,15 +39,16 @@ namespace VFXEpoch{
           max_iterations = 0;
           num_particles = 0;
           density_source = 0.0;
+          external_force_strength = 0.0;
         }
         Parameters(Vector2Di _dimension, double _h, Vector2Dd _space, double _dt, 
                    double _buoyancy_alpha, double _buoyancy_beta, double _tolerance,
                    double _diff, double _visc, int _max_iterations, int _num_particles, 
-                   double _density_source): 
+                   double _density_source, double _external_force_strength): 
                    dimension(_dimension), h(_h), space(_space), dt(_dt), 
                    buoyancy_alpha(_buoyancy_alpha), buoyancy_beta(_buoyancy_beta), 
                    tolerance(_tolerance), diff(_diff), visc(_visc), max_iterations(_max_iterations), 
-                   num_particles(_num_particles), density_source(_density_source){}
+                   num_particles(_num_particles), density_source(_density_source), external_force_strength(_external_force_strength){}
         Parameters(const Parameters& src){
           dimension = src.dimension;
           h = src.h;
@@ -60,6 +61,7 @@ namespace VFXEpoch{
           max_iterations = src.max_iterations;
           num_particles = src.num_particles;
           density_source = src.density_source;
+          external_force_strength = src.external_force_strength;
         }
         Parameters& operator=(const Parameters& rhs){
           dimension = rhs.dimension;
@@ -73,6 +75,7 @@ namespace VFXEpoch{
           max_iterations = rhs.max_iterations;
           num_particles = rhs.num_particles;
           density_source = rhs.density_source;
+          external_force_strength = rhs.external_force_strength;
           return *this;
         }
         ~Parameters(){ clear(); }
@@ -89,6 +92,7 @@ namespace VFXEpoch{
           max_iterations = 0;
           num_particles = 0;
           density_source = 0.0;
+          external_force_strength = 0.0;
         }
 
         friend inline ostream&

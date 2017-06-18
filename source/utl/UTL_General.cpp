@@ -231,3 +231,32 @@ VFXEpoch::Zeros(VFXEpoch::Grid2DVector2DiField& field){
 		}
 	}
 }
+
+void
+VFXEpoch::Zeros(VFXEpoch::Grid2DVector2DdField& field){
+	for(int i = 0; i != field.getDimY(); i++){
+		for(int j = 0; j != field.getDimX(); j++){
+			field(i, j) = VFXEpoch::Vector2Dd(0.0, 0.0);
+		}
+	}
+}
+
+float 
+VFXEpoch::Dist2D(VFXEpoch::Vector2Df p0, VFXEpoch::Vector2Df p1){
+	return std::sqrt(std::pow(p0.m_x - p1.m_x, 2) + std::pow(p0.m_y - p1.m_y, 2));
+}
+
+double
+VFXEpoch::Dist2D(VFXEpoch::Vector2Dd p0, VFXEpoch::Vector2Dd p1){
+	return std::sqrt(std::pow(p0.m_x - p1.m_x, 2) + std::pow(p0.m_y - p1.m_y, 2));
+}
+
+float
+VFXEpoch::Dist3D(VFXEpoch::Vector3Df p0, VFXEpoch::Vector3Df p1){
+	return std::sqrt(std::pow(p0.m_x - p1.m_x, 2) + std::pow(p0.m_y - p1.m_y, 2) + std::pow(p0.m_z - p1.m_z, 2));
+}
+
+double
+VFXEpoch::Dist3D(VFXEpoch::Vector3Dd p0, VFXEpoch::Vector3Dd p1){
+	return std::sqrt(std::pow(p0.m_x - p1.m_x, 2) + std::pow(p0.m_y - p1.m_y, 2) + std::pow(p0.m_z - p1.m_z, 2));
+}

@@ -57,8 +57,7 @@ EulerGAS2D::EulerGAS2D(Parameters _user_params):user_params(_user_params){
   vw.Reset(_user_params.dimension.m_x, _user_params.dimension.m_y + 1, _user_params.h, _user_params.h);
   d.Reset(_user_params.dimension.m_x, _user_params.dimension.m_y, _user_params.h, _user_params.h); d0 = d;
   t.Reset(_user_params.dimension.m_x, _user_params.dimension.m_y, _user_params.h, _user_params.h); t0 = t;
-  omega.Reset(_user_params.dimension.m_x + 2, _user_params.dimension.m_y + 2, _user_params.h, _user_params.h);
-  omega0.Reset(_user_params.dimension.m_x + 2, _user_params.dimension.m_y + 2, _user_params.h, _user_params.h);
+  omega.Reset(_user_params.dimension.m_x + 2, _user_params.dimension.m_y + 2, _user_params.h, _user_params.h); omega0 = omega;
   nodal_solid_phi.Reset(_user_params.dimension.m_x + 1, _user_params.dimension.m_y + 1, _user_params.h, _user_params.h);
   inside_mask.Reset(_user_params.dimension.m_x + 1, _user_params.dimension.m_y + 1, _user_params.h, _user_params.h); inside_mask0 = inside_mask;
   particles_container.resize(_user_params.num_particles);
@@ -100,7 +99,7 @@ EulerGAS2D::init(Parameters params){
   d.Reset(user_params.dimension.m_x, user_params.dimension.m_y, user_params.h, user_params.h); d0 = d;
   t.Reset(user_params.dimension.m_x, user_params.dimension.m_y, user_params.h, user_params.h); t0 = t;
   omega.Reset(user_params.dimension.m_x + 2, user_params.dimension.m_y + 2, user_params.h, user_params.h); omega0 = omega;
-  inside_mask.Reset(user_params.dimension.m_x, user_params.dimension.m_y, user_params.h, user_params.h);
+  inside_mask.Reset(user_params.dimension.m_x + 1, user_params.dimension.m_y + 1, user_params.h, user_params.h);
   nodal_solid_phi.Reset(user_params.dimension.m_x + 1, user_params.dimension.m_y + 1, user_params.h, user_params.h);
   particles_container.resize(user_params.num_particles);
   return true;
@@ -443,7 +442,7 @@ EulerGAS2D::extrapolate(Grid2DfScalarField& grid,
 
   for(int i = 0; i != 5; i++){
     mask0 = mask;
-    LOOP_GRID2D(grid){
+    LOOP_GRID2D_WITHOUT_DOMAIN_BOUNDARY(grid){
       float sum = 0;
       int count = 0;
 
