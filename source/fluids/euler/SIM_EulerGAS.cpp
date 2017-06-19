@@ -109,13 +109,14 @@ EulerGAS2D::init(Parameters params){
 // Overload from SIM_Base.h -> class Euler_Fluid2D_Base
 void
 EulerGAS2D::step(){
-  add_source();
+  if(0 != source_locations.size())  add_source();
   advect_particles();
   advect_vel();
-  add_force();  
+  if(0 != external_force_locations.size()) add_force();  
   project();
   extrapolate(u, uw, inside_mask, inside_mask0);
   extrapolate(v, vw, inside_mask, inside_mask0);
+  clamp_vel();
 }
 
 // Public

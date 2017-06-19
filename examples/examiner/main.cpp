@@ -116,7 +116,7 @@ int main(int argc, char** argv)
 	if(!isInit) return -1;
 	gas_solver->set_source_location(2, 2);
 	gas_solver->set_static_boundary(boundary_phi);
-	gas_solver->set_external_force_location(VFXEpoch::VECTOR_COMPONENTS::Y,	5, 5);
+	gas_solver->set_external_force_location(VFXEpoch::VECTOR_COMPONENTS::Y, 16, 16);
 	
 	// TODO: A small size simulation for unit test
 	int total_frames = 300;
