@@ -12,8 +12,8 @@
 
 #include "Helpers.h"
 
-const int Nx = 32;
-const int Ny = 32;
+const int Nx = 8;
+const int Ny = 8;
 const float source = 1.0f;
 const float h = 1.f / Nx;
 VFXEpoch::Vector2Df c0(0.5,0.5), c1(0.7,0.5), c2(0.3,0.35), c3(0.5,0.7);
@@ -28,16 +28,17 @@ float circle_phi(const VFXEpoch::Vector2Df& pos, const VFXEpoch::Vector2Df& cent
 
 float boundary_phi(const VFXEpoch::Vector2Df& position) {
    float phi0 = -circle_phi(position, c0, rad0);
-   float phi1 = circle_phi(position, c1, rad1);
-   float phi2 = circle_phi(position, c2, rad2);
-   float phi3 = circle_phi(position, c3, rad3);
-   return std::min(std::min(phi0,phi1), std::min(phi2,phi3));
+   //float phi1 = circle_phi(position, c1, rad1);
+   //float phi2 = circle_phi(position, c2, rad2);
+   //float phi3 = circle_phi(position, c3, rad3);
+   //return std::min(std::min(phi0,phi1), std::min(phi2,phi3));
+   return phi0;
 }
 /****************************** For Dbuge ******************************/
 
 int main(int argc, char** argv)
 {
-	std::cout << '\n' << "VFXEpoch Lib - Ubuntu v14.04 Unit Test" << '\n' << '\n';
+	std::cout << '\n' << "VFXEpoch Lib - Ubuntu v16.04 Unit Test" << '\n' << '\n';
 
 	VFXEpoch::Grid2DfScalarField gridf(Nx, Ny, h, h);
 	VFXEpoch::Grid2DVector2DfField gridv(Nx, Ny, h, h);
@@ -116,11 +117,12 @@ int main(int argc, char** argv)
 	if(!isInit) return -1;
 	gas_solver->set_source_location(2, 2);
 	gas_solver->set_static_boundary(boundary_phi);
-	gas_solver->set_external_force_location(VFXEpoch::VECTOR_COMPONENTS::Y, 16, 16);
+	gas_solver->set_external_force_location(VFXEpoch::VECTOR_COMPONENTS::Y, 4, 4);
 	
 	// TODO: A small size simulation for unit test
 	int total_frames = 300;
 	for(int i = 0; i != total_frames; i++){
+		cout << endl << "Solver starts working for frame " << i;
 		gas_solver->step();
 	}
 

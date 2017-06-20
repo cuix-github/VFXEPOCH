@@ -110,8 +110,24 @@ EulerGAS2D::init(Parameters params){
 void
 EulerGAS2D::step(){
   if(0 != source_locations.size())  add_source();
+  cout << endl << "u field before advection" << endl;
+  Helpers::displayScalarField(u);
+  cout << endl << "v field before advection" << endl;
+  Helpers::displayScalarField(v);
+  cout << endl << "u0 field before advection" << endl;
+  Helpers::displayScalarField(u0);
+  cout << endl << "v0 field before advection" << endl;
+  Helpers::displayScalarField(v0);
   advect_particles();
   advect_vel();
+  cout << endl << "u field after advection" << endl;
+  Helpers::displayScalarField(u);
+  cout << endl << "v field after advection" << endl;
+  Helpers::displayScalarField(v);
+  cout << endl << "u0 field after advection" << endl;
+  Helpers::displayScalarField(u0);
+  cout << endl << "v0 field after advection" << endl;
+  Helpers::displayScalarField(v0);
   if(0 != external_force_locations.size()) add_force();  
   project();
   extrapolate(u, uw, inside_mask, inside_mask0);
@@ -268,14 +284,14 @@ EulerGAS2D::advect_vel(){
   // Using RK2 method time integration
   // advect u component of velocity field
   LOOP_GRID2D(u0){
-    VFXEpoch::Vector2Df pos((j+0.5f) * user_params.h, i * user_params.h);
+    VFXEpoch::Vector2Df pos(j * user_params.h, (i+0.5f) * user_params.h);
     pos = trace_rk2(pos, -user_params.dt);
     u0(i, j) = get_vel(pos).m_x;
   }
 
   // advect v component of velocity field
   LOOP_GRID2D(v0){
-    VFXEpoch::Vector2Df pos(j * user_params.h, (i+0.5f) * user_params.h);
+    VFXEpoch::Vector2Df pos((j+0.5f) * user_params.h, i * user_params.h);
     pos = trace_rk2(pos, -user_params.dt);
     v0(i, j) = get_vel(pos).m_y;
   }
@@ -550,8 +566,12 @@ EulerGAS2D::setup_pressure_coef_matrix(){
 Vector2Df
 EulerGAS2D::get_vel(const Vector2Df& pos){
   assert(user_params.h != 0);
-  float _u = VFXEpoch::InterpolateGrid(pos / (float)user_params.h - Vector2Df(0.5f, 0.0f), u);
-  float _v = VFXEpoch::InterpolateGrid(pos / (float)user_params.h - Vector2Df(0.0f, 0.5f), v);
+  // For debug
+  VFXEpoch::Vector2Df tmp(0.0f, 0.0f);
+  tmp = pos / (float)user_params.h;
+  cout << "tmp pos = Vector2Df(" << tmp.m_x << ". " << tmp.m_y << ")." << endl;
+  float _u = VFXEpoch::InterpolateGrid(pos / (float)user_params.h - Vector2Df(0.0f, 5.0f), u);
+  float _v = VFXEpoch::InterpolateGrid(pos / (float)user_params.h - Vector2Df(0.5f, 0.0f), v);
   return Vector2Df(_u, _v);
 }
 

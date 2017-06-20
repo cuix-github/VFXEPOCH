@@ -15,6 +15,10 @@
 #include "utl/PCGSolver/blas_wrapper.h"
 #include "utl/PCGSolver/pcg_solver.h"
 
+/********************************* For Debug *********************************/
+#include "utl/UTL_Helpers.h"
+/********************************* For Debug *********************************/
+
 using namespace VFXEpoch;
 using namespace VFXEpoch::Solvers;
 
@@ -152,6 +156,12 @@ namespace VFXEpoch{
       void set_inside_boundary(Grid2DCellTypes boundaries);
       void set_domain_boundary(VFXEpoch::BOUNDARY boundary_type, VFXEpoch::EDGES_2DSIM edge);
       void set_static_boundary(float (*phi)(const VFXEpoch::Vector2Df&));
+
+      /********************************* Debug the field *********************************/
+      // TODO: Ensure to close following functions
+    public:
+      
+      /********************************* Debug the field *********************************/
 
     public:
       void set_user_params(Parameters params);
