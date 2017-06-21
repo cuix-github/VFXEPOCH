@@ -570,7 +570,7 @@ EulerGAS2D::get_vel(const Vector2Df& pos){
   VFXEpoch::Vector2Df tmp(0.0f, 0.0f);
   tmp = pos / (float)user_params.h;
   cout << "tmp pos = Vector2Df(" << tmp.m_x << ". " << tmp.m_y << ")." << endl;
-  float _u = VFXEpoch::InterpolateGrid(pos / (float)user_params.h - Vector2Df(0.0f, 5.0f), u);
+  float _u = VFXEpoch::InterpolateGrid(pos / (float)user_params.h - Vector2Df(0.0f, 0.5f), u);
   float _v = VFXEpoch::InterpolateGrid(pos / (float)user_params.h - Vector2Df(0.5f, 0.0f), v);
   return Vector2Df(_u, _v);
 }
