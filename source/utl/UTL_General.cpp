@@ -126,7 +126,8 @@ VFXEpoch::InterpolateGrid(float x, float y, VFXEpoch::Grid2DfScalarField& field)
 
 	VFXEpoch::get_barycentric(x, j, fx, 0, field.getDimX());
 	VFXEpoch::get_barycentric(y, i, fy, 0, field.getDimY());
-	return VFXEpoch::Bilerp(fx, fy, field(i, j), field(i + 1, j), field(i, j + 1), field(i + 1, j + 1));
+	// TODO: Verify for Bilinear interpolation
+	return VFXEpoch::Bilerp(fx, fy, field(i, j), field(i, j + 1), field(i + 1, j), field(i + 1, j + 1));
 }
 
 float
@@ -135,7 +136,9 @@ VFXEpoch::InterpolateGrid(Vector2Df pos, Grid2DfScalarField& field){
 	float fx, fy;
 	VFXEpoch::get_barycentric(pos.m_x, j, fx, 0, field.getDimX());
 	VFXEpoch::get_barycentric(pos.m_y, i, fy, 0, field.getDimY());
-	return VFXEpoch::Bilerp(fx, fy, field(i, j), field(i + 1, j), field(i, j + 1), field(i + 1, j + 1));
+
+	// TODO: Verify for Bilinear interpolation
+	return VFXEpoch::Bilerp(fx, fy, field(i, j), field(i, j + 1), field(i + 1, j), field(i + 1, j + 1));
 }
 
 float 
@@ -164,7 +167,7 @@ VFXEpoch::InteralFrac(float left, float right){
 }
 
 void 
-VFXEpoch::DataFromVectorToGrid(const std::vector<float> vec, VFXEpoch::Grid2DfScalarField grid){
+VFXEpoch::DataFromVectorToGrid(const std::vector<float> vec, VFXEpoch::Grid2DfScalarField& grid){
 	assert(vec.size() == grid.getVectorSize());
 	LOOP_GRID2D(grid){
 		int idx = i * grid.getDimX() + j;
@@ -173,7 +176,7 @@ VFXEpoch::DataFromVectorToGrid(const std::vector<float> vec, VFXEpoch::Grid2DfSc
 }
 
 void 
-VFXEpoch::DataFromVectorToGrid(const std::vector<double> vec, VFXEpoch::Grid2DdScalarField grid){
+VFXEpoch::DataFromVectorToGrid(const std::vector<double> vec, VFXEpoch::Grid2DdScalarField& grid){
 	assert(vec.size() == grid.getVectorSize());
 	LOOP_GRID2D(grid){
 		int idx = i * grid.getDimX() + j;

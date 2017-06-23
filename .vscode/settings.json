@@ -5,6 +5,12 @@
         "iostream": "cpp",
         "*.ipp": "cpp",
         "*.tcc": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "system_error": "cpp",
+        "tuple": "cpp",
+        "type_traits": "cpp",
+        "slist": "cpp",
+        "initializer_list": "cpp",
+        "array": "cpp"
     }
 }

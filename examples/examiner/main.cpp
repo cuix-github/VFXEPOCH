@@ -12,8 +12,8 @@
 
 #include "Helpers.h"
 
-const int Nx = 8;
-const int Ny = 8;
+const int Nx = 9;
+const int Ny = 9;
 const float source = 1.0f;
 const float h = 1.f / Nx;
 VFXEpoch::Vector2Df c0(0.5,0.5), c1(0.7,0.5), c2(0.3,0.35), c3(0.5,0.7);
@@ -86,7 +86,7 @@ int main(int argc, char** argv)
 	EulerGAS2D::Parameters params;
 	params.dimension = VFXEpoch::Vector2Di(Nx, Ny);
 	params.h = h;
-	params.dt = 0.01;
+	params.dt = 0.005;
 	params.buoyancy_alpha = 0.1;
 	params.buoyancy_beta = 0.3;
 	params.vort_conf_eps = 0.55;
@@ -106,6 +106,7 @@ int main(int argc, char** argv)
 
 	/************************************ Test Vector functions ************************************/
 	VFXEpoch::Vector2Df p0f(0.5f, 0.0f), p1f(0.0f, 10.0f);
+	VFXEpoch::Vector2Df p2f = p0f / 0.1f;
 	cout << endl << "The distance between p0 & p1 is: " << VFXEpoch::Dist2D(p0f, p1f) << endl;
 
 	VFXEpoch::Vector2Dd p0d(0.9, 0.0), p1d(0.0, 5.0);

@@ -64,7 +64,7 @@ namespace VFXEpoch
 		computeDivergence_uniform(VFXEpoch::Grid2DfScalarField& dest, VFXEpoch::Grid2DVector2DfField ref);
 
 		void
-		computeDivergence_with_weights_mac(VFXEpoch::Grid2DdScalarField& dest, VFXEpoch::Grid2DfScalarField u, VFXEpoch::Grid2DfScalarField v,
+		computeDivergence_with_weights_mac(VFXEpoch::Grid2DdScalarField& dest, float h, VFXEpoch::Grid2DfScalarField u, VFXEpoch::Grid2DfScalarField v,
 										   VFXEpoch::Grid2DfScalarField _uw, VFXEpoch::Grid2DfScalarField _vw);
 		void
 		computeDivergence_mac(VFXEpoch::Grid2DfScalarField& dest, VFXEpoch::Grid2DfScalarField u, VFXEpoch::Grid2DfScalarField v);

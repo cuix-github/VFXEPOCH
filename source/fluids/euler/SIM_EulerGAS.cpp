@@ -130,6 +130,14 @@ EulerGAS2D::step(){
   Helpers::displayScalarField(v0);
   if(0 != external_force_locations.size()) add_force();  
   project();
+  cout << endl << "u field after projection" << endl;
+  Helpers::displayScalarField(u);
+  cout << endl << "v field after projection" << endl;
+  Helpers::displayScalarField(v);
+  cout << endl << "u0 field after projection" << endl;
+  Helpers::displayScalarField(u0);
+  cout << endl << "v0 field after projection" << endl;
+  Helpers::displayScalarField(v0);
   extrapolate(u, uw, inside_mask, inside_mask0);
   extrapolate(v, vw, inside_mask, inside_mask0);
   clamp_vel();
@@ -407,7 +415,7 @@ EulerGAS2D::pressure_solve(){
 
   VFXEpoch::Grid2DdScalarField div(user_params.dimension.m_x, user_params.dimension.m_y, user_params.h, user_params.h);
   get_grid_weights();
-  VFXEpoch::Analysis::computeDivergence_with_weights_mac(div, u, v, uw, vw);
+  VFXEpoch::Analysis::computeDivergence_with_weights_mac(div, user_params.h, u, v, uw, vw);
   pressure_solver_params.rhs = div.toVector();
   setup_pressure_coef_matrix();
   bool success = pressure_solver_params.pcg_solver.solve(pressure_solver_params.sparse_matrix,
@@ -417,7 +425,7 @@ EulerGAS2D::pressure_solve(){
                                                          user_params.max_iterations);
   if(!success){
     std::cout << "Pressure solve failed!" << endl;
-  }                                                         
+  }                                               
 }
 
 // Protected
@@ -538,8 +546,8 @@ EulerGAS2D::clamp_vel(){
 // Protected
 void
 EulerGAS2D::setup_pressure_coef_matrix(){
-  int row = user_params.dimension.m_y - 1;
-  int col = user_params.dimension.m_x - 1;
+  int row = user_params.dimension.m_y;
+  int col = user_params.dimension.m_x;
   int idx = 0;
   float val = 0.0f;
   float dx = user_params.h;
@@ -547,16 +555,16 @@ EulerGAS2D::setup_pressure_coef_matrix(){
   int grid_each_row_elements = user_params.dimension.m_x;
   LOOP_GRID2D_WITHOUT_DOMAIN_BOUNDARY(row, col){
     idx = i * user_params.dimension.m_x + j;
-    val = uw(i, j+1) * dt / sqrt(dx);
+    val = uw(i, j+1) * dt / std::pow(dx, 2);
     pressure_solver_params.sparse_matrix.add_to_element(idx, idx,val);
     pressure_solver_params.sparse_matrix.add_to_element(idx, idx + 1, -val);
-    val = uw(i, j) * dt / sqrt(dx);
+    val = uw(i, j) * dt / std::pow(dx, 2);
     pressure_solver_params.sparse_matrix.add_to_element(idx, idx, val);
     pressure_solver_params.sparse_matrix.add_to_element(idx, idx - 1, -val);
-    val = vw(i+1, j) * dt / sqrt(dx);
+    val = vw(i+1, j) * dt / std::pow(dx, 2);
     pressure_solver_params.sparse_matrix.add_to_element(idx, idx, val);
     pressure_solver_params.sparse_matrix.add_to_element(idx, idx + grid_each_row_elements, -val);
-    val = vw(i, j) * dt / sqrt(dx);
+    val = vw(i, j) * dt / std::pow(dx, 2);
     pressure_solver_params.sparse_matrix.add_to_element(idx, idx, val);
     pressure_solver_params.sparse_matrix.add_to_element(idx, idx - grid_each_row_elements, -val);
   }
@@ -566,10 +574,6 @@ EulerGAS2D::setup_pressure_coef_matrix(){
 Vector2Df
 EulerGAS2D::get_vel(const Vector2Df& pos){
   assert(user_params.h != 0);
-  // For debug
-  VFXEpoch::Vector2Df tmp(0.0f, 0.0f);
-  tmp = pos / (float)user_params.h;
-  cout << "tmp pos = Vector2Df(" << tmp.m_x << ". " << tmp.m_y << ")." << endl;
   float _u = VFXEpoch::InterpolateGrid(pos / (float)user_params.h - Vector2Df(0.0f, 0.5f), u);
   float _v = VFXEpoch::InterpolateGrid(pos / (float)user_params.h - Vector2Df(0.5f, 0.0f), v);
   return Vector2Df(_u, _v);
