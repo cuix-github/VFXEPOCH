@@ -99,9 +99,18 @@ EulerGAS2D::init(Parameters params){
   d.Reset(user_params.dimension.m_x, user_params.dimension.m_y, user_params.h, user_params.h); d0 = d;
   t.Reset(user_params.dimension.m_x, user_params.dimension.m_y, user_params.h, user_params.h); t0 = t;
   omega.Reset(user_params.dimension.m_x + 2, user_params.dimension.m_y + 2, user_params.h, user_params.h); omega0 = omega;
-  inside_mask.Reset(user_params.dimension.m_x + 1, user_params.dimension.m_y + 1, user_params.h, user_params.h);
   nodal_solid_phi.Reset(user_params.dimension.m_x + 1, user_params.dimension.m_y + 1, user_params.h, user_params.h);
   particles_container.resize(user_params.num_particles);
+
+  // Make the mask all as boundaries in initialization
+  inside_mask.Reset(user_params.dimension.m_x + 1, user_params.dimension.m_y + 1, user_params.h, user_params.h); inside_mask0 = inside_mask;
+  for(int i = 0; i != inside_mask.getDimY(); i++){
+    for(int j = 0; j != inside_mask.getDimX(); j++){
+      inside_mask(i, j) = VFXEpoch::BOUNDARY_MASK::SOMETHING;
+      inside_mask0(i, j) = inside_mask(i, j);
+    }
+  }
+  
   return true;
 }
 
@@ -114,13 +123,25 @@ EulerGAS2D::step(){
   advect_vel();
   if(0 != external_force_locations.size()) add_force();  
   project();
+  cout << endl << "u field before extrapolate" << endl;
+  Helpers::displayScalarField(u);
+  cout << endl << "v field before extrapolate" << endl;
+  Helpers::displayScalarField(v);
+  cout << endl << "Fluids & Boundaries mask" << endl;
+  Helpers::displayCellStatus(inside_mask);
+  cout << endl << "Fluids & Boundaries mask0" << endl;
+  Helpers::displayCellStatus(inside_mask0);
   extrapolate(u, uw, inside_mask, inside_mask0);
   extrapolate(v, vw, inside_mask, inside_mask0);
-  clamp_vel();
-  cout << endl << "u field";
+  cout << endl << "u field after extrapolate" << endl;
   Helpers::displayScalarField(u);
-  cout << endl << "v field";
+  cout << endl << "v field after extrapolate" << endl;
   Helpers::displayScalarField(v);
+  cout << endl << "Fluids & Boundaries mask" << endl;
+  Helpers::displayCellStatus(inside_mask);
+  cout << endl << "Fluids & Boundaries mask0" << endl;
+  Helpers::displayCellStatus(inside_mask0);
+  clamp_vel();
 }
 
 // Public
@@ -411,11 +432,11 @@ EulerGAS2D::pressure_solve(){
 // as accessing out of range of pressure
 void
 EulerGAS2D::apply_gradients(){
-  VFXEpoch::Grid2DfScalarField _pressure(user_params.dimension.m_x, user_params.dimension.m_y);
-  std::vector<float> solvedPressure(pressure_solver_params.pressure.begin(), pressure_solver_params.pressure.end());
+  VFXEpoch::Grid2DdScalarField _pressure(user_params.dimension.m_x, user_params.dimension.m_y);
+  std::vector<double> solvedPressure(pressure_solver_params.pressure.begin(), pressure_solver_params.pressure.end());
   VFXEpoch::DataFromVectorToGrid(solvedPressure, _pressure);
-  double dt = user_params.dt;
-  double dx = user_params.h;
+  float dt = user_params.dt;
+  float dx = user_params.h;
   LOOP_GRID2D(u){
     if(uw(i, j) > 0){
       u(i, j) -= dt * (_pressure(i, j) - _pressure(i, j - 1)) / dx;
@@ -446,7 +467,7 @@ EulerGAS2D::extrapolate(Grid2DfScalarField& grid,
   for(int i = 0; i != 5; i++){
     mask0 = mask;
     LOOP_GRID2D_WITHOUT_DOMAIN_BOUNDARY(grid){
-      float sum = 0;
+      float sum = 0.0f;
       int count = 0;
 
       if(BOUNDARY_MASK::SOMETHING == mask0(i, j)){
@@ -531,6 +552,7 @@ EulerGAS2D::setup_pressure_coef_matrix(){
   float dx = user_params.h;
   float dt = user_params.dt;
   int grid_each_row_elements = user_params.dimension.m_x;
+  pressure_solver_params.sparse_matrix.zero();
   LOOP_GRID2D_WITHOUT_DOMAIN_BOUNDARY(row, col){
     idx = i * user_params.dimension.m_x + j;
     val = uw(i, j+1) * dt / std::pow(dx, 2.0f);
