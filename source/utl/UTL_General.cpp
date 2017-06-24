@@ -142,7 +142,7 @@ VFXEpoch::InterpolateGrid(Vector2Df pos, Grid2DfScalarField& field){
 }
 
 float 
-VFXEpoch::InterpolateGradient(Vector2Df gradient, Vector2Df pos, VFXEpoch::Grid2DfScalarField& field){
+VFXEpoch::InterpolateGradient(Vector2Df& gradient, Vector2Df pos, VFXEpoch::Grid2DfScalarField& field){
 	int i, j;
 	float fx, fy;
 	VFXEpoch::get_barycentric(pos.m_x, j, fx, 0, field.getDimX());
@@ -156,6 +156,8 @@ VFXEpoch::InterpolateGradient(Vector2Df gradient, Vector2Df pos, VFXEpoch::Grid2
 
 	gradient.m_x = VFXEpoch::Lerp(fy, dx0, dx1);
 	gradient.m_y = VFXEpoch::Lerp(fx, dy0, dy1);
+
+	return VFXEpoch::Bilerp(fx, fy, field(i, j), field(i, j+1), field(i+1, j), field(i+1, j+1));
 }
 
 float

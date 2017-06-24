@@ -159,8 +159,7 @@ namespace VFXEpoch{
 
       /********************************* Debug the field *********************************/
       // TODO: Ensure to close following functions
-    public:
-      
+    public:      
       /********************************* Debug the field *********************************/
 
     public:

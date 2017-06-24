@@ -60,7 +60,7 @@ namespace VFXEpoch
 	void InsertComponents(VFXEpoch::Grid2DfScalarField component, VFXEpoch::Grid3DVector3DfField& vectorField, VECTOR_COMPONENTS axis);
 	float InterpolateGrid(float x, float y, VFXEpoch::Grid2DfScalarField& field);
 	float InterpolateGrid(Vector2Df pos, VFXEpoch::Grid2DfScalarField& field);
-	float InterpolateGradient(Vector2Df gradient, Vector2Df pos, VFXEpoch::Grid2DfScalarField& field);
+	float InterpolateGradient(Vector2Df& gradient, Vector2Df pos, VFXEpoch::Grid2DfScalarField& field);
 	float InteralFrac(float left, float right);
 	void DataFromVectorToGrid(const std::vector<float> vec, VFXEpoch::Grid2DfScalarField& grid);
 	void DataFromVectorToGrid(const std::vector<double> vec, VFXEpoch::Grid2DdScalarField& grid);

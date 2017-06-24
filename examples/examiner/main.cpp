@@ -86,7 +86,7 @@ int main(int argc, char** argv)
 	EulerGAS2D::Parameters params;
 	params.dimension = VFXEpoch::Vector2Di(Nx, Ny);
 	params.h = h;
-	params.dt = 0.005;
+	params.dt = 0.005f;
 	params.buoyancy_alpha = 0.1;
 	params.buoyancy_beta = 0.3;
 	params.vort_conf_eps = 0.55;
@@ -123,7 +123,7 @@ int main(int argc, char** argv)
 	// TODO: A small size simulation for unit test
 	int total_frames = 300;
 	for(int i = 0; i != total_frames; i++){
-		cout << endl << "Solver starts working for frame " << i;
+		cout << endl << "Now is solving for frame " << i;
 		gas_solver->step();
 	}
 
