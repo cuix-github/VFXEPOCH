@@ -12,8 +12,8 @@
 
 #include "Helpers.h"
 
-const int Nx = 9;
-const int Ny = 9;
+const int Nx = 512;
+const int Ny = 512;
 const float source = 1.0f;
 const float h = 1.f / Nx;
 VFXEpoch::Vector2Df c0(0.5,0.5), c1(0.7,0.5), c2(0.3,0.35), c3(0.5,0.7);
@@ -39,10 +39,6 @@ float boundary_phi(const VFXEpoch::Vector2Df& position) {
 int main(int argc, char** argv)
 {
 	std::cout << '\n' << "VFXEpoch Lib - Ubuntu v16.04 Unit Test" << '\n' << '\n';
-
-	VFXEpoch::Grid2DfScalarField gridf(Nx, Ny, h, h);
-	VFXEpoch::Grid2DVector2DfField gridv(Nx, Ny, h, h);
-	VFXEpoch::Grid2DCellTypes domain_mask(Nx, Ny);
 	VFXEpoch::Solvers::Euler_Fluid2D_Base *solver = new VFXEpoch::Solvers::EulerGAS2D();
 	VFXEpoch::Solvers::EulerGAS2D* gas_solver = dynamic_cast<VFXEpoch::Solvers::EulerGAS2D*>(solver);
 
@@ -55,33 +51,7 @@ int main(int argc, char** argv)
 		}
 		cout << endl;
 	}
-
 	else cout << "Euler GAS solver has been set up." << '\n' << '\n';
-	Helpers::randomInitScalarField(gridf, -1.0, 1.0);
-	Helpers::randomInitVectorField(gridv, -1.0, 1.0);
-	Helpers::randomInitCellStatus(domain_mask);
-
-	cout << "2D Scalar field access test:" << endl;
-	displayScalarField(gridf);
-	cout << endl;
-
-	cout << "2D Vector field access test:" << endl;
-	displayVectorField(gridv);
-	cout << endl;
-
-	cout << "Domain status (F->Fluid, B->Boundary):" << endl;
-	displayCellStatus(domain_mask);
-	cout << endl;
-
-	int i = VFXEpoch::RandomI(0, Ny - 1);
-	int j = VFXEpoch::RandomI(0, Nx - 1);
-	std::cout << "The value of gridf at position" << "(" << i << ", " << j << ") is " << gridf(i, j) << '\n';
-	std::cout << "The value of gridv at position" << "(" << i << ", " << j << ") is " << "Vector2Df(" << gridv(i, j).m_x << ", " << gridv(i, j).m_y << ")" << '\n';
-	if(VFXEpoch::BOUNDARY_MASK::NOTHING == domain_mask(i, j))
-	std::cout << "The value of domain_mask at position" << "(" << i << ", " << j << ") is Fluid" << '\n';
-	else
-	std::cout << "The value of domain_mask at position" << "(" << i << ", " << j << ") is Boundary" << '\n';
-	cout << endl;
 
 	EulerGAS2D::Parameters params;
 	params.dimension = VFXEpoch::Vector2Di(Nx, Ny);
@@ -102,28 +72,19 @@ int main(int argc, char** argv)
 	params = gas_solver->get_user_params();
 
 	cout << "Simulation User Parameters:" << endl;
-	cout << params;
-
-	/************************************ Test Vector functions ************************************/
-	VFXEpoch::Vector2Df p0f(0.5f, 0.0f), p1f(0.0f, 10.0f);
-	VFXEpoch::Vector2Df p2f = p0f / 0.1f;
-	cout << endl << "The distance between p0 & p1 is: " << VFXEpoch::Dist2D(p0f, p1f) << endl;
-
-	VFXEpoch::Vector2Dd p0d(0.9, 0.0), p1d(0.0, 5.0);
-	cout << endl << "The distance between p0 & p1 is: " << VFXEpoch::Dist2D(p0d, p1d) << endl;
-	/************************************ Test Vector functions ************************************/
+	cout << params << endl;
 
 	/************************************ Test solver functions ************************************/
 	bool isInit = gas_solver->init(params);
 	if(!isInit) return -1;
-	gas_solver->set_source_location(2, 2);
+	gas_solver->set_source_location(Nx/2, Ny/2);
 	gas_solver->set_static_boundary(boundary_phi);
-	gas_solver->set_external_force_location(VFXEpoch::VECTOR_COMPONENTS::Y, 4, 4);
+	gas_solver->set_external_force_location(VFXEpoch::VECTOR_COMPONENTS::Y, Nx/2, Ny/2);
 	
 	// TODO: A small size simulation for unit test
 	int total_frames = 300;
 	for(int i = 0; i != total_frames; i++){
-		cout << endl << "Now is solving for frame " << i;
+		cout << endl << "------------------ Frame " << i << " ------------------" << endl;
 		gas_solver->step();
 	}
 
