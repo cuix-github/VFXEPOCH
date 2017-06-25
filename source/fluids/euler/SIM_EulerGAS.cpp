@@ -21,6 +21,8 @@ EulerGAS2D::EulerGAS2D(){
   nodal_solid_phi.clear();
   pressure_solver_params.clear();
   particles_container.clear();
+  source_locations.clear();
+  external_force_locations.clear();
   domain_boundaries[0].side = EDGES_2DSIM::TOP;
 	domain_boundaries[0].boundaryType = BOUNDARY::STREAK;
 	domain_boundaries[1].side = EDGES_2DSIM::BOTTOM;
@@ -43,21 +45,24 @@ EulerGAS2D::EulerGAS2D(const EulerGAS2D& src){
   inside_mask = src.inside_mask; inside_mask0 = src.inside_mask0;
   nodal_solid_phi = src.nodal_solid_phi;
   particles_container = src.particles_container;
+  source_locations = src.source_locations;
+  external_force_locations = src.external_force_locations;
 }
 
 // Public
 EulerGAS2D::EulerGAS2D(Parameters _user_params):user_params(_user_params){
-  v.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y + 1); v0 = v;
-  u.ResetDimension(_user_params.dimension.m_x + 1, _user_params.dimension.m_y); u0 = u;
-  uw.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y + 1);
-  vw.ResetDimension(_user_params.dimension.m_x + 1, _user_params.dimension.m_y + 1);
-  d.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y); d0 = d;
-  t.ResetDimension(_user_params.dimension.m_x, _user_params.dimension.m_y); t0 = t;
-  omega.ResetDimension(_user_params.dimension.m_x + 2, _user_params.dimension.m_y + 2);
-  omega0.ResetDimension(_user_params.dimension.m_x + 2, _user_params.dimension.m_y + 2);
-  nodal_solid_phi.ResetDimension(_user_params.dimension.m_x + 1, _user_params.dimension.m_y + 1);
-  inside_mask.ResetDimension(_user_params.dimension.m_x + 1, _user_params.dimension.m_y + 1); inside_mask0 = inside_mask;
+  v.Reset(_user_params.dimension.m_x, _user_params.dimension.m_y + 1, _user_params.h, _user_params.h); v0 = v;
+  u.Reset(_user_params.dimension.m_x + 1, _user_params.dimension.m_y, _user_params.h, _user_params.h); u0 = u;
+  uw.Reset(_user_params.dimension.m_x + 1, _user_params.dimension.m_y, _user_params.h, _user_params.h);
+  vw.Reset(_user_params.dimension.m_x, _user_params.dimension.m_y + 1, _user_params.h, _user_params.h);
+  d.Reset(_user_params.dimension.m_x, _user_params.dimension.m_y, _user_params.h, _user_params.h); d0 = d;
+  t.Reset(_user_params.dimension.m_x, _user_params.dimension.m_y, _user_params.h, _user_params.h); t0 = t;
+  omega.Reset(_user_params.dimension.m_x + 2, _user_params.dimension.m_y + 2, _user_params.h, _user_params.h); omega0 = omega;
+  nodal_solid_phi.Reset(_user_params.dimension.m_x + 1, _user_params.dimension.m_y + 1, _user_params.h, _user_params.h);
+  inside_mask.Reset(_user_params.dimension.m_x + 1, _user_params.dimension.m_y + 1, _user_params.h, _user_params.h); inside_mask0 = inside_mask;
   particles_container.resize(_user_params.num_particles);
+  source_locations.resize(0);
+  external_force_locations.resize(0);
 }
 
 // Public
@@ -72,6 +77,8 @@ EulerGAS2D::operator=(const EulerGAS2D& rhs){
   inside_mask = rhs.inside_mask; inside_mask0 = rhs.inside_mask0;
   user_params = rhs.user_params;
   particles_container = rhs.particles_container;
+  source_locations = rhs.source_locations;
+  external_force_locations = rhs.external_force_locations;
   return *this;
 }
 
@@ -85,16 +92,25 @@ EulerGAS2D::~EulerGAS2D(){
 bool
 EulerGAS2D::init(Parameters params){
   user_params = params;
-  v.ResetDimension(user_params.dimension.m_x, user_params.dimension.m_y + 1); v0 = v;
-  u.ResetDimension(user_params.dimension.m_x + 1, user_params.dimension.m_y); u0 = u;
-  uw.ResetDimension(user_params.dimension.m_x, user_params.dimension.m_y + 1);
-  vw.ResetDimension(user_params.dimension.m_x + 1, user_params.dimension.m_x);
-  d.ResetDimension(user_params.dimension.m_x, user_params.dimension.m_y); d0 = d;
-  t.ResetDimension(user_params.dimension.m_x, user_params.dimension.m_y); t0 = t;
-  omega.ResetDimension(user_params.dimension.m_x + 2, user_params.dimension.m_y + 2); omega0 = omega;
-  inside_mask.ResetDimension(user_params.dimension.m_x, user_params.dimension.m_y);
-  nodal_solid_phi.ResetDimension(user_params.dimension.m_x + 1, user_params.dimension.m_y + 1);
+  v.Reset(user_params.dimension.m_x, user_params.dimension.m_y + 1, user_params.h, user_params.h); v0 = v;
+  u.Reset(user_params.dimension.m_x + 1, user_params.dimension.m_y, user_params.h, user_params.h); u0 = u;
+  uw.Reset(user_params.dimension.m_x + 1, user_params.dimension.m_y, user_params.h, user_params.h);
+  vw.Reset(user_params.dimension.m_x, user_params.dimension.m_y + 1, user_params.h, user_params.h);
+  d.Reset(user_params.dimension.m_x, user_params.dimension.m_y, user_params.h, user_params.h); d0 = d;
+  t.Reset(user_params.dimension.m_x, user_params.dimension.m_y, user_params.h, user_params.h); t0 = t;
+  omega.Reset(user_params.dimension.m_x + 2, user_params.dimension.m_y + 2, user_params.h, user_params.h); omega0 = omega;
+  nodal_solid_phi.Reset(user_params.dimension.m_x + 1, user_params.dimension.m_y + 1, user_params.h, user_params.h);
   particles_container.resize(user_params.num_particles);
+
+  // Make the mask all as boundaries in initialization
+  inside_mask.Reset(user_params.dimension.m_x + 1, user_params.dimension.m_y + 1, user_params.h, user_params.h); inside_mask0 = inside_mask;
+  for(int i = 0; i != inside_mask.getDimY(); i++){
+    for(int j = 0; j != inside_mask.getDimX(); j++){
+      inside_mask(i, j) = VFXEpoch::BOUNDARY_MASK::SOMETHING;
+      inside_mask0(i, j) = inside_mask(i, j);
+    }
+  }
+  
   return true;
 }
 
@@ -102,7 +118,18 @@ EulerGAS2D::init(Parameters params){
 // Overload from SIM_Base.h -> class Euler_Fluid2D_Base
 void
 EulerGAS2D::step(){
-  /* TODO: code */
+  if(0 != source_locations.size())  add_source();
+  advect_particles();
+  advect_vel();
+  if(0 != external_force_locations.size()) add_force();  
+  project();
+  extrapolate(u, uw, inside_mask, inside_mask0);
+  extrapolate(v, vw, inside_mask, inside_mask0);
+  clamp_vel();
+  cout << endl << "u field" << endl;
+  Helpers::displayScalarField(u);
+  cout << endl << "v field" << endl;
+  Helpers::displayScalarField(v);
 }
 
 // Public
@@ -118,29 +145,54 @@ EulerGAS2D::close(){
   nodal_solid_phi.clear();
   user_params.clear();
   particles_container.clear();
+  source_locations.clear();
+}
+
+// Public
+void
+EulerGAS2D::set_source_location(int i, int j){
+  assert(i >= 0 && j >= 0 && i < user_params.dimension.m_y && j < user_params.dimension.m_x);
+  source_locations.push_back(VFXEpoch::Vector2Di(i, j));
 }
 
 // Public
 // Overload from SIM_Base.h -> class Euler_Fluid2D_Base
 void
-EulerGAS2D::add_source(int i, int j){
-  assert(i >= 0 && i <= d.getDimY() && j >= 0 && j <= d.getDimX());
-  d(i, j) = user_params.density_source;
+EulerGAS2D::add_source(){
+  for(std::vector<VFXEpoch::Vector2Di>::iterator ite = source_locations.begin(); ite != source_locations.end(); ite++){
+    assert(ite->m_x >= 0 && ite->m_x < d.getDimY() && ite->m_y >= 0 && ite->m_y < d.getDimX());
+    d(ite->m_x, ite->m_y) = user_params.density_source;
+  }
 }
 
 // Public
 void
-EulerGAS2D::add_external_force(VFXEpoch::VECTOR_COMPONENTS component, int i, int j){
+EulerGAS2D::set_external_force_location(VFXEpoch::VECTOR_COMPONENTS component, int i, int j){
   if(VFXEpoch::VECTOR_COMPONENTS::X == component){
     assert(i >= 0 && i <= u.getDimY() && j >= 0 && j <= u.getDimX());
-    u(i, j) = user_params.external_force_strength;
+    external_force_locations.push_back(VFXEpoch::Vector3Di(i, j, 0));
   }
   else if(VFXEpoch::VECTOR_COMPONENTS::Y == component){
     assert(i >= 0 && i <= v.getDimY() && j >= 0 && j <= v.getDimX());
-    v(i, j) = user_params.external_force_strength;
+    external_force_locations.push_back(VFXEpoch::Vector3Di(i, j, 1));
   }
   else{
     std::cout << "Component error occured!" << endl;
+  }
+}
+
+// Protected
+void
+EulerGAS2D::add_force(){
+  /* TODO: code */
+  for(std::vector<VFXEpoch::Vector3Di>::iterator ite = external_force_locations.begin(); ite != external_force_locations.end(); ite++){
+    if(0 == ite->m_z){
+      assert(ite->m_x >= 0 && ite->m_x < u.getDimY() && ite->m_y >= 0 && ite->m_y < u.getDimX());
+      u(ite->m_x, ite->m_y) = user_params.external_force_strength;
+    } else {
+      assert(ite->m_x >= 0 && ite->m_x < v.getDimY() && ite->m_y >= 0 && ite->m_y < v.getDimX());
+      v(ite->m_x, ite->m_y) = user_params.external_force_strength;
+    }
   }
 }
 
@@ -177,6 +229,15 @@ EulerGAS2D::set_domain_boundary(const VFXEpoch::BOUNDARY boundary_type, const VF
 
 // Public
 void
+EulerGAS2D::set_static_boundary(float (*phi)(const VFXEpoch::Vector2Df&)){
+  LOOP_GRID2D(nodal_solid_phi){
+    VFXEpoch::Vector2Df position(i * user_params.h, j * user_params.h);
+    nodal_solid_phi(i, j) = phi(position);
+  }
+}
+
+// Public
+void
 EulerGAS2D::set_user_params(Parameters params){
   user_params = params;
 }
@@ -196,6 +257,7 @@ EulerGAS2D::set_domain_boundary_wrapper(Grid2DfScalarField& field){
 }
 
 // Protected
+// TODO: Check fast linear solvercorrectness for dx, dy, dimension in vertical & horizontal
 void
 EulerGAS2D::density_diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref){
   float a = user_params.diff * user_params.dt * user_params.dimension.m_x * user_params.dimension.m_y;
@@ -203,6 +265,7 @@ EulerGAS2D::density_diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref){
 }
 
 // Protected
+// TODO: Check fast linear solver correctness for dx, dy, dimension in vertical & horizontal
 void 
 EulerGAS2D::dynamic_diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref){
   float a = user_params.visc * user_params.dt * user_params.dimension.m_x * user_params.dimension.m_y;
@@ -216,14 +279,14 @@ EulerGAS2D::advect_vel(){
   // Using RK2 method time integration
   // advect u component of velocity field
   LOOP_GRID2D(u0){
-    VFXEpoch::Vector2Df pos((j+0.5f) * user_params.size.m_x, i * user_params.size.m_y);
+    VFXEpoch::Vector2Df pos(j * user_params.h, (i+0.5f) * user_params.h);
     pos = trace_rk2(pos, -user_params.dt);
     u0(i, j) = get_vel(pos).m_x;
   }
 
   // advect v component of velocity field
   LOOP_GRID2D(v0){
-    VFXEpoch::Vector2Df pos(j * user_params.size.m_x, (i+0.5f) * user_params.size.m_y);
+    VFXEpoch::Vector2Df pos((j+0.5f) * user_params.h, i * user_params.h);
     pos = trace_rk2(pos, -user_params.dt);
     v0(i, j) = get_vel(pos).m_y;
   }
@@ -239,14 +302,23 @@ EulerGAS2D::advect_den(){
   // Brutal turning over the boundaries
   assert(d0.getDimX() == inside_mask.getDimX() && d0.getDimY() == inside_mask.getDimY());
   LOOP_GRID2D(d0){
-    if(inside_mask(i, j) == VFXEpoch::BOUNDARY_MASK::SOMETHING) continue;
-    else{
-      VFXEpoch::Vector2Df pos((j+0.5f) * user_params.size.m_x, (i+0.5f) * user_params.size.m_y);
+      VFXEpoch::Vector2Df pos((j+0.5f) * user_params.h, (i+0.5f) * user_params.h);
       pos = trace_rk2(pos, -user_params.dt);
       d0(i, j) = get_den(pos);
-    }    
   }
   d = d0;
+}
+
+// Protected
+void
+EulerGAS2D::advect_tmp(){
+  assert(t0.getDimX() == inside_mask.getDimX() && t0.getDimY() == inside_mask.getDimY());
+  LOOP_GRID2D(t0){
+      VFXEpoch::Vector2Df pos((j+0.5f) * user_params.h, (i+0.5f) * user_params.h);
+      pos = trace_rk2(pos, -user_params.dt);
+      t0(i, j) = get_tmp(pos);
+  }
+  t = t0;
 }
 
 // Protected
@@ -254,8 +326,9 @@ void
 EulerGAS2D::advect_curl(){
   // Using RK2 method time integration
   // advect curl field
+  assert(omega0.getDimX() == omega.getDimX() && omega0.getDimY() == omega0.getDimY());
   LOOP_GRID2D(omega0){
-    VFXEpoch::Vector2Df pos((j+0.5f) * user_params.size.m_x, (i+0.5f) * user_params.size.m_y);
+    VFXEpoch::Vector2Df pos((j+0.5f) * user_params.h, (i+0.5f) * user_params.h);
     pos = trace_rk2(pos, -user_params.dt);
     omega0(i, j) = get_curl(pos);
   }
@@ -270,7 +343,7 @@ EulerGAS2D::advect_particles(){
     ite->pos = trace_rk2(ite->pos, user_params.dt);
 
     // Correction particles at the boundaries
-    float h = user_params.size.m_x;
+    float h = user_params.h;
     float corrections = VFXEpoch::InterpolateGrid(ite->pos / h, nodal_solid_phi);
     if(corrections < 0.0f){
       VFXEpoch::Vector2Df normal;
@@ -281,10 +354,30 @@ EulerGAS2D::advect_particles(){
   }
 }
 
-// Public
+// Protected
+void
+EulerGAS2D::project(){
+  pressure_solve();
+  apply_gradients();
+}
+
+// Protected
 void
 EulerGAS2D::apply_buoyancy(){
-  /* TODO: code */
+  // Dimension check
+  assert(v0.getDimX() == v.getDimX() && v0.getDimY() == v.getDimY());
+
+  float a = user_params.buoyancy_alpha;
+  float b = user_params.buoyancy_beta;
+  int row = user_params.dimension.m_y;
+  int col = user_params.dimension.m_x;
+  LOOP_GRID2D(v0){
+    if(0 == i || j == 0) continue;
+    float average_temperature = (t(i, j) + t(i, j - 1)) * 0.5f;
+    float average_density = (d(i, j) + d(i, j - 1)) * 0.5f;
+    v0(i, j) = v(i, j) - a * average_density + b * average_temperature;
+  }
+  v = v0;
 }
 
 //Protected
@@ -298,14 +391,55 @@ EulerGAS2D::trace_rk2(const Vector2Df& pos, float dt){
 // Protected
 // Overload from SIM_Base.h -> class Euler_Fluid2D_Base
 void
-EulerGAS2D::presure_solve(){
-  /* TODO: code */
+EulerGAS2D::pressure_solve(){
+  // System size check and resize;
+  int system_size = user_params.dimension.m_x * user_params.dimension.m_y;
+  if(pressure_solver_params.pressure.size() != system_size){
+    pressure_solver_params.rhs.resize(system_size);
+    pressure_solver_params.pressure.resize(system_size);
+    pressure_solver_params.sparse_matrix.resize(system_size);
+  }
+
+  VFXEpoch::Grid2DdScalarField div(user_params.dimension.m_x, user_params.dimension.m_y, user_params.h, user_params.h);
+  get_grid_weights();
+  VFXEpoch::Analysis::computeDivergence_with_weights_mac(div, user_params.h, u, v, uw, vw);
+  pressure_solver_params.rhs = div.toVector();
+  setup_pressure_coef_matrix();
+  bool success = pressure_solver_params.pcg_solver.solve(pressure_solver_params.sparse_matrix,
+                                                         pressure_solver_params.rhs,
+                                                         pressure_solver_params.pressure,
+                                                         user_params.tolerance,
+                                                         user_params.max_iterations);
+  if(!success){
+    std::cout << endl <<  "Pressure solve failed!" << endl;
+  }                                               
 }
 
 // Protected
+// Issues here, when no value set for nodal_solid_phi. Program crashes
+// as accessing out of range of pressure
 void
 EulerGAS2D::apply_gradients(){
-  /* TODO: code */
+  VFXEpoch::Grid2DdScalarField _pressure(user_params.dimension.m_x, user_params.dimension.m_y);
+  std::vector<double> solvedPressure(pressure_solver_params.pressure.begin(), pressure_solver_params.pressure.end());
+  VFXEpoch::DataFromVectorToGrid(solvedPressure, _pressure);
+  float dt = user_params.dt;
+  float dx = user_params.h;
+  LOOP_GRID2D(u){
+    if(uw(i, j) > 0){
+      u(i, j) -= dt * (_pressure(i, j) - _pressure(i, j - 1)) / dx;
+    } else {
+      u(i, j) = 0.0f;
+    }
+  }
+
+  LOOP_GRID2D(v){
+    if(vw(i, j) > 0){
+      v(i, j) -= dt * (_pressure(i, j) - _pressure(i - 1, j)) / dx;
+    } else {
+      v(i, j) = 0.0f;
+    }
+  }
 }
 
 // Protected
@@ -320,24 +454,32 @@ EulerGAS2D::extrapolate(Grid2DfScalarField& grid,
 
   for(int i = 0; i != 5; i++){
     mask0 = mask;
-    LOOP_GRID2D(grid){
-      float sum = 0;
+    LOOP_GRID2D_WITHOUT_DOMAIN_BOUNDARY(grid){
+      float sum = 0.0f;
       int count = 0;
 
       if(BOUNDARY_MASK::SOMETHING == mask0(i, j)){
         if(BOUNDARY_MASK::NOTHING == mask0(i, j+1)){
           sum += grid(i, j+1);
           ++count;
-        } else if(BOUNDARY_MASK::NOTHING == mask0(i, j-1)){
+        }
+
+        if(BOUNDARY_MASK::NOTHING == mask0(i, j-1)){
           sum += grid(i, j-1);
           ++count;
-        } else if(BOUNDARY_MASK::NOTHING == mask0(i+1, j)){
+        }
+
+        if(BOUNDARY_MASK::NOTHING == mask0(i+1, j)){
           sum += grid(i+1, j);
           ++count;
-        } else if(BOUNDARY_MASK::NOTHING == mask0(i-1, j)){
+        }
+
+        if(BOUNDARY_MASK::NOTHING == mask0(i-1, j)){
           sum += grid(i-1, j);
           ++count;
-        } else {
+        } 
+
+        else {
           /* TODO: ... */
         }
 
@@ -354,6 +496,7 @@ EulerGAS2D::extrapolate(Grid2DfScalarField& grid,
 void
 EulerGAS2D::get_grid_weights(){
   LOOP_GRID2D(uw){
+    // TODO: Access out of range "nodal_solid_phi"
     uw(i, j) = 1 - VFXEpoch::InteralFrac(nodal_solid_phi(i+1, j), nodal_solid_phi(i, j));
   }
 
@@ -366,14 +509,14 @@ EulerGAS2D::get_grid_weights(){
 void
 EulerGAS2D::clamp_vel(){
   u0 = u; v0 = v;
-  float h = user_params.size.m_x;
+  float h = user_params.h;
   LOOP_GRID2D(u){
     if(uw(i, j) == 0.0f){
-      VFXEpoch::Vector2Df pos((i+0.5f) * h, j * h);
+      VFXEpoch::Vector2Df pos(j * h, (i+0.5) * h);
       VFXEpoch::Vector2Df vel = get_vel(pos);
       VFXEpoch::Vector2Df normal(0.0f, 0.0f);
-      normal.normalize();
       VFXEpoch::InterpolateGradient(normal, pos / h, nodal_solid_phi);
+      normal.normalize();
       float correction_component = VFXEpoch::Vector2Df::dot(vel, normal);
       vel -= correction_component * normal;
       u0(i, j) = vel.m_x;
@@ -382,7 +525,7 @@ EulerGAS2D::clamp_vel(){
 
   LOOP_GRID2D(v){
     if(vw(i, j) == 0.0f){
-      VFXEpoch::Vector2Df pos((i) * h, (j+0.5f) * h);
+      VFXEpoch::Vector2Df pos((j+0.5f) * h, i * h);
       VFXEpoch::Vector2Df vel = get_vel(pos);
       VFXEpoch::Vector2Df normal(0.0f, 0.0f);
       VFXEpoch::InterpolateGradient(normal, pos / h, nodal_solid_phi);
@@ -396,26 +539,62 @@ EulerGAS2D::clamp_vel(){
 }
 
 // Protected
+void
+EulerGAS2D::setup_pressure_coef_matrix(){
+  int row = user_params.dimension.m_y;
+  int col = user_params.dimension.m_x;
+  int idx = 0;
+  double val = 0.0;
+  float dx = user_params.h;
+  float dt = user_params.dt;
+  int grid_each_row_elements = user_params.dimension.m_x;
+  pressure_solver_params.sparse_matrix.zero();
+  LOOP_GRID2D_WITHOUT_DOMAIN_BOUNDARY(row, col){
+    idx = i * user_params.dimension.m_x + j;
+    val = uw(i, j+1) * dt / std::pow(dx, 2.0f);
+    pressure_solver_params.sparse_matrix.add_to_element(idx, idx,val);
+    pressure_solver_params.sparse_matrix.add_to_element(idx, idx + 1, -val);
+    val = uw(i, j) * dt / std::pow(dx, 2.0f);
+    pressure_solver_params.sparse_matrix.add_to_element(idx, idx, val);
+    pressure_solver_params.sparse_matrix.add_to_element(idx, idx - 1, -val);
+    val = vw(i+1, j) * dt / std::pow(dx, 2.0f);
+    pressure_solver_params.sparse_matrix.add_to_element(idx, idx, val);
+    pressure_solver_params.sparse_matrix.add_to_element(idx, idx + grid_each_row_elements, -val);
+    val = vw(i, j) * dt / std::pow(dx, 2.0f);
+    pressure_solver_params.sparse_matrix.add_to_element(idx, idx, val);
+    pressure_solver_params.sparse_matrix.add_to_element(idx, idx - grid_each_row_elements, -val);
+  }
+}
+
+// Protected
 Vector2Df
 EulerGAS2D::get_vel(const Vector2Df& pos){
-  assert(user_params.size.m_x != 0 && user_params.size.m_y != 0);
-  float _u = VFXEpoch::InterpolateGrid(pos / user_params.size.m_x - Vector2Df(0.5f, 0.0f), u);
-  float _v = VFXEpoch::InterpolateGrid(pos / user_params.size.m_y - Vector2Df(0.0f, 0.5f), v);
+  assert(user_params.h != 0);
+  float _u = VFXEpoch::InterpolateGrid(pos / (float)user_params.h - Vector2Df(0.0f, 0.5f), u);
+  float _v = VFXEpoch::InterpolateGrid(pos / (float)user_params.h - Vector2Df(0.5f, 0.0f), v);
   return Vector2Df(_u, _v);
 }
 
 // Protected
 float
 EulerGAS2D::get_den(const Vector2Df& pos){
-  assert(user_params.size.m_x != 0 && user_params.size.m_y != 0 && user_params.size.m_x == user_params.size.m_y);
-  float h = user_params.size.m_x;
+  assert(user_params.h != 0);
+  float h = user_params.h;
   return VFXEpoch::InterpolateGrid(pos / h - Vector2Df(0.5f, 0.5f), d);
 }
 
 // Protected
 float
 EulerGAS2D::get_curl(const Vector2Df& pos){
-  assert(user_params.size.m_x != 0 && user_params.size.m_y != 0 && user_params.size.m_x == user_params.size.m_y);
-  float h = user_params.size.m_x;
+  assert(user_params.h != 0);
+  float h = user_params.h;
   return VFXEpoch::InterpolateGrid(pos / h - Vector2Df(0.5f, 0.5f), omega);
+}
+
+// Protected
+float
+EulerGAS2D::get_tmp(const Vector2Df& pos){
+  assert(user_params.h != 0);
+  float h = user_params.h;
+  return VFXEpoch::InterpolateGrid(pos / h - Vector2Df(0.5f, 0.5f), t);
 }

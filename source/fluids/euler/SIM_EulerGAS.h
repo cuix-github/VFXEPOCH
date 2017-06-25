@@ -8,11 +8,16 @@
 *******************************************************************************/
 #ifndef _SIM_EULER_GAS_H_
 #define _SIM_EULER_GAS_H_
+
 #include "fluids/euler/SIM_FluidBase.h"
 #include "utl/PCGSolver/util.h"
 #include "utl/PCGSolver/sparse_matrix.h"
 #include "utl/PCGSolver/blas_wrapper.h"
 #include "utl/PCGSolver/pcg_solver.h"
+
+/********************************* For Debug *********************************/
+#include "utl/UTL_Helpers.h"
+/********************************* For Debug *********************************/
 
 using namespace VFXEpoch;
 using namespace VFXEpoch::Solvers;
@@ -30,26 +35,27 @@ namespace VFXEpoch{
       public:
         Parameters(){
           dimension.m_x = 0; dimension.m_y = 0; dt = 0.0; 
-          size.m_x = 0.0f; size.m_y = 0.0f;
           space.m_x = space.m_y = 0.0;
+          h = 0.0;
           dt = 0.0;
           buoyancy_alpha = buoyancy_beta = 0.0;
           tolerance = 0.0;
           max_iterations = 0;
           num_particles = 0;
           density_source = 0.0;
+          external_force_strength = 0.0;
         }
-        Parameters(Vector2Di _dimension, Vector2Df _size, Vector2Dd _space, double _dt, 
+        Parameters(Vector2Di _dimension, double _h, Vector2Dd _space, double _dt, 
                    double _buoyancy_alpha, double _buoyancy_beta, double _tolerance,
                    double _diff, double _visc, int _max_iterations, int _num_particles, 
-                   double _density_source): 
-                   dimension(_dimension), size(_size), space(_space), dt(_dt), 
+                   double _density_source, double _external_force_strength): 
+                   dimension(_dimension), h(_h), space(_space), dt(_dt), 
                    buoyancy_alpha(_buoyancy_alpha), buoyancy_beta(_buoyancy_beta), 
                    tolerance(_tolerance), diff(_diff), visc(_visc), max_iterations(_max_iterations), 
-                   num_particles(_num_particles), density_source(_density_source){}
+                   num_particles(_num_particles), density_source(_density_source), external_force_strength(_external_force_strength){}
         Parameters(const Parameters& src){
           dimension = src.dimension;
-          size = src.size;
+          h = src.h;
           space = src.space;
           dt = src.dt;
           buoyancy_alpha = src.buoyancy_alpha; buoyancy_beta = src.buoyancy_beta;
@@ -59,10 +65,11 @@ namespace VFXEpoch{
           max_iterations = src.max_iterations;
           num_particles = src.num_particles;
           density_source = src.density_source;
+          external_force_strength = src.external_force_strength;
         }
         Parameters& operator=(const Parameters& rhs){
           dimension = rhs.dimension;
-          size = rhs.size;
+          h = rhs.h;
           space = rhs.space;
           dt = rhs.dt;
           buoyancy_alpha = rhs.buoyancy_alpha; buoyancy_beta = rhs.buoyancy_beta;
@@ -72,14 +79,15 @@ namespace VFXEpoch{
           max_iterations = rhs.max_iterations;
           num_particles = rhs.num_particles;
           density_source = rhs.density_source;
+          external_force_strength = rhs.external_force_strength;
           return *this;
         }
         ~Parameters(){ clear(); }
       public:
         inline void clear(){
           dimension.m_x = dimension.m_y = 0;
-          size.m_x = size.m_y = 0.0f;
           space.m_x = space.m_y = 0.0;
+          h = 0.0;
           dt = 0.0;
           buoyancy_alpha = buoyancy_beta = 0.0;
           tolerance = 0.0;
@@ -88,13 +96,14 @@ namespace VFXEpoch{
           max_iterations = 0;
           num_particles = 0;
           density_source = 0.0;
+          external_force_strength = 0.0;
         }
 
         friend inline ostream&
         operator<<(ostream& os, const Parameters& params) {
           os << std::setprecision(4) << setiosflags(ios::fixed);
           os << "Dimension = " << params.dimension.m_x << " x " << params.dimension.m_y << endl;
-          os << "Width = " << params.size.m_x << ", height = " << params.size.m_y << endl;
+          os << "Increment h = " << params.h << endl;
           os << "Dx = " << params.space.m_x << ", Dy = " << params.space.m_y << endl;
           os << "Diffuse rate = " << params.diff << endl;
           os << "Viscousity = " << params.visc << endl;
@@ -111,8 +120,8 @@ namespace VFXEpoch{
         }
       public:
         Vector2Di dimension;
-        Vector2Df size;
         Vector2Dd space;
+        double h;
         double dt;
         double buoyancy_alpha, buoyancy_beta;
         double vort_conf_eps;
@@ -134,37 +143,54 @@ namespace VFXEpoch{
       ~EulerGAS2D();
     public:
       // TODO: Implement overload functions
+      // TODO: Need to set nodal_solid_boundary
       bool init(Parameters params); // Overload
       void step(); // Overload
       void close(); // Overload
-      void add_source(int i, int j); // Overload
-      void add_external_force(VFXEpoch::VECTOR_COMPONENTS component, int i, int j);
+      void set_source_location(int i, int j);
+      void set_external_force_location(VFXEpoch::VECTOR_COMPONENTS component, int i, int j);
       void add_particles(VFXEpoch::Particle2D p);
+      
+      // About boundaries
     public:
       void set_inside_boundary(Grid2DCellTypes boundaries);
       void set_domain_boundary(VFXEpoch::BOUNDARY boundary_type, VFXEpoch::EDGES_2DSIM edge);
+      void set_static_boundary(float (*phi)(const VFXEpoch::Vector2Df&));
+
+      /********************************* Debug the field *********************************/
+      // TODO: Ensure to close following functions
+    public:      
+      /********************************* Debug the field *********************************/
+
     public:
       void set_user_params(Parameters params);
       EulerGAS2D::Parameters get_user_params();
     protected:
+      void add_source(); // Overload
+      void add_force();
       void set_domain_boundary_wrapper(Grid2DfScalarField& field);
       void density_diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref);
       void dynamic_diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref);
       void advect_vel();
       void advect_curl();
       void advect_den();
+      void advect_tmp();
       void advect_particles();
+      void project();
+    protected:
       void apply_buoyancy();
-      void presure_solve(); // Overload
+      void pressure_solve(); // Overload
       void apply_gradients();
       void extrapolate(Grid2DfScalarField& grid, const Grid2DfScalarField& weights, 
                        Grid2DCellTypes& mask, Grid2DCellTypes& mask0);
       void get_grid_weights();
       void clamp_vel();
+      void setup_pressure_coef_matrix();
       Vector2Df trace_rk2(const Vector2Df& pos, float dt);
       Vector2Df get_vel(const Vector2Df& pos);
       float get_den(const Vector2Df& pos);
       float get_curl(const Vector2Df& pos);
+      float get_tmp(const Vector2Df& pos);
     private:
     /*********************** Pressure Solver Parameters ************************/
       struct PressureSolverParams{
@@ -187,12 +213,17 @@ namespace VFXEpoch{
       Grid2DfScalarField uw, vw;
       Grid2DfScalarField d, d0;
       Grid2DfScalarField t, t0;
-      Grid2DfScalarField pressure;
       Grid2DfScalarField omega, omega0;
       Grid2DfScalarField nodal_solid_phi;
       Grid2DCellTypes inside_mask, inside_mask0;
       BndConditionPerEdge domain_boundaries[4];
       vector<VFXEpoch::Particle2D> particles_container;
+      vector<VFXEpoch::Vector2Di> source_locations;
+
+      // The last component is used to specify velocity component
+      // 1 represents vertical component, 0 is the horizontal
+      vector<VFXEpoch::Vector3Di> external_force_locations;
+      
       Parameters user_params;
       PressureSolverParams pressure_solver_params;
     };

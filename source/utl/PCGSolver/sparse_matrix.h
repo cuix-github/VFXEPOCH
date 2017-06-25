@@ -65,7 +65,7 @@ struct SparseMatrix
          }else if(index[i][k]>j){
             insert(index[i], k, j);
             insert(value[i], k, new_value);
-            return;
+            return; 
          }
       }
       index[i].push_back(j);

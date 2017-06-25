@@ -57,10 +57,11 @@ namespace VFXEpoch
 		Vector2D operator-(const Vector2D& source) const { return Vector2D(m_x - source.m_x, m_y - source.m_y); }
 		Vector2D operator-(const Vector2D&& source) const { return Vector2D(m_x - source.m_x, m_y - source.m_y); }
 		Vector2D operator-()const { return Vector2D(-m_x, -m_y); }
+		Vector2D operator/(T coef){ return Vector2D(m_x / coef, m_y / coef); }
 		Vector2D& operator+=(const Vector2D& source){ m_x += source.m_x; m_y += source.m_y; return *this; }
 		Vector2D& operator-=(const Vector2D& source){ m_x -= source.m_x; m_y -= source.m_y; return *this; }
 		Vector2D& operator*=(const T& coef){ m_x *= coef; m_y *= coef; return *this; }
-		Vector2D& operator/=(const T& coef){ m_x / coef; m_y / coef; return *this; }
+		Vector2D& operator/=(const T& coef){ m_x /= coef; m_y /= coef; return *this; }
 		T& operator[](int i) { assert(i < 0 || i > 1); if (0 == i) return m_x; else return m_y;	}
 
 		inline bool operator==(const Vector2D& source) const {
