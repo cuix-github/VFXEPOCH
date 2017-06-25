@@ -11,6 +11,8 @@
         "type_traits": "cpp",
         "slist": "cpp",
         "initializer_list": "cpp",
-        "array": "cpp"
+        "array": "cpp",
+        "chrono": "cpp",
+        "algorithm": "cpp"
     }
 }

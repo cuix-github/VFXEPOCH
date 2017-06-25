@@ -123,25 +123,13 @@ EulerGAS2D::step(){
   advect_vel();
   if(0 != external_force_locations.size()) add_force();  
   project();
-  cout << endl << "u field before extrapolate" << endl;
-  Helpers::displayScalarField(u);
-  cout << endl << "v field before extrapolate" << endl;
-  Helpers::displayScalarField(v);
-  cout << endl << "Fluids & Boundaries mask" << endl;
-  Helpers::displayCellStatus(inside_mask);
-  cout << endl << "Fluids & Boundaries mask0" << endl;
-  Helpers::displayCellStatus(inside_mask0);
   extrapolate(u, uw, inside_mask, inside_mask0);
   extrapolate(v, vw, inside_mask, inside_mask0);
-  cout << endl << "u field after extrapolate" << endl;
-  Helpers::displayScalarField(u);
-  cout << endl << "v field after extrapolate" << endl;
-  Helpers::displayScalarField(v);
-  cout << endl << "Fluids & Boundaries mask" << endl;
-  Helpers::displayCellStatus(inside_mask);
-  cout << endl << "Fluids & Boundaries mask0" << endl;
-  Helpers::displayCellStatus(inside_mask0);
   clamp_vel();
+  cout << endl << "u field" << endl;
+  Helpers::displayScalarField(u);
+  cout << endl << "v field" << endl;
+  Helpers::displayScalarField(v);
 }
 
 // Public
@@ -474,16 +462,24 @@ EulerGAS2D::extrapolate(Grid2DfScalarField& grid,
         if(BOUNDARY_MASK::NOTHING == mask0(i, j+1)){
           sum += grid(i, j+1);
           ++count;
-        } else if(BOUNDARY_MASK::NOTHING == mask0(i, j-1)){
+        }
+
+        if(BOUNDARY_MASK::NOTHING == mask0(i, j-1)){
           sum += grid(i, j-1);
           ++count;
-        } else if(BOUNDARY_MASK::NOTHING == mask0(i+1, j)){
+        }
+
+        if(BOUNDARY_MASK::NOTHING == mask0(i+1, j)){
           sum += grid(i+1, j);
           ++count;
-        } else if(BOUNDARY_MASK::NOTHING == mask0(i-1, j)){
+        }
+
+        if(BOUNDARY_MASK::NOTHING == mask0(i-1, j)){
           sum += grid(i-1, j);
           ++count;
-        } else {
+        } 
+
+        else {
           /* TODO: ... */
         }
 
