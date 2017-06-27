@@ -119,20 +119,19 @@ EulerGAS2D::init(Parameters params){
 void
 EulerGAS2D::step(){
   if(0 != source_locations.size())  add_source();
-  cout << endl << "**Advection of particles is now working**" << endl;
+  cout << "-->Advect particles" << endl;
   advect_particles();
-  cout << endl << "**Self-Advection is now working**" << endl;
+  cout << "-->Advect velocity (Self-Advection)" << endl;
   advect_vel();
   if(0 != external_force_locations.size()) add_force();
-  cout << endl << "**Pressure solving & Ensure divergence free**" << endl;
+  cout << "-->Solving pressure" << endl;
   project();
-  cout << endl << "**Pressure solved**" << endl;
-  cout << endl << "Tolerance:" << user_params.tolerance << endl;
-  cout << endl << "Iterations:" << user_params.max_iterations << endl;
+  cout << "-->Pressure linear solver (pcg) outputs:" << endl;
+  cout << " ->Tolerance:" << user_params.tolerance << endl;
+  cout << " ->rations:" << user_params.max_iterations << endl;
   extrapolate(u, uw, inside_mask, inside_mask0);
   extrapolate(v, vw, inside_mask, inside_mask0);
-  cout << endl << "**Solving boundary conditions**" << endl;
-  cout << "------------------ Step done ------------------" << endl;
+  cout << "-->Solving boundary conditions" << endl;
   clamp_vel();
 
 }

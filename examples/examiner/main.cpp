@@ -84,8 +84,10 @@ int main(int argc, char** argv)
 	// TODO: A small size simulation for unit test
 	int total_frames = 300;
 	for(int i = 0; i != total_frames; i++){
-		cout << endl << "------------------ Frame " << i << " ------------------" << endl;
+		cout << endl;
+		cout << "****************** Frame " << i << " ******************" << endl;
 		gas_solver->step();
+		cout << "**************** Step " << i << " done ****************" << endl;
 	}
 
 	gas_solver->close();
