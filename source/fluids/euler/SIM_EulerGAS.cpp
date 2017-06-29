@@ -410,6 +410,9 @@ EulerGAS2D::pressure_solve(){
   VFXEpoch::Analysis::computeDivergence_with_weights_mac(div, user_params.h, u, v, uw, vw);
   pressure_solver_params.rhs = div.toVector();
   setup_pressure_coef_matrix();
+
+  // TODO: Invoke pcgsolver interface to setup the solver inside parameters
+
   bool success = pressure_solver_params.pcg_solver.solve(pressure_solver_params.sparse_matrix,
                                                          pressure_solver_params.rhs,
                                                          pressure_solver_params.pressure,
