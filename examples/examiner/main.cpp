@@ -12,8 +12,8 @@
 
 #include "Helpers.h"
 
-const int Nx = 512;
-const int Ny = 512;
+const int Nx = 1024;
+const int Ny = 1024;
 const float source = 1.0f;
 const float h = 1.f / Nx;
 VFXEpoch::Vector2Df c0(0.5,0.5), c1(0.7,0.5), c2(0.3,0.35), c3(0.5,0.7);
@@ -28,10 +28,10 @@ float circle_phi(const VFXEpoch::Vector2Df& pos, const VFXEpoch::Vector2Df& cent
 
 float boundary_phi(const VFXEpoch::Vector2Df& position) {
    float phi0 = -circle_phi(position, c0, rad0);
-   //float phi1 = circle_phi(position, c1, rad1);
-   //float phi2 = circle_phi(position, c2, rad2);
-   //float phi3 = circle_phi(position, c3, rad3);
-   //return std::min(std::min(phi0,phi1), std::min(phi2,phi3));
+   float phi1 = circle_phi(position, c1, rad1);
+   float phi2 = circle_phi(position, c2, rad2);
+   float phi3 = circle_phi(position, c3, rad3);
+   return std::min(std::min(phi0,phi1), std::min(phi2,phi3));
    return phi0;
 }
 /****************************** For Dbuge ******************************/
@@ -66,7 +66,6 @@ int main(int argc, char** argv)
 	params.diff = 0.01;
 	params.visc = 0.01;
 
-	// Error cast.
 	gas_solver->set_user_params(params);
 	params.clear();
 	params = gas_solver->get_user_params();
@@ -84,10 +83,10 @@ int main(int argc, char** argv)
 	// TODO: A small size simulation for unit test
 	int total_frames = 300;
 	for(int i = 0; i != total_frames; i++){
-		cout << endl;
 		cout << "****************** Frame " << i << " ******************" << endl;
 		gas_solver->step();
 		cout << "**************** Step " << i << " done ****************" << endl;
+		cout << endl;
 	}
 
 	gas_solver->close();

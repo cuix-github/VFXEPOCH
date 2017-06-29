@@ -119,19 +119,20 @@ EulerGAS2D::init(Parameters params){
 void
 EulerGAS2D::step(){
   if(0 != source_locations.size())  add_source();
-  cout << "-->Advect particles" << endl;
+  cout << "--> Advect particles" << endl;
   advect_particles();
-  cout << "-->Advect velocity (Self-Advection)" << endl;
+  cout << "--> Advect velocity (Self-Advection)" << endl;
   advect_vel();
   if(0 != external_force_locations.size()) add_force();
-  cout << "-->Solving pressure" << endl;
+  cout << "--> Solving pressure" << endl;
   project();
-  cout << "-->Pressure linear solver (pcg) outputs:" << endl;
-  cout << " ->Tolerance:" << user_params.tolerance << endl;
-  cout << " ->rations:" << user_params.max_iterations << endl;
+  cout << "--> Pressure linear solver (pcg) outputs:" << endl;
+  cout << " -> Tolerance:" << user_params.tolerance << endl;
+  cout << " -> rations:" << user_params.max_iterations << endl;
+  cout << "--> Looking for boundaries" << endl;
   extrapolate(u, uw, inside_mask, inside_mask0);
   extrapolate(v, vw, inside_mask, inside_mask0);
-  cout << "-->Solving boundary conditions" << endl;
+  cout << "--> Solving boundary conditions" << endl;
   clamp_vel();
 
 }
@@ -415,7 +416,11 @@ EulerGAS2D::pressure_solve(){
                                                          user_params.tolerance,
                                                          user_params.max_iterations);
   if(!success){
-    std::cout << endl <<  "Pressure solve failed!" << endl;
+    #ifdef __linux__
+    std:: cout << "\033[1;33mWARNING:Pressure solve failed!\033[0m" << endl;
+    #elif __WIN32__
+    std::cout <<  "Pressure solve failed!" << endl;
+    #endif
   }                                               
 }
 
