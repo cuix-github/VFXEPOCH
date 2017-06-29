@@ -417,9 +417,9 @@ EulerGAS2D::pressure_solve(){
                                                          user_params.max_iterations);
   if(!success){
     #ifdef __linux__
-    std:: cout << "\033[1;33mWARNING:Pressure solve failed!\033[0m" << endl;
+    std:: cout << "\033[1;33mWARNING: Pressure solve failed!\033[0m" << endl;
     #elif __WIN32__
-    std::cout <<  "Pressure solve failed!" << endl;
+    std::cout <<  "WARNING: Pressure solve failed!" << endl;
     #endif
   }                                               
 }
