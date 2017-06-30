@@ -35,31 +35,29 @@ namespace VFXEpoch{
       public:
         Parameters(){
           dimension.m_x = 0; dimension.m_y = 0; dt = 0.0; 
-          space.m_x = space.m_y = 0.0;
           h = 0.0;
           dt = 0.0;
           buoyancy_alpha = buoyancy_beta = 0.0;
-          tolerance = 0.0;
+          min_tolerance = 0.0;
           max_iterations = 0;
           num_particles = 0;
           density_source = 0.0;
           external_force_strength = 0.0;
         }
-        Parameters(Vector2Di _dimension, double _h, Vector2Dd _space, double _dt, 
-                   double _buoyancy_alpha, double _buoyancy_beta, double _tolerance,
+        Parameters(Vector2Di _dimension, double _h, double _dt, 
+                   double _buoyancy_alpha, double _buoyancy_beta, double _min_tolerance,
                    double _diff, double _visc, int _max_iterations, int _num_particles, 
                    double _density_source, double _external_force_strength): 
-                   dimension(_dimension), h(_h), space(_space), dt(_dt), 
+                   dimension(_dimension), h(_h), dt(_dt), 
                    buoyancy_alpha(_buoyancy_alpha), buoyancy_beta(_buoyancy_beta), 
-                   tolerance(_tolerance), diff(_diff), visc(_visc), max_iterations(_max_iterations), 
+                   min_tolerance(_min_tolerance), diff(_diff), visc(_visc), max_iterations(_max_iterations), 
                    num_particles(_num_particles), density_source(_density_source), external_force_strength(_external_force_strength){}
         Parameters(const Parameters& src){
           dimension = src.dimension;
           h = src.h;
-          space = src.space;
           dt = src.dt;
           buoyancy_alpha = src.buoyancy_alpha; buoyancy_beta = src.buoyancy_beta;
-          tolerance = src.tolerance;
+          min_tolerance = src.min_tolerance;
           visc = src.visc;
           diff = src.diff;
           max_iterations = src.max_iterations;
@@ -70,10 +68,9 @@ namespace VFXEpoch{
         Parameters& operator=(const Parameters& rhs){
           dimension = rhs.dimension;
           h = rhs.h;
-          space = rhs.space;
           dt = rhs.dt;
           buoyancy_alpha = rhs.buoyancy_alpha; buoyancy_beta = rhs.buoyancy_beta;
-          tolerance = rhs.tolerance;
+          min_tolerance = rhs.min_tolerance;
           diff = rhs.diff;
           visc = rhs.visc;
           max_iterations = rhs.max_iterations;
@@ -86,11 +83,10 @@ namespace VFXEpoch{
       public:
         inline void clear(){
           dimension.m_x = dimension.m_y = 0;
-          space.m_x = space.m_y = 0.0;
           h = 0.0;
           dt = 0.0;
           buoyancy_alpha = buoyancy_beta = 0.0;
-          tolerance = 0.0;
+          min_tolerance = 0.0;
           diff = 0.0;
           visc = 0.0;
           max_iterations = 0;
@@ -101,10 +97,9 @@ namespace VFXEpoch{
 
         friend inline ostream&
         operator<<(ostream& os, const Parameters& params) {
-          os << std::setprecision(4) << setiosflags(ios::fixed);
+          os << std::setprecision(6) << setiosflags(ios::fixed);
           os << "Dimension = " << params.dimension.m_x << " x " << params.dimension.m_y << endl;
           os << "Increment h = " << params.h << endl;
-          os << "Dx = " << params.space.m_x << ", Dy = " << params.space.m_y << endl;
           os << "Diffuse rate = " << params.diff << endl;
           os << "Viscousity = " << params.visc << endl;
           os << "Time step = " << params.dt << endl;
@@ -114,23 +109,25 @@ namespace VFXEpoch{
           os << "Vorticity Confinement Epsilon = " << params.vort_conf_eps << endl;
           os << "Number of particles = " << params.num_particles << endl;
           os << "Density source = " << params.density_source << endl;
-          os << "Iterations in solver = " << params.max_iterations << endl;
+          os << "Maximum iterations in pressure solver = " << params.max_iterations << endl;
+          os << "Minimum tolerance in pressure solver = " << params.min_tolerance << endl;
           os << "External force strength = " << params.external_force_strength << endl;
           return os;
         }
       public:
         Vector2Di dimension;
-        Vector2Dd space;
         double h;
         double dt;
         double buoyancy_alpha, buoyancy_beta;
         double vort_conf_eps;
-        double tolerance;
+        double out_tolerance;
+        double min_tolerance;
         double density_source;
         double external_force_strength;
         double diff;
         double visc;
         int max_iterations;
+        int out_iterations;
         int num_particles;
       };
     /***************************** User Parameters END *************************/
@@ -181,10 +178,10 @@ namespace VFXEpoch{
       void apply_buoyancy();
       void pressure_solve(); // Overload
       void apply_gradients();
-      void extrapolate(Grid2DfScalarField& grid, const Grid2DfScalarField& weights, 
-                       Grid2DCellTypes& mask, Grid2DCellTypes& mask0);
+      void find_boundary(Grid2DfScalarField& grid, const Grid2DfScalarField& weights, 
+                           Grid2DCellTypes& mask, Grid2DCellTypes& mask0);
       void get_grid_weights();
-      void clamp_vel();
+      void correct_vel();
       void setup_pressure_coef_matrix();
       Vector2Df trace_rk2(const Vector2Df& pos, float dt);
       Vector2Df get_vel(const Vector2Df& pos);

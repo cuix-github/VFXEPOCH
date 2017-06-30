@@ -14,6 +14,14 @@ FILE(
   "${CMAKE_CURRENT_SOURCE_DIR}/examiner/*.cpp"
 )
 
+FILE(
+  GLOB_RECURSE 2DPARTICLE_VISUALIZER
+  "${CMAKE_CURRENT_SOURCE_DIR}/Common/*.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/Common/*.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/viz2D/*.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/viz2D/*.cpp"
+)
+
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} )
@@ -28,6 +36,8 @@ message("WILL INSTALL LIB PATH = ${CMAKE_SOURCE_DIR}/vfxepoch_libs")
 
 add_executable(smoke ${EXAMPLE_SMOKE})
 add_executable(examiner ${EXAMPLE_UNIT_TEST})
+add_executable(2D_particle_visualizer ${2DPARTICLE_VISUALIZER})
 
 target_link_libraries(smoke VFXEpoch ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
 target_link_libraries(examiner VFXEpoch ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
+target_link_libraries(2D_particle_visualizer VFXEpoch ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})

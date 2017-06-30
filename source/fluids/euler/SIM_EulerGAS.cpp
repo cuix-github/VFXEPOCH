@@ -127,13 +127,13 @@ EulerGAS2D::step(){
   cout << "--> Solving pressure" << endl;
   project();
   cout << "--> Pressure linear solver (pcg) outputs:" << endl;
-  cout << " -> Tolerance:" << user_params.tolerance << endl;
-  cout << " -> rations:" << user_params.max_iterations << endl;
+  cout << " -> Tolerance:" << user_params.out_tolerance << endl;
+  cout << " -> rations:" << user_params.out_iterations << endl;
   cout << "--> Looking for boundaries" << endl;
-  extrapolate(u, uw, inside_mask, inside_mask0);
-  extrapolate(v, vw, inside_mask, inside_mask0);
+  find_boundary(u, uw, inside_mask, inside_mask0);
+  find_boundary(v, vw, inside_mask, inside_mask0);
   cout << "--> Solving boundary conditions" << endl;
-  clamp_vel();
+  correct_vel();
 
 }
 
@@ -412,12 +412,12 @@ EulerGAS2D::pressure_solve(){
   setup_pressure_coef_matrix();
 
   // TODO: Invoke pcgsolver interface to setup the solver inside parameters
-
+  pressure_solver_params.pcg_solver.set_solver_parameters(user_params.min_tolerance, user_params.max_iterations);
   bool success = pressure_solver_params.pcg_solver.solve(pressure_solver_params.sparse_matrix,
                                                          pressure_solver_params.rhs,
                                                          pressure_solver_params.pressure,
-                                                         user_params.tolerance,
-                                                         user_params.max_iterations);
+                                                         user_params.out_tolerance,
+                                                         user_params.out_iterations);
   if(!success){
     #ifdef __linux__
     std:: cout << "\033[1;33mWARNING: Pressure solve failed!\033[0m" << endl;
@@ -456,7 +456,7 @@ EulerGAS2D::apply_gradients(){
 
 // Protected
 void
-EulerGAS2D::extrapolate(Grid2DfScalarField& grid, 
+EulerGAS2D::find_boundary(Grid2DfScalarField& grid, 
                         const Grid2DfScalarField& weights, 
                         Grid2DCellTypes& mask, 
                         Grid2DCellTypes& mask0){
@@ -519,7 +519,7 @@ EulerGAS2D::get_grid_weights(){
 
 // Protected
 void
-EulerGAS2D::clamp_vel(){
+EulerGAS2D::correct_vel(){
   u0 = u; v0 = v;
   float h = user_params.h;
   LOOP_GRID2D(u){

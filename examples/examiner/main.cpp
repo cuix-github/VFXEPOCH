@@ -63,6 +63,8 @@ int main(int argc, char** argv)
 	params.max_iterations = 30;
 	params.density_source = 20;
 	params.external_force_strength = 10;
+	params.max_iterations = 300;
+	params.min_tolerance = 1e-5;
 	params.diff = 0.01;
 	params.visc = 0.01;
 
@@ -74,11 +76,10 @@ int main(int argc, char** argv)
 	cout << params << endl;
 
 	/************************************ Test solver functions ************************************/
-	bool isInit = gas_solver->init(params);
-	if(!isInit) return -1;
+	bool isInit = gas_solver->init(params);	if(!isInit) return -1;
 	gas_solver->set_source_location(Nx/2, Ny/2);
-	gas_solver->set_static_boundary(boundary_phi);
 	gas_solver->set_external_force_location(VFXEpoch::VECTOR_COMPONENTS::Y, Nx/2, Ny/2);
+	gas_solver->set_static_boundary(boundary_phi);
 	
 	// TODO: A small size simulation for unit test
 	int total_frames = 300;
