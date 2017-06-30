@@ -14,13 +14,14 @@
 #include <cfloat>
 
 #include "VisualizerHelpers.h"
+#include "VisualizerHelpers_OpenGL.h"
 #include "Helpers.h"
 
 using namespace VFXEpoch::Gluvi;
 
 PanZoom2D cam(-0.1, -0.35, 1.2);
-bool loadBin(const char* filename);
-void initData();
+bool load_bin(const char* filename);
+void init_data();
 void display();
 void mouse(int button, int state, int x, int y);
 void drag(int x, int y);
@@ -32,7 +33,7 @@ int main(int argc, char **argv)
 {   
    //Setup viewer stuff
    Gluvi::init("2D Particles Visualizer", &argc, argv, 720, 480);
-   initData();
+   init_data();
    Gluvi::camera=&cam;
    Gluvi::userDisplayFunc=display;
    Gluvi::userMouseFunc=mouse;
@@ -45,12 +46,12 @@ int main(int argc, char **argv)
 }
 
 void
-initData(){
+init_data(){
     // TODO: Initialize data;
 }
 
 bool
-loadBin(const char* filename){
+load_bin(const char* filename){
     // TODO: Load binary files
     return true;
 }
