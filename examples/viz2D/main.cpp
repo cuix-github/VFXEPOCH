@@ -18,6 +18,7 @@
 #include "Helpers.h"
 
 using namespace VFXEpoch::Gluvi;
+using namespace VFXEpoch::OpenGL_Utility;
 
 PanZoom2D cam(-0.1, -0.35, 1.2);
 bool load_bin(const char* filename);
@@ -32,7 +33,7 @@ std::vector<VFXEpoch::Vector2Df> particles;
 int main(int argc, char **argv)
 {   
    //Setup viewer stuff
-   Gluvi::init("2D Particles Visualizer", &argc, argv, 720, 480);
+   Gluvi::init("2D Particles Visualizer", &argc, argv, 1280, 720);
    init_data();
    Gluvi::camera=&cam;
    Gluvi::userDisplayFunc=display;

@@ -1,5 +1,7 @@
 #include "VisualizerHelpers_OpenGL.h"
 
+using namespace VFXEpoch;
+
 #ifdef __APPLE__ 
   #include <GLUT/glut.h> // why does Apple have to put glut.h here...
 #else
@@ -10,7 +12,8 @@
 #include <cfloat>
 
 // TODO: Synchronize with VFXEPOCH library
-void draw_grid2d(const VFXEpoch::Vector2Df& origin, float dx, float nx, float ny) {
+void 
+OpenGL_Utility::draw_grid2d(const VFXEpoch::Vector2Df& origin, float dx, float nx, float ny) {
 //    float width = nx*dx;
 //    float height = ny*dx;
    
@@ -30,7 +33,8 @@ void draw_grid2d(const VFXEpoch::Vector2Df& origin, float dx, float nx, float ny
 //    glEnd();
 }
 
-void draw_particles2d(const std::vector<VFXEpoch::Vector2Df>& particles_container) {
+void 
+OpenGL_Utility::draw_particles2d(const std::vector<VFXEpoch::Vector2Df>& particles_container) {
    glBegin(GL_POINTS);
    for(unsigned int i = 0; i < particles_container.size(); ++i) {
        glVertex2f(particles_container[i].m_x, particles_container[i].m_y);
