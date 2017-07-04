@@ -20,7 +20,8 @@
 using namespace VFXEpoch::Gluvi;
 using namespace VFXEpoch::OpenGL_Utility;
 
-PanZoom2D cam(-0.1, -0.35, 1.2);
+//PanZoom2D cam(-0.1, -0.35, 1.2);
+PanZoom2D cam(0.0, 0.0, 1.0f);
 bool load_bin(const char* filename);
 void init_data();
 void display();
@@ -33,7 +34,7 @@ std::vector<VFXEpoch::Vector2Df> particles;
 int main(int argc, char **argv)
 {   
    //Setup viewer stuff
-   Gluvi::init("2D Particles Visualizer", &argc, argv, 1280, 720);
+   Gluvi::init("2D Particles Visualizer", &argc, argv, 720, 280);
    init_data();
    Gluvi::camera=&cam;
    Gluvi::userDisplayFunc=display;
@@ -49,6 +50,8 @@ int main(int argc, char **argv)
 void
 init_data(){
     // TODO: Initialize data;
+    VFXEpoch::Vector2Df v(0.5, 0.5);
+    particles.push_back(v);
 }
 
 bool
@@ -60,6 +63,8 @@ load_bin(const char* filename){
 void
 display(){
     // TODO: Draw particles
+    glPointSize(5);
+    OpenGL_Utility::draw_particles2d(particles);
 }
 
 void 
