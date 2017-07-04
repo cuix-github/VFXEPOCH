@@ -20,8 +20,7 @@
 using namespace VFXEpoch::Gluvi;
 using namespace VFXEpoch::OpenGL_Utility;
 
-//PanZoom2D cam(-0.1, -0.35, 1.2);
-PanZoom2D cam(0.0, 0.0, 1.0f);
+PanZoom2D cam(0.0f, 0.0f, 1.0f, true);
 bool load_bin(const char* filename);
 void init_data();
 void display();

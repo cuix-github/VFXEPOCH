@@ -300,12 +300,19 @@ export_rib(ostream &output)
 //=================================================================================
 
 PanZoom2D::
-PanZoom2D(float bottom_, float left_, float height_)
-    : bottom(bottom_), left(left_), height(height_), action_mode(INACTIVE)
+PanZoom2D(float bottom_, float left_, float height_, bool isSquare_)
+    : bottom(bottom_), left(left_), height(height_), isSquare(isSquare_), action_mode(INACTIVE)
 {
     default_bottom=bottom;
     default_left=left;
     default_height=height;
+    default_isSquare=isSquare;
+}
+
+bool PanZoom2D::
+is_square(void)
+{
+    return isSquare;
 }
 
 void PanZoom2D::
@@ -412,6 +419,16 @@ gl_transform(void)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(left, left+(height*winwidth)/winheight, bottom, bottom+height, 0, 1);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+}
+
+void PanZoom2D::
+gl_transform_square(void){
+    glViewport(0, 0, (GLsizei)winwidth, (GLsizei)winheight);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(bottom, bottom+height, bottom, bottom+height, 0.0f, 1.0f);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
@@ -721,7 +738,14 @@ static void gluviDisplay()
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
     // draw the scene
-    if(camera) camera->gl_transform();
+    if(camera) {
+        if(camera->is_square()){
+            camera->gl_transform_square();
+        }
+        else{
+            camera->gl_transform();
+        }
+    }
     if(userDisplayFunc) userDisplayFunc();
 
     // now draw widgets on top
