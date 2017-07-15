@@ -20,7 +20,7 @@
 using namespace VFXEpoch::Gluvi;
 using namespace VFXEpoch::OpenGL_Utility;
 
-PanZoom2D cam(0.0f, 0.0f, 1.0f, true);
+PanZoom2D cam(-2.0f, 0.0f, 4.0f, false);
 bool load_bin(const char* filename);
 void init_data();
 void display();
@@ -35,6 +35,7 @@ int main(int argc, char **argv)
    //Setup viewer stuff
    Gluvi::init("2D Particles Visualizer", &argc, argv, 720, 280);
    init_data();
+   load_bin("../../outputs/Particle_data0036.bin");
    Gluvi::camera=&cam;
    Gluvi::userDisplayFunc=display;
    Gluvi::userMouseFunc=mouse;
@@ -48,21 +49,33 @@ int main(int argc, char **argv)
 
 void
 init_data(){
-    // TODO: Initialize data;
-    VFXEpoch::Vector2Df v(0.5, 0.5);
-    particles.push_back(v);
+    // TODO: Initialize data
 }
 
 bool
 load_bin(const char* filename){
-    // TODO: Load binary files
+    // Debug: In progress for visualizing particles
+    FILE* f;
+    f = fopen(filename, "rb");
+    int num_of_particles = 0;
+    fread(&num_of_particles, sizeof(num_of_particles), 1, f);
+    float *data = new float[num_of_particles * 4]; if(!data) return false;
+    fread(data, sizeof(data), 4 * num_of_particles, f);
+    fclose(f);
+    
+    for(int i = 0; i != num_of_particles; i++){
+        VFXEpoch::Vector2Df v(data[i * 4 + 0], data[i * 4 + 1]);
+        particles.push_back(v);
+    }
+
+    delete [] data;
     return true;
 }
 
 void
 display(){
     // TODO: Draw particles
-    glPointSize(5);
+    glPointSize(1);
     OpenGL_Utility::draw_particles2d(particles);
 }
 
