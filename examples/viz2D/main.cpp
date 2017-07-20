@@ -20,8 +20,9 @@
 using namespace VFXEpoch::Gluvi;
 using namespace VFXEpoch::OpenGL_Utility;
 
-PanZoom2D cam(-2.0f, 0.0f, 4.0f, false);
+PanZoom2D cam(-2.5f, 0.0f, 5.0f, false);
 bool load_bin(const char* filename);
+void write_EXRs(int frame);
 void init_data();
 void display();
 void mouse(int button, int state, int x, int y);
@@ -29,13 +30,14 @@ void drag(int x, int y);
 void timer(int junk);
 
 std::vector<VFXEpoch::Vector2Df> particles;
+unsigned int total_frames = 300;
+unsigned int frame_counter = 0;
 
 int main(int argc, char **argv)
 {   
    //Setup viewer stuff
    Gluvi::init("2D Particles Visualizer", &argc, argv, 720, 280);
    init_data();
-   load_bin("../../outputs/Particle_data0036.bin");
    Gluvi::camera=&cam;
    Gluvi::userDisplayFunc=display;
    Gluvi::userMouseFunc=mouse;
@@ -50,6 +52,10 @@ int main(int argc, char **argv)
 void
 init_data(){
     // TODO: Initialize data
+    frame_counter = 1;
+    char filename[256];
+    sprintf(filename, "../../outputs/sims/Particle_data%04d.bin", frame_counter);
+    load_bin(filename);
 }
 
 bool
@@ -57,6 +63,10 @@ load_bin(const char* filename){
     // Debug: In progress for visualizing particles
     FILE* f;
     f = fopen(filename, "rb");
+    if(!f){
+        return false;
+    }
+
     int num_of_particles = 0;
     fread(&num_of_particles, sizeof(num_of_particles), 1, f);
     float *data = new float[num_of_particles * 4]; if(!data) return false;
@@ -67,9 +77,13 @@ load_bin(const char* filename){
         VFXEpoch::Vector2Df v(data[i * 4 + 0], data[i * 4 + 1]);
         particles.push_back(v);
     }
-
+    
     delete [] data;
     return true;
+}
+
+void 
+write_EXRs(int frame){
 }
 
 void
@@ -91,7 +105,23 @@ drag(int x, int y){
 
 void 
 timer(int junk){
-    // TODO: N/A
+    particles.clear();
+    char filename[256];
+    bool result;
+    frame_counter++;
+    sprintf(filename, "../../outputs/sims/Particle_data%04d.bin", frame_counter);
+    result = load_bin(filename);
+    string str_filename(filename);
+    if(!result){
+#ifdef __linux__
+        cout << "\033[1;31mERROR:\033[0m" << "Loading simulation file faild!" << endl;
+        cout << "File " << "\033[1;33m" << str_filename << "\033[0m" << " may not exist!" << endl;
+#endif
+        exit(0);
+    }
+
+    glutPostRedisplay();
+    glutTimerFunc(30, timer, 0);
 }
 
 
