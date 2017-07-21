@@ -13,16 +13,27 @@
 #include <string>
 #include <cfloat>
 
+// OpenEXR libraries headers
+#include <OpenEXR/ImfRgbaFile.h>
+#include <OpenEXR/ImfStringAttribute.h>
+#include <OpenEXR/ImfMatrixAttribute.h>
+#include <OpenEXR/ImfArray.h>
+#include <OpenEXR/ImfNamespace.h>
+
 #include "VisualizerHelpers.h"
 #include "VisualizerHelpers_OpenGL.h"
 #include "Helpers.h"
 
 using namespace VFXEpoch::Gluvi;
 using namespace VFXEpoch::OpenGL_Utility;
+namespace IMF = OPENEXR_IMF_NAMESPACE;
+using namespace IMF;
+using namespace IMATH_NAMESPACE;
 
 PanZoom2D cam(-2.5f, 0.0f, 5.0f, false);
 bool load_bin(const char* filename);
-void write_EXRs(int frame);
+void write_exrs(const char fileName[], const Rgba *pixels, int width, int height);
+void convert_to_exr_rgba(float* in_pixels, Array2D<Imf::Rgba>& out_pixels, int width, int height);
 void init_data();
 void display();
 void mouse(int button, int state, int x, int y);
@@ -32,11 +43,14 @@ void timer(int junk);
 std::vector<VFXEpoch::Vector2Df> particles;
 unsigned int total_frames = 300;
 unsigned int frame_counter = 0;
+unsigned int width = 720;
+unsigned int height = 280;
+bool is_write_to_disk = false;
 
 int main(int argc, char **argv)
 {   
    //Setup viewer stuff
-   Gluvi::init("2D Particles Visualizer", &argc, argv, 720, 280);
+   Gluvi::init("2D Particles Visualizer", &argc, argv, width, height);
    init_data();
    Gluvi::camera=&cam;
    Gluvi::userDisplayFunc=display;
@@ -52,10 +66,19 @@ int main(int argc, char **argv)
 void
 init_data(){
     // TODO: Initialize data
-    frame_counter = 1;
+    frame_counter = 0;
     char filename[256];
+    bool result;
     sprintf(filename, "../../outputs/sims/Particle_data%04d.bin", frame_counter);
-    load_bin(filename);
+    std::string str_filename(filename);
+    result = load_bin(filename);
+    if(!result){
+#ifdef __linux__
+        cout << "\033[1;31mERROR:\033[0m" << "Loading simulation file faild!" << endl;
+        cout << "File " << "\033[1;33m" << str_filename << "\033[0m" << " may not exist!" << endl;
+#endif
+        exit(0);
+    }
 }
 
 bool
@@ -82,8 +105,24 @@ load_bin(const char* filename){
     return true;
 }
 
+void
+write_exrs(const char fileName[], const Rgba *pixels, int width, int height){
+    RgbaOutputFile file (fileName, width, height, WRITE_RGBA);
+    file.setFrameBuffer (pixels, 1, width);
+    file.writePixels (height);
+}
+
 void 
-write_EXRs(int frame){
+convert_to_exr_rgba(float* in_pixels, Array2D<Imf::Rgba>& out_pixels, int width, int height){
+    assert(NULL != in_pixels && width >= 0 && height >= 0);
+    for(int i = 0; i != height; i++){
+        for(int j = 0; j != width; j++){
+            out_pixels[i][j].r = in_pixels[i * width + j];
+            out_pixels[i][j].g = in_pixels[i * width + j + 1];
+            out_pixels[i][j].b = in_pixels[i * width + j + 2];
+            out_pixels[i][j].a = in_pixels[i * width + j + 3];
+        }
+    }
 }
 
 void
@@ -111,15 +150,28 @@ timer(int junk){
     frame_counter++;
     sprintf(filename, "../../outputs/sims/Particle_data%04d.bin", frame_counter);
     result = load_bin(filename);
-    string str_filename(filename);
     if(!result){
 #ifdef __linux__
+        string str_filename(filename);
         cout << "\033[1;31mERROR:\033[0m" << "Loading simulation file faild!" << endl;
         cout << "File " << "\033[1;33m" << str_filename << "\033[0m" << " may not exist!" << endl;
 #endif
         exit(0);
     }
 
+    if(is_write_to_disk){
+        sprintf(filename, "../../outputs/anims/frame_%04d.exr", frame_counter);
+        float* read_pixels = new float[width * height * 4];
+        Array2D<Imf::Rgba> write_pixels(height, width);
+        if(!read_pixels){
+            cout << "\033[1;31mUnable to write images into disk!\033[0m" << endl;
+            exit(-1);
+        }
+        glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, read_pixels);
+        convert_to_exr_rgba(read_pixels, write_pixels, width, height);
+        write_exrs(filename, &write_pixels[0][0], width, height);
+        delete [] read_pixels;
+    }
     glutPostRedisplay();
     glutTimerFunc(30, timer, 0);
 }
