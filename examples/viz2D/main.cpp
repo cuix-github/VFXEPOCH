@@ -33,7 +33,7 @@ using namespace IMATH_NAMESPACE;
 PanZoom2D cam(-2.5f, 0.0f, 5.0f, false);
 bool load_bin(const char* filename);
 void write_exrs(const char fileName[], const Rgba *pixels, int width, int height);
-void convert_to_exr_rgba(float* in_pixels, Array2D<Imf::Rgba>& out_pixels, int width, int height);
+void convert_to_exr_rgba(GLubyte* in_pixels, Array2D<Imf::Rgba>& out_pixels, int width, int height);
 void init_data();
 void display();
 void mouse(int button, int state, int x, int y);
@@ -45,7 +45,7 @@ unsigned int total_frames = 300;
 unsigned int frame_counter = 0;
 unsigned int width = 720;
 unsigned int height = 280;
-bool is_write_to_disk = false;
+bool is_write_to_disk = true;
 
 int main(int argc, char **argv)
 {   
@@ -113,14 +113,15 @@ write_exrs(const char fileName[], const Rgba *pixels, int width, int height){
 }
 
 void 
-convert_to_exr_rgba(float* in_pixels, Array2D<Imf::Rgba>& out_pixels, int width, int height){
+convert_to_exr_rgba(GLubyte* in_pixels, Array2D<Imf::Rgba>& out_pixels, int width, int height){
     assert(NULL != in_pixels && width >= 0 && height >= 0);
     for(int i = 0; i != height; i++){
         for(int j = 0; j != width; j++){
-            out_pixels[i][j].r = in_pixels[i * width + j];
-            out_pixels[i][j].g = in_pixels[i * width + j + 1];
-            out_pixels[i][j].b = in_pixels[i * width + j + 2];
-            out_pixels[i][j].a = in_pixels[i * width + j + 3];
+            int index = 4 * ((height - i - 1) * width + j);
+            out_pixels[i][j].r = in_pixels[index];
+            out_pixels[i][j].g = in_pixels[index + 1];
+            out_pixels[i][j].b = in_pixels[index + 2];
+            out_pixels[i][j].a = in_pixels[index + 3];
         }
     }
 }
@@ -161,13 +162,16 @@ timer(int junk){
 
     if(is_write_to_disk){
         sprintf(filename, "../../outputs/anims/frame_%04d.exr", frame_counter);
-        float* read_pixels = new float[width * height * 4];
+        std::string frame_name(filename);
+        cout << "Writing frame " << frame_counter << " to " << frame_name << endl;
+        GLubyte* read_pixels = new GLubyte[width * height * 4];
         Array2D<Imf::Rgba> write_pixels(height, width);
         if(!read_pixels){
             cout << "\033[1;31mUnable to write images into disk!\033[0m" << endl;
             exit(-1);
         }
         glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, read_pixels);
+        // ****Bugs when converting to exr rgba format****
         convert_to_exr_rgba(read_pixels, write_pixels, width, height);
         write_exrs(filename, &write_pixels[0][0], width, height);
         delete [] read_pixels;
