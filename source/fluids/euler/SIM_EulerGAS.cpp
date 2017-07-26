@@ -119,17 +119,22 @@ EulerGAS2D::init(Parameters params){
 void
 EulerGAS2D::step(){
   if(0 != source_locations.size())  add_source();
+  cout << "--> Advect particles" << endl;
   advect_particles();
+  cout << "--> Advect velocity (Self-Advection)" << endl;
   advect_vel();
-  if(0 != external_force_locations.size()) add_force();  
+  if(0 != external_force_locations.size()) add_force();
+  cout << "--> Solving pressure" << endl;
   project();
-  extrapolate(u, uw, inside_mask, inside_mask0);
-  extrapolate(v, vw, inside_mask, inside_mask0);
-  clamp_vel();
-  cout << endl << "u field" << endl;
-  Helpers::displayScalarField(u);
-  cout << endl << "v field" << endl;
-  Helpers::displayScalarField(v);
+  cout << "--> Pressure linear solver (pcg) outputs:" << endl;
+  cout << " -> Tolerance:" << user_params.out_tolerance << endl;
+  cout << " -> rations:" << user_params.out_iterations << endl;
+  cout << "--> Looking for boundaries" << endl;
+  find_boundary(u, uw, inside_mask, inside_mask0);
+  find_boundary(v, vw, inside_mask, inside_mask0);
+  cout << "--> Solving boundary conditions" << endl;
+  correct_vel();
+
 }
 
 // Public
@@ -405,13 +410,20 @@ EulerGAS2D::pressure_solve(){
   VFXEpoch::Analysis::computeDivergence_with_weights_mac(div, user_params.h, u, v, uw, vw);
   pressure_solver_params.rhs = div.toVector();
   setup_pressure_coef_matrix();
+
+  // TODO: Invoke pcgsolver interface to setup the solver inside parameters
+  pressure_solver_params.pcg_solver.set_solver_parameters(user_params.min_tolerance, user_params.max_iterations);
   bool success = pressure_solver_params.pcg_solver.solve(pressure_solver_params.sparse_matrix,
                                                          pressure_solver_params.rhs,
                                                          pressure_solver_params.pressure,
-                                                         user_params.tolerance,
-                                                         user_params.max_iterations);
+                                                         user_params.out_tolerance,
+                                                         user_params.out_iterations);
   if(!success){
-    std::cout << endl <<  "Pressure solve failed!" << endl;
+    #ifdef __linux__
+    std:: cout << "\033[1;33mWARNING: Pressure solve failed!\033[0m" << endl;
+    #elif __WIN32__
+    std::cout <<  "WARNING: Pressure solve failed!" << endl;
+    #endif
   }                                               
 }
 
@@ -444,7 +456,7 @@ EulerGAS2D::apply_gradients(){
 
 // Protected
 void
-EulerGAS2D::extrapolate(Grid2DfScalarField& grid, 
+EulerGAS2D::find_boundary(Grid2DfScalarField& grid, 
                         const Grid2DfScalarField& weights, 
                         Grid2DCellTypes& mask, 
                         Grid2DCellTypes& mask0){
@@ -507,7 +519,7 @@ EulerGAS2D::get_grid_weights(){
 
 // Protected
 void
-EulerGAS2D::clamp_vel(){
+EulerGAS2D::correct_vel(){
   u0 = u; v0 = v;
   float h = user_params.h;
   LOOP_GRID2D(u){

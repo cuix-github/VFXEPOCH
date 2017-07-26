@@ -204,9 +204,9 @@ namespace VFXEpoch
 		Vector3D& normalize(){ if (T(UTL_ZERO) == length()) return *this; *this *= (1.0f / length()); return *this; }
 		static T dot(Vector3D v1, Vector3D v2) { return v1.m_x * v2.m_x + v1.m_y * v2.m_y + v1.m_z * v2.m_z; }
 
-		static Vector3D cross(Vector3D v1, Vector3D v2)
+		static Vector3D<T> cross(Vector3D<T> v1, Vector3D<T> v2)
 		{
-			Vector3D result;
+			Vector3D<T> result;
 			result.m_x = v1.m_y * v2.m_z - v1.m_z * v2.m_y;
 			result.m_y = v1.m_z * v2.m_x - v1.m_x * v2.m_z;
 			result.m_z = v1.m_x * v2.m_y - v1.m_y * v2.m_x;

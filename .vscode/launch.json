@@ -5,7 +5,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/home/faq/Documents/dev/VFXEPOCH/build/examples/./examiner",
+            "program": "/home/faq/Documents/dev/VFXEPOCH/build/examples/./2D_particle_visualizer",
             "args": [],
             "stopAtEntry": false,
             "cwd": "/home/faq/Documents/dev/VFXEPOCH/build/examples/",
