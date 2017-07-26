@@ -43,9 +43,9 @@ void timer(int junk);
 std::vector<VFXEpoch::Vector2Df> particles;
 unsigned int total_frames = 300;
 unsigned int frame_counter = 0;
-unsigned int width = 720;
+unsigned int width = 960;
 unsigned int height = 280;
-bool is_write_to_disk = true;
+bool is_write_to_disk = false;
 
 int main(int argc, char **argv)
 {   
@@ -77,7 +77,7 @@ init_data(){
         cout << "\033[1;31mERROR:\033[0m" << "Loading simulation file faild!" << endl;
         cout << "File " << "\033[1;33m" << str_filename << "\033[0m" << " may not exist!" << endl;
 #endif
-        exit(0);
+        exit(-1);
     }
 }
 
@@ -128,7 +128,6 @@ convert_to_exr_rgba(GLubyte* in_pixels, Array2D<Imf::Rgba>& out_pixels, int widt
 
 void
 display(){
-    // TODO: Draw particles
     glPointSize(1);
     OpenGL_Utility::draw_particles2d(particles);
 }
@@ -170,10 +169,15 @@ timer(int junk){
             cout << "\033[1;31mUnable to write images into disk!\033[0m" << endl;
             exit(-1);
         }
+        // --> Get pixels from OpenGL window
         glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, read_pixels);
-        // ****Bugs when converting to exr rgba format****
+
+        // --> Convert pixels from Glubyte to OpenEXR::Rgba
         convert_to_exr_rgba(read_pixels, write_pixels, width, height);
+
+        // --> Write the frame to a file
         write_exrs(filename, &write_pixels[0][0], width, height);
+
         delete [] read_pixels;
     }
     glutPostRedisplay();
