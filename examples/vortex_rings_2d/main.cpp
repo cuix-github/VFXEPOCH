@@ -1,3 +1,5 @@
+// Desc :
+// Xinxin's article: https://zhuanlan.zhihu.com/p/26882619
 #include <stdio.h>
 #include <random>
 #include <math.h>
