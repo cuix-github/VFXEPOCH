@@ -87,7 +87,6 @@ void rk3_integrate_pos(double &x, double &y, std::vector<vortex2D> &vortex, doub
 //write tracer particle data to a file so that can be visulized by matlab
 void write_file(double *pos_x, double *pos_y, int num, int frame)
 {
-	//I have a openGL executable to quickly draw 3D particles, so all 2D data is transfered to 3D for rendering.
 	char filename[256];
 	sprintf(filename,"../../outputs/sims/Particle_data%04d.bin",frame);
 	float *data;

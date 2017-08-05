@@ -8,7 +8,7 @@
 *******************************************************************************/
 
 // This utility is usually used for testing grids within several digits.
-// Higher dimensions could violate the display format.
+// WARNING! Higher dimensions could violate the display format.
 
 #include "Helpers.h"
 
