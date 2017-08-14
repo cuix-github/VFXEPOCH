@@ -84,6 +84,7 @@ void rk3_integrate_pos(double &x, double &y, std::vector<vortex2D> &vortex, doub
 	x += 0.222222222222*dt*u0 + 0.333333333333*dt*u1 + 0.444444444444*dt*u2;
 	y += 0.222222222222*dt*v0 + 0.333333333333*dt*v1 + 0.444444444444*dt*v2;
 }
+
 //write tracer particle data to a file so that can be visulized by matlab
 void write_file(double *pos_x, double *pos_y, int num, int frame)
 {
@@ -105,7 +106,6 @@ void write_file(double *pos_x, double *pos_y, int num, int frame)
 
 	delete[]data;
 	fclose(f);
-
 }
 
 
