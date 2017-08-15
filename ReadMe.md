@@ -38,15 +38,12 @@ $ sudo make install
 &nbsp;&nbsp;&nbsp;&nbsp;Checkout [here](http://eigen.tuxfamily.org/index.php?title=Main_Page/) for downloading the library. Note that this library only has header files so there is no need to build.
 &nbsp;&nbsp;&nbsp;&nbsp;Additionally, we grab Robert Bridson's Pre-Conditioned Conjugate Gradient (PCG) solver during fluid simulation for pressure solve step. The code has been wrapped up into a specific folder called "/source/util/PCGSolver".
 
-
 ### **How to compile**
 1. Except for VFXEPOCH libraries, examples requires only OpenGL GLUT to be installed. Following the link [here](http://kiwwito.com/installing-opengl-glut-libraries-in-ubuntu/) to test your OpenGL GLUT.
 2. Go to the root directory of VFXEPOCH folder. Open the CMakeLists.txt, find the line:
-**option(VFXEPOCH_EXAMPLES "Turn ON to build example projects" OFF)** to makre sure the option has been turned off for the very first time compiling the VFXEPOCH library.
-3. You should find a scripts files called "cleanup.sh" & "setup.sh". Firstly, try "cleanup.sh" to make it naked and ready to build. Then use the bash "setup.sh" to setup and build the projects. Go to the root directory of VFXEPOCH project folder, and following are the scripts to execute "cleanup.sh" & "setup.sh".
+**option(VFXEPOCH_EXAMPLES "Turn ON to build example projects" OFF)** to check and  to make sure the option has been turned off for the very first time compiling the VFXEPOCH library.
+3. You should find a script files called "cleanup.sh" & "setup.sh". Firstly, try "cleanup.sh" to make it naked and ready to build. Then use the bash "setup.sh" to setup and build the projects. Go to the root directory of VFXEPOCH project folder, and following are the scripts to execute "cleanup.sh" & "setup.sh".
 ```sh
 $ ./cleanup.sh && ./setup.sh
 ```
 When it's done, you should see an examples folder under the build directory. Go into it and have fun!
-
-### **Issues for current version:**
