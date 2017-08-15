@@ -227,13 +227,7 @@ void ParticleSystem::emitNew( chrono_t dt )
 //-*****************************************************************************
 //-*****************************************************************************
 //-*****************************************************************************
-void RunAndWriteParticles
-(
-    OObject &iParent,
-    const ParticleSystem::Parameters &iParams,
-    size_t iNumFrames,
-    chrono_t iFps
-)
+void RunAndWriteParticles(OObject &iParent, const ParticleSystem::Parameters &iParams, size_t iNumFrames, chrono_t iFps)
 {
     // Make the particle system.
     ParticleSystem parts( iParams );
