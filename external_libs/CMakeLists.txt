@@ -9,60 +9,6 @@ INSTALL(
 )
 
 INSTALL(
-  DIRECTORY ${CMAKE_SOURCE_DIR}/external_libs/Alembic/Abc
-  DESTINATION ${CMAKE_SOURCE_DIR}/include/Alembic/
-  FILES_MATCHING PATTERN "*.h"
-)
-
-INSTALL(
-  DIRECTORY ${CMAKE_SOURCE_DIR}/external_libs/Alembic/AbcCollection
-  DESTINATION ${CMAKE_SOURCE_DIR}/include/Alembic/
-  FILES_MATCHING PATTERN "*.h"
-)
-
-INSTALL(
-  DIRECTORY ${CMAKE_SOURCE_DIR}/external_libs/Alembic/AbcCoreAbstract
-  DESTINATION ${CMAKE_SOURCE_DIR}/include/Alembic/
-  FILES_MATCHING PATTERN "*.h"
-)
-
-INSTALL(
-  DIRECTORY ${CMAKE_SOURCE_DIR}/external_libs/Alembic/AbcCoreFactory
-  DESTINATION ${CMAKE_SOURCE_DIR}/include/Alembic/
-  FILES_MATCHING PATTERN "*.h"
-)
-
-INSTALL(
-  DIRECTORY ${CMAKE_SOURCE_DIR}/external_libs/Alembic/AbcCoreLayer
-  DESTINATION ${CMAKE_SOURCE_DIR}/include/Alembic/
-  FILES_MATCHING PATTERN "*.h"
-)
-
-INSTALL(
-  DIRECTORY ${CMAKE_SOURCE_DIR}/external_libs/Alembic/AbcCoreOgawa
-  DESTINATION ${CMAKE_SOURCE_DIR}/include/Alembic/
-  FILES_MATCHING PATTERN "*.h"
-)
-
-INSTALL(
-  DIRECTORY ${CMAKE_SOURCE_DIR}/external_libs/Alembic/AbcGeom
-  DESTINATION ${CMAKE_SOURCE_DIR}/include/Alembic/
-  FILES_MATCHING PATTERN "*.h"
-)
-
-INSTALL(
-  DIRECTORY ${CMAKE_SOURCE_DIR}/external_libs/Alembic/AbcMaterial
-  DESTINATION ${CMAKE_SOURCE_DIR}/include/Alembic/
-  FILES_MATCHING PATTERN "*.h"
-)
-
-INSTALL(
-  DIRECTORY ${CMAKE_SOURCE_DIR}/external_libs/Alembic/Util
-  DESTINATION ${CMAKE_SOURCE_DIR}/include/Alembic/
-  FILES_MATCHING PATTERN "*.h"
-)
-
-INSTALL(
-  DIRECTORY ${CMAKE_SOURCE_DIR}/external_libs/Alembic/bin
-  DESTINATION ${CMAKE_SOURCE_DIR}/bin/Alembic/
+  DIRECTORY ${CMAKE_SOURCE_DIR}/external_libs/Alembic
+  DESTINATION ${CMAKE_SOURCE_DIR}/include
 )
