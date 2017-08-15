@@ -108,7 +108,6 @@ void write_file(double *pos_x, double *pos_y, int num, int frame)
 	fclose(f);
 }
 
-
 // our main function computes two vortex ring leapforgging
 int main(int argc, char * argv[])
 {
