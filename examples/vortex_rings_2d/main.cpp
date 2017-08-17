@@ -4,7 +4,17 @@
 #include <random>
 #include <math.h>
 
+// For exporting alembic files (Points) including the following headers
+#include <Alembic/AbcGeom/All.h>
+#include <Alembic/AbcCoreOgawa/All.h>
+#include <Alembic/Util/Assert.h>
+#include <ImathRandom.h>
+
 using namespace std;
+namespace AbcG = Alembic::AbcGeom;
+using namespace AbcG;
+using Alembic::AbcCoreAbstract::chrono_t;
+using Alembic::AbcCoreAbstract::index_t;
 
 //define the mollify radius
 #define EPS 0.01
@@ -30,6 +40,17 @@ struct vortex2D
 		x = vortex.x; y=vortex.y; vort=vortex.vort;
 	}
 };
+
+struct particle2D
+{
+	std::vector<V3f> pos;
+	std::vector<Alembic::Util::uint64_t> id;
+};
+
+// Global variables
+bool is_export_alembic = true;
+std::vector<vortex2D> vortex_particles;
+particle2D particles;
 
 //u component of velocity from a single vortex
 double compute_u_from_single_vortex(double x, double y, vortex2D &vortex)
@@ -114,7 +135,6 @@ int main(int argc, char * argv[])
 	//initialize computation : 2 vortex ring pair and a lot tracer particles used to visualize
 
 	//2 vortex ring pairs;
-	std::vector<vortex2D> vortex_particles;
 	vortex_particles.resize(0);
 	vortex_particles.push_back(vortex2D(0.0,  1.0,  1.0));
 	vortex_particles.push_back(vortex2D(0.0, -1.0, -1.0));
@@ -135,7 +155,23 @@ int main(int argc, char * argv[])
 		pos_x[num] = x;
 		pos_y[num] = y;
 		num++;
+		particles.id.push_back(num);
 	}
+
+	// Create the time sampling type.
+	OArchive archive(Alembic::AbcCoreOgawa::WriteArchive(), "vortex_particles.abc");
+	OObject topObj(archive, kTop);
+	TimeSampling ts(1.f / 24.f, 0.0);
+	Alembic::Util::uint32_t tsidx = topObj.getArchive().addTimeSampling(ts);
+	
+	// Create our object.
+	OPoints partsOut( topObj, "Particles", tsidx );
+	std::cout << "Created Particles" << std::endl;
+	
+	// Add attributes
+	OPointsSchema &pSchema = partsOut.getSchema();
+	MetaData mdata;
+	SetGeometryScope( mdata, kVaryingScope );
 
 	//our simulation
 	double dt = 0.1;
@@ -148,9 +184,18 @@ int main(int argc, char * argv[])
 		{
 		//integrate tracers, we are going to use rk3 integrator
 			#pragma omp parallel for
+			particles.pos.clear();
 			for (int i=0;i<num_tracer;i++)
 			{
 				rk3_integrate_pos(pos_x[i],pos_y[i],vortex_particles, dt);
+				if(is_export_alembic) {
+					particles.pos.push_back(V3f(pos_x[i], 0.0f, pos_y[i]));
+				}
+			}
+
+			if(is_export_alembic){
+				OPointsSchema::Sample point_sample(V3fArraySample(particles.pos), UInt64ArraySample(particles.id));
+				pSchema.set(point_sample);
 			}
 		
 			//integrate vortex particles
@@ -189,5 +234,7 @@ int main(int argc, char * argv[])
 	}
 	
 	delete[]pos_x; delete[]pos_y;
+	particles.pos.clear();
+	particles.id.clear();
 	return 0;
 }

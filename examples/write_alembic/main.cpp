@@ -549,7 +549,7 @@ int main( int argc, char *argv[] )
     params.gravity = V3f( 0.0, -9.81, 0.0 );
     params.elasticity = 0.75f;
     params.lifespan = 4.5f;
-    params.emitRate = 600.0f;
+    params.emitRate = 6000.0f;
     params.emitRadius = 0.5f;
     params.emitVelocitySpread = 1.5f;
     params.emitVelocity = V3f( 1.0, 10.0, 2.35 );
