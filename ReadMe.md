@@ -36,6 +36,7 @@ $ sudo make install
 ```
 * **Eigen**
 <br />&nbsp;&nbsp;&nbsp;&nbsp;Checkout [here](http://eigen.tuxfamily.org/index.php?title=Main_Page) for downloading the library. Note that this library only has header files so there is no need to build.
+
 &nbsp;&nbsp;&nbsp;&nbsp;Additionally, we grab Robert Bridson's Pre-Conditioned Conjugate Gradient (PCG) solver during fluid simulation for pressure solve step. The code has been wrapped up into a specific folder called "/source/util/PCGSolver".
 
 ### **How to compile**
