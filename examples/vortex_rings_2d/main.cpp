@@ -7,7 +7,7 @@
 // For exporting alembic files (Points) including the following headers
 #include <Alembic/AbcGeom/All.h>
 #include <Alembic/AbcCoreOgawa/All.h>
-#include <Alembic/Util/Assert.h>
+// #include <Alembic/Util/Assert.h>
 #include <ImathRandom.h>
 
 using namespace std;
