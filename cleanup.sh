@@ -9,3 +9,5 @@ sudo rm -rf $PWD/build/
 sudo rm -rf $PWD/external_libs/ILM/ilmbase-2.2.0
 sudo rm -rf $PWD/external_libs/ILM/openexr-2.2.0
 sudo rm -rf $PWD/external_libs/SPI/alembic-1.7.3
+sudo rm -rf $PWD/outputs/anims
+sudo rm -rf $PWD/outputs/sims

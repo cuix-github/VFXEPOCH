@@ -12,6 +12,9 @@
 
 #include "Helpers.h"
 
+#include "VisualizerHelpers.h"
+#include "VisualizerHelpers_OpenGL.h"
+
 const int Nx = 1024;
 const int Ny = 1024;
 const float source = 1.0f;

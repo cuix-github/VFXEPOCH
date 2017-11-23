@@ -75,7 +75,7 @@ init_data(){
     if(!result){
 #ifdef __linux__
         cout << "\033[1;31mERROR:\033[0m" << "Loading simulation file faild!" << endl;
-        cout << "File " << "\033[1;33m" << str_filename << "\033[0m" << " may not exist!" << endl;
+        cout << "File " << "\033[1;33m" << str_filename << "\033[0m" << " does not exist!" << endl;
 #endif
         exit(-1);
     }
