@@ -4,11 +4,12 @@
 |![Build Status](https://travis-ci.org/Shakebones/VFXEPOCH.svg?branch=master)|
 
 ### **Tested Platform**
-1. gcc-4.8 & ubuntu 14.04 failed
-2. gcc-5.4 & ubuntu 14.04 passed
-3. gcc-6.2 & ubuntu 14.04 passed
-4. gcc-default & ubuntu 16.04 passed
-5. gcc-5.4 & linux-mint 18.2 passed
+1. gcc/g++-4.8 & ubuntu 14.04 failed
+2. gcc/g++-5.4 & ubuntu 14.04 passed
+3. gcc/g++-6.2 & ubuntu 14.04 passed
+4. gcc/g++-default & ubuntu 16.04 passed
+5. gcc/g++-5.4 & linux-mint 18.2 passed
+6. gcc/g++-6.3 & linux-mint 18.2 passed
 
 **Commands for checking and switching your gcc version:**
 ```sh
@@ -25,8 +26,18 @@ For example:
 ```sh
 $ sudo ln -sf gcc-5 /usr/bin/gcc
 ```
+Also, check if your g++ is installed as well and switch to the version:
+```sh
+$ sudo ln -sf (g++ version) /usr/bin/g++
+```
+Example:
+```sh
+$ sudo ln -sf g++-5 /usr/bin/g++
+```
 
 ### **Third Party Library Used**
+Gnerally, we include the pre-compiled **Linux** libraries for users, but if they do now work well on your side, we
+encourage you compiling one for yourself. They all have clear documents to guide you get the work done.
 * **OpenEXR (Including ILMBase)**
 <br />&nbsp;&nbsp;&nbsp;&nbsp;Checkout [here](http://www.openexr.com/downloads.html) for downloading OpenEXR & ILMBase. For "How to correctly install" please refer to the link [here](http://www.openexr.com/documentation.html)
 * **Alembic**

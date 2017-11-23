@@ -43,12 +43,13 @@ find_package(GLUT REQUIRED)
 include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} )
 
 #Homemade public headers and libs
+include_directories(/usr/local/include)
+include_directories(/usr/local/include/OpenEXR)
 include_directories(${CMAKE_SOURCE_DIR}/include)
-include_directories(${CMAKE_SOURCE_DIR}/include/OpenEXR)
 include_directories(${CMAKE_SOURCE_DIR}/examples/Common)
 link_directories(${CMAKE_SOURCE_DIR}/vfxepoch_libs)
-link_directories(${CMAKE_SOURCE_DIR}/external_libs/OpenEXR/libs)
 link_directories(${CMAKE_SOURCE_DIR}/external_libs/Alembic/libs)
+link_directories(/usr/local/lib)
 
 message("-- INSTALL INCLUDE PATH = ${CMAKE_SOURCE_DIR}/include")
 message("-- INSTALL LIB PATH = ${CMAKE_SOURCE_DIR}/vfxepoch_libs")
