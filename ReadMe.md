@@ -50,8 +50,8 @@ We start with building and installing ILMBase first:
 	to current directory. Then you should get an folder with the same name: ilmbase-2.2.0.
 	Now let's dive into to the extracted folder and make a directory called "build", the hierarchy should look like:
 	<b>ilmbase-2.2.0/build </b>. Dive into the "build" folder and type <b> cmake .. </b>. Check the options and installing target path as you wish. Then type <b>make -j 8</b>. The option "-j 8" is for 8 threads accelerating compiling process. If you have 12 threads 22 threads (Intel xeon E5 maybe?), change it to "-j 12" or "-j 22". Finally type <b>make install</b> to copy files into the specified location.
-	&nbsp;&nbsp;&nbsp;&nbsp;Next step is to install OpenEXR. Please note that, installing OpenEXR would rely on <b>ilmbase</b> library from above we addressed, so don't skip it.
-	&nbsp;&nbsp;&nbsp;&nbsp;Here if you simply follow the steps like we did for <b>ilmbase</b>, probably you will get an error said it cannot find <b>half.h</b>. Just for simplifying the step, let's put two more lines in the CMakeLists.txt of OpenEXR (openexr-2.2.0, of course extract like above first!). Using any text editor you like to open CMakeLists.txt. Then add the path of ilmbase header files and libs, for my case, it's:
+	<br />&nbsp;&nbsp;&nbsp;&nbsp;Next step is to install OpenEXR. Please note that, installing OpenEXR would rely on <b>ilmbase</b> library from above we addressed, so don't skip it.
+	<br />&nbsp;&nbsp;&nbsp;&nbsp;Here if you simply follow the steps like we did for <b>ilmbase</b>, probably you will get an error said it cannot find <b>half.h</b>. Just for simplifying the step, let's put two more lines in the CMakeLists.txt of OpenEXR (openexr-2.2.0, of course extract like above first!). Using any text editor you like to open CMakeLists.txt. Then add the path of ilmbase header files and libs, for my case, it's:
 	```sh
 	INCLUDE_DIRECTORIES (
 			  ${CMAKE_CURRENT_BINARY_DIR}/config
@@ -67,7 +67,7 @@ We start with building and installing ILMBase first:
 
 	LINK_DIRECTORIES ( ${ILMBASE_PACKAGE_PREFIX}/lib /usr/local/lib/ )
 	```
-	We do this because we didn't change any options for the installing of <b>ilmbase</b>, if you are aware of this already, you could definitely fix it before just simply specifying the options for <b>ilmbase</b> CMakeLists.txt. Anyway, it should not be an annoy step, try more goolge!
+	<br />&nbsp;&nbsp;&nbsp;&nbsp;We do this because we didn't change any options for the installing of <b>ilmbase</b>, if you are aware of this already, you could definitely fix it before just simply specifying the options for <b>ilmbase</b> CMakeLists.txt. Anyway, it should not be an annoy step, try more goolge!
 * **Alembic**
 <br />&nbsp;&nbsp;&nbsp;&nbsp;Checkout [here](https://github.com/alembic/alembic) for downloading and [here](http://docs.alembic.io/#build-alembic) for how to build it from scratch. Don't forget to install into your local path:
 ```sh
