@@ -21,6 +21,7 @@ const float source = 1.0f;
 const float h = 1.f / Nx;
 VFXEpoch::Vector2Df c0(0.5,0.5), c1(0.7,0.5), c2(0.3,0.35), c3(0.5,0.7);
 float rad0 = 0.4,  rad1 = 0.1,  rad2 = 0.1,   rad3 = 0.1;
+const int tracers = 100000
 
 using namespace Helpers;
 

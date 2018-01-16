@@ -32,7 +32,9 @@ namespace VFXEpoch{
     /***************************** User Parameters *****************************/
     public:
       struct Parameters{
+
       public:
+
         Parameters(){
           dimension.m_x = 0; dimension.m_y = 0; dt = 0.0; 
           h = 0.0;
@@ -44,6 +46,7 @@ namespace VFXEpoch{
           density_source = 0.0;
           external_force_strength = 0.0;
         }
+
         Parameters(Vector2Di _dimension, double _h, double _dt, 
                    double _buoyancy_alpha, double _buoyancy_beta, double _min_tolerance,
                    double _diff, double _visc, int _max_iterations, int _num_particles, 
@@ -52,6 +55,7 @@ namespace VFXEpoch{
                    buoyancy_alpha(_buoyancy_alpha), buoyancy_beta(_buoyancy_beta), 
                    min_tolerance(_min_tolerance), diff(_diff), visc(_visc), max_iterations(_max_iterations), 
                    num_particles(_num_particles), density_source(_density_source), external_force_strength(_external_force_strength){}
+
         Parameters(const Parameters& src){
           dimension = src.dimension;
           h = src.h;
@@ -65,6 +69,7 @@ namespace VFXEpoch{
           density_source = src.density_source;
           external_force_strength = src.external_force_strength;
         }
+
         Parameters& operator=(const Parameters& rhs){
           dimension = rhs.dimension;
           h = rhs.h;
@@ -80,7 +85,9 @@ namespace VFXEpoch{
           return *this;
         }
         ~Parameters(){ clear(); }
+
       public:
+
         inline void clear(){
           dimension.m_x = dimension.m_y = 0;
           h = 0.0;
@@ -114,7 +121,9 @@ namespace VFXEpoch{
           os << "External force strength = " << params.external_force_strength << endl;
           return os;
         }
+
       public:
+
         Vector2Di dimension;
         double h;
         double dt;
@@ -133,12 +142,15 @@ namespace VFXEpoch{
     /***************************** User Parameters END *************************/
 
     public:
+
       EulerGAS2D();
       EulerGAS2D(Parameters _user_params);
       EulerGAS2D(const EulerGAS2D& src);
       EulerGAS2D& operator=(const EulerGAS2D& rhs);
       ~EulerGAS2D();
+
     public:
+      
       // TODO: Implement overload functions
       // TODO: Need to set nodal_solid_boundary
       bool init(Parameters params); // Overload
@@ -150,19 +162,25 @@ namespace VFXEpoch{
       
       // About boundaries
     public:
+
       void set_inside_boundary(Grid2DCellTypes boundaries);
       void set_domain_boundary(VFXEpoch::BOUNDARY boundary_type, VFXEpoch::EDGES_2DSIM edge);
       void set_static_boundary(float (*phi)(const VFXEpoch::Vector2Df&));
 
       /********************************* Debug the field *********************************/
       // TODO: Ensure to close following functions
+
     public:      
+
       /********************************* Debug the field *********************************/
 
     public:
+
       void set_user_params(Parameters params);
       EulerGAS2D::Parameters get_user_params();
+
     protected:
+
       void add_source(); // Overload
       void add_force();
       void set_domain_boundary_wrapper(Grid2DfScalarField& field);
@@ -174,7 +192,9 @@ namespace VFXEpoch{
       void advect_tmp();
       void advect_particles();
       void project();
+
     protected:
+
       void apply_buoyancy();
       void pressure_solve(); // Overload
       void apply_gradients();
@@ -188,7 +208,9 @@ namespace VFXEpoch{
       float get_den(const Vector2Df& pos);
       float get_curl(const Vector2Df& pos);
       float get_tmp(const Vector2Df& pos);
+
     private:
+
     /*********************** Pressure Solver Parameters ************************/
       struct PressureSolverParams{
         PCGSolver<double> pcg_solver;
@@ -204,7 +226,9 @@ namespace VFXEpoch{
         }
       };
     /*********************** Pressure Solver Parameters END ********************/
+
     private:
+
       Grid2DfScalarField u, u0;
       Grid2DfScalarField v, v0;
       Grid2DfScalarField uw, vw;
