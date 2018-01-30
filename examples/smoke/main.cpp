@@ -35,7 +35,7 @@ using namespace IMATH_NAMESPACE;
 /***************************** For Visualization ******************************/
 unsigned int win_width = 720;
 unsigned int win_height = 720;
-int total_frames = 300;
+int total_frames = 240;
 
 PanZoom2D cam(-0.5, 0.5, -0.5, 0.5);
 bool process_cmd_params(int argc, char* argv[]);
@@ -43,7 +43,7 @@ bool init_solver_params();
 void display();
 void mouse();
 void drag(int x, int y);
-void timer(int junk);
+void timer(int arg);
 
 // Visualization & Output Data
 bool preview = true;
@@ -199,10 +199,21 @@ void mouse(int button, int state, int x, int y)
         std::cout << "Mouse Right Button Clicked" << std::endl;
 }
 
-void timer(int junk)
+void timer(int arg)
 {
-	glutPostRedisplay();
-	glutTimerFunc(1000 / 24, timer, 0);
+	if (arg > 0) {
+		int i = (total_frames - arg) + 1;
+		cout << "****************** Frame " << i << " ******************" << endl;
+		gas_solver->step();
+		cout << "**************** Step " << i << " done ****************" << endl;
+		cout << endl;
+		glutPostRedisplay();
+		glutTimerFunc(1000 / 24, timer, arg - 1);
+	}
+	else {
+		std::cout << total_frames << " steps of simulation is done" << std::endl;
+		exit(-1);
+	}
 }
 
 int main(int argc, char** argv)
@@ -225,15 +236,13 @@ int main(int argc, char** argv)
 		}
 		else{
 			cout << "Failed dynamic cast fluid base pointer to an instance" << endl;
+			return -1;
 		}
-		cout << endl;
 	}
-	else cout << "Euler GAS solver has been set up." << '\n' << '\n';
 
 	if (!preview) {
 		
 		std::cout << '\n' << "VFXEpoch Lib - Ubuntu v16.04 Unit Test" << '\n' << '\n';
-
 		gas_solver->set_user_params(params);
 		params.clear();
 		params = gas_solver->get_user_params();
@@ -257,13 +266,27 @@ int main(int argc, char** argv)
 	}
 
 	else {
+		gas_solver->set_user_params(params);
+		params.clear();
+		params = gas_solver->get_user_params();
+
+		cout << "Simulation User Parameters:" << endl;
+		cout << params << endl;
+
+		cout << "Simulation User Parameters:" << endl;
+		cout << params << endl;
+
+		bool isInit = gas_solver->init(params);	if(!isInit) return -1;
+		gas_solver->set_source_location(params.dimension[0] / 2, params.dimension[1] / 2);
+		gas_solver->set_external_force_location(VFXEpoch::VECTOR_COMPONENTS::Y, params.dimension[0]/2, params.dimension[1]/2);
+		gas_solver->set_static_boundary(boundary_phi);
 
 		Gluvi::init("VFXEPOCH - Example - Smoke", &argc, argv, win_width, win_height);
 		Gluvi::camera = &cam;
 		Gluvi::userDisplayFunc = display;
 		Gluvi::userMouseFunc = mouse;
 		glClearColor(0, 0, 0, 1);
-		glutTimerFunc(1000 / 24, timer, 0);
+		glutTimerFunc(1000 / 24, timer, total_frames);
 		Gluvi::run();
 	}
 
