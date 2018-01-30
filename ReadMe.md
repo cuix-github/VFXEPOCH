@@ -87,3 +87,12 @@ $ sudo make install
 $ ./cleanup.sh && ./setup.sh
 ```
 When it's done, you should see an examples folder under the build directory. Go into it and have fun!
+
+### **Examples**
+1. **Smoke**
+<br />Launch the program by all default settings or provide arguments as:
+```
+$ ./program resolutionX(int) resolutionY(int) window_width(int) window_height(int) total_frames(int) preview_swtich(true/false)
+$  Example Below
+$ ./smoke 64 64 720 720 240 true
+```
