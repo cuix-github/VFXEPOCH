@@ -202,7 +202,7 @@ void mouse(int button, int state, int x, int y)
 void timer(int junk)
 {
 	glutPostRedisplay();
-	glutTimerFunc(30, timer, 0);
+	glutTimerFunc(1000 / 24, timer, 0);
 }
 
 int main(int argc, char** argv)
@@ -249,9 +249,7 @@ int main(int argc, char** argv)
 
 		for(int i = 0; i != total_frames; i++){
 			cout << "****************** Frame " << i << " ******************" << endl;
-
 			gas_solver->step();
-			
 			cout << "**************** Step " << i << " done ****************" << endl;
 			cout << endl;
 		}
@@ -265,7 +263,7 @@ int main(int argc, char** argv)
 		Gluvi::userDisplayFunc = display;
 		Gluvi::userMouseFunc = mouse;
 		glClearColor(0, 0, 0, 1);
-		glutTimerFunc(1000, timer, 0);
+		glutTimerFunc(1000 / 24, timer, 0);
 		Gluvi::run();
 	}
 
