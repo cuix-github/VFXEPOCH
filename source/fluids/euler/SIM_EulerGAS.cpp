@@ -605,6 +605,12 @@ EulerGAS2D::get_curl(const Vector2Df& pos){
 
 // Protected
 float
+EulerGAS2D::get_cfl(){
+  // TODO: Implement CFL condition and return it
+}
+
+// Protected
+float
 EulerGAS2D::get_tmp(const Vector2Df& pos){
   assert(user_params.h != 0);
   float h = user_params.h;

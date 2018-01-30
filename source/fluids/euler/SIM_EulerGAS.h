@@ -207,6 +207,7 @@ namespace VFXEpoch{
       Vector2Df get_vel(const Vector2Df& pos);
       float get_den(const Vector2Df& pos);
       float get_curl(const Vector2Df& pos);
+      float get_cfl();
       float get_tmp(const Vector2Df& pos);
 
     private:

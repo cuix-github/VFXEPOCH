@@ -38,8 +38,6 @@ namespace VFXEpoch {
       virtual void gl_transform(void) = 0;
       virtual void export_rib(std::ostream & output) = 0;
       virtual void display_screen(void) {} // in case the camera needs to show anything on screen
-      virtual void gl_transform_square(void){}
-      virtual bool is_square(void){ return false; }
     };
 
     struct Target3D: public Camera {
@@ -98,10 +96,8 @@ namespace VFXEpoch {
     };
 
     struct PanZoom2D: public Camera {
-      float bottom, left, height;
-      float default_bottom, default_left, default_height;
-      bool default_isSquare;
-      bool isSquare;
+      float bottom, left, height, right;
+      float default_bottom, default_left, default_height, default_right;
       enum {
         INACTIVE,
         PAN,
@@ -113,16 +109,14 @@ namespace VFXEpoch {
       bool moved_since_mouse_down; // to distinuish simple clicks from drags
       int clickx, clicky;
 
-      PanZoom2D(float bottom_ = 0, float left_ = 0, float height_ = 1, bool isSquare_ = false);
+      PanZoom2D(float bottom_ = 1, float height_ = 1, float left_ = 1, float right_ = 1);
       void click(int button, int state, int x, int y);
       void drag(int x, int y);
       void return_to_default(void);
       void transform_mouse(int x, int y, float coords[2]);
       void gl_transform(void);
-      void gl_transform_square(void);
       void export_rib(std::ostream & output);
       void display_screen(void);
-      bool is_square(void);
     };
 
     // overlaid user-interface widgets

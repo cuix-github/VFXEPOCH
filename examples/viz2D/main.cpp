@@ -30,7 +30,7 @@ namespace IMF = OPENEXR_IMF_NAMESPACE;
 using namespace IMF;
 using namespace IMATH_NAMESPACE;
 
-PanZoom2D cam(-2.5f, 0.0f, 5.0f, false);
+PanZoom2D cam(-2.5f, 0.0f, 5.0f);
 bool load_bin(const char* filename);
 void write_exrs(const char fileName[], const Rgba *pixels, int width, int height);
 void convert_to_exr_rgba(GLubyte* in_pixels, Array2D<Imf::Rgba>& out_pixels, int width, int height);

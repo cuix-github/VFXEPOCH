@@ -11,26 +11,45 @@ using namespace VFXEpoch;
 //#include "vec.h"
 #include <cfloat>
 
+//Debug
+#include <iostream>
+using namespace std;
+
 // TODO: Synchronize with VFXEPOCH library
 void 
-OpenGL_Utility::draw_grid2d(const VFXEpoch::Vector2Df& origin, float dx, float nx, float ny) {
-//    float width = nx*dx;
-//    float height = ny*dx;
+OpenGL_Utility::draw_grid2d(const VFXEpoch::Vector2Dd& origin, float dx, unsigned int nx, unsigned int ny) {
+	float width = nx * dx;
+	float height = ny * dx;
+
+  glBegin(GL_LINES);
+  for(int i = 0; i != nx; i++){
    
-//    glBegin(GL_LINES);
-//    for(int i = 0; i <= nx; i++) {
-//       Vec2f a(i*dx, 0);
-//       Vec2f b(i*dx, height);
-//       glVertex2fv((origin+a).v); 
-//       glVertex2fv((origin+b).v);
-//    }
-//    for(int j = 0; j <= ny; ++j) {
-//       Vec2f a(0,j*dx);
-//       Vec2f b(width,j*dx);
-//       glVertex2fv((origin + a).v); 
-//       glVertex2fv((origin + b).v);
-//    }
-//    glEnd();
+    VFXEpoch::Vector2Dd a(i * dx, 0);
+    VFXEpoch::Vector2Dd b(i * dx, height);
+    VFXEpoch::Vector2Dd oa = origin + a;
+    VFXEpoch::Vector2Dd ob = origin + b;
+   
+    double oa_d[2] = {oa[0], oa[1]};
+    double ob_d[2] = {ob[0], ob[1]};
+
+    glVertex2dv(oa_d);
+    glVertex2dv(ob_d);
+  }
+
+  for(int j = 0; j != ny; j++){
+
+    VFXEpoch::Vector2Dd a(0, j * dx);
+    VFXEpoch::Vector2Dd b(width, j * dx);
+    VFXEpoch::Vector2Dd oa = origin + a;
+    VFXEpoch::Vector2Dd ob = origin + b;
+
+    double oa_d[2] = {oa[0], oa[1]};
+    double ob_d[2] = {ob[0], ob[1]};
+    
+    glVertex2dv(oa_d);
+    glVertex2dv(ob_d);
+  }
+	glEnd();
 }
 
 void 
