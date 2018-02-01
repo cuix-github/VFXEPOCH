@@ -55,23 +55,23 @@ EulerGAS2D::Parameters params;
 VFXEpoch::Solvers::Euler_Fluid2D_Base *solver = NULL;
 VFXEpoch::Solvers::EulerGAS2D *gas_solver = NULL;
 const float source = 1.0f;
-VFXEpoch::Vector2Df c0(0.5,0.5), c1(0.7,0.5), c2(0.3,0.35), c3(0.5,0.7);
-float rad0 = 0.4,  rad1 = 0.1,  rad2 = 0.1,   rad3 = 0.1;
+VFXEpoch::Vector2Dd c0(0.0, 0.0), c1(0.7,0.5), c2(0.3,0.35), c3(0.5,0.7);
+double rad0 = 0.5,  rad1 = 0.1,  rad2 = 0.1,   rad3 = 0.1;
 const int tracers = 100000;
 
 using namespace Helpers;
 
 /****************************** For Dbuge ******************************/
-float circle_phi(const VFXEpoch::Vector2Df& pos, const VFXEpoch::Vector2Df& center, float radius) {
+double circle_phi(const VFXEpoch::Vector2Dd& pos, const VFXEpoch::Vector2Dd& center, double radius) {
 	return (VFXEpoch::Dist2D(pos, center) - radius);	
 }
 
-float boundary_phi(const VFXEpoch::Vector2Df& position) {
-   float phi0 = -circle_phi(position, c0, rad0);
-   float phi1 = circle_phi(position, c1, rad1);
-   float phi2 = circle_phi(position, c2, rad2);
-   float phi3 = circle_phi(position, c3, rad3);
-   return std::min(std::min(phi0,phi1), std::min(phi2,phi3));
+double boundary_phi(const VFXEpoch::Vector2Dd& position) {
+   double phi0 = -circle_phi(position, c0, rad0);
+   // double phi1 = circle_phi(position, c1, rad1);
+   // double phi2 = circle_phi(position, c2, rad2);
+   // double phi3 = circle_phi(position, c3, rad3);
+   // return std::min(std::min(phi0,phi1), std::min(phi2,phi3));
    return phi0;
 }
 /****************************** For Dbuge ******************************/
@@ -181,10 +181,15 @@ bool init_solver_params()
 	return true;
 }
 
+vector<VFXEpoch::Vector2Df> particles;
 void display()
 {
 	glColor3f(1.0, 1.0, 1.0);
+	glPointSize(5);
+	glEnable(GL_POINT_SMOOTH);
 	OpenGL_Utility::draw_grid2d(VFXEpoch::Vector2Dd(-0.5, -0.5), params.h, params.dimension[0], params.dimension[1]);
+	OpenGL_Utility::draw_particles2d(gas_solver->get_particles());
+	OpenGL_Utility::draw_circle2d(c0, rad0, 100);
 }
 
 void mouse(int button, int state, int x, int y)
@@ -240,6 +245,7 @@ int main(int argc, char** argv)
 		}
 	}
 
+	// Silent run for the simulation
 	if (!preview) {
 		
 		std::cout << '\n' << "VFXEpoch Lib - Ubuntu v16.04 Unit Test" << '\n' << '\n';
@@ -265,6 +271,7 @@ int main(int argc, char** argv)
 		/************************************ Test solver functions ***********************************/
 	}
 
+	// Toggle the OpenGL window to preview the simulation
 	else {
 		gas_solver->set_user_params(params);
 		params.clear();
@@ -280,6 +287,10 @@ int main(int argc, char** argv)
 		gas_solver->set_source_location(params.dimension[0] / 2, params.dimension[1] / 2);
 		gas_solver->set_external_force_location(VFXEpoch::VECTOR_COMPONENTS::Y, params.dimension[0]/2, params.dimension[1]/2);
 		gas_solver->set_static_boundary(boundary_phi);
+
+		VFXEpoch::Particle2Dd p;
+		p.pos = VFXEpoch::Vector2Dd(0.0, 0.0);
+		gas_solver->add_particles(p);
 
 		Gluvi::init("VFXEPOCH - Example - Smoke", &argc, argv, win_width, win_height);
 		Gluvi::camera = &cam;

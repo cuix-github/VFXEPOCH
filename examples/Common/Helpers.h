@@ -10,7 +10,6 @@
 #define _HELPERS_H_
 #include "utl/UTL_General.h"
 #include "utl/PCGSolver/pcg_solver.h"
-#include "fluids/euler/SIM_Gas.h"
 #include "fluids/euler/SIM_EulerGAS.h"
 #include "Eigen/Dense"
 #include <iostream>

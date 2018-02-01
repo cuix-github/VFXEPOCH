@@ -23,19 +23,29 @@ namespace VFXEpoch
 	* 2D/3D Particle
 	* Particles are used for tracking the motion of the Euler grid
 	*/
-	typedef struct _particle_2d{
+	typedef struct _particle_2df{
 		VFXEpoch::Vector2Df pos;
 		VFXEpoch::Vector2Df vel;
 		VFXEpoch::Vector3Df color;
-		float padding;
-	}Particle2D;
+	}Particle2Df;
 
-	typedef struct _particle_3d{
+	typedef struct _particle_2dd{
+		VFXEpoch::Vector2Dd pos;
+		VFXEpoch::Vector2Dd vel;
+		VFXEpoch::Vector3Dd color;
+	}Particle2Dd;
+
+	typedef struct _particle_3df{
 		VFXEpoch::Vector3Df pos;
 		VFXEpoch::Vector3Df vel;
 		VFXEpoch::Vector3Df color;
-		float padding[7];
-	}Particle3D;
+	}Particle3Df;
+
+	typedef struct _particle_3dd{
+		VFXEpoch::Vector3Dd pos;
+		VFXEpoch::Vector3Dd vel;
+		VFXEpoch::Vector3Dd color;
+	}Particle3Dd;
 
 	enum class VORT_METHODS
 	{
@@ -53,14 +63,19 @@ namespace VFXEpoch
 	float RandomF(float min, float max);
 	int RandomI(int min, int max);
 	float Lerp(float t, float x0, float x1);
+	double Lerp(double t, double x0, double x1);
 	float Bilerp(float t, float s, float x0, float x1, float y0, float y1);
+	double Bilerp(double t, double s, double x0, double x1, double y0, double y1);
 	void ExtractComponents(VFXEpoch::Grid2DfScalarField& component, VFXEpoch::Grid2DVector2DfField vectorField, VECTOR_COMPONENTS axis);
 	void ExtractComponents(VFXEpoch::Grid2DfScalarField& component, VFXEpoch::Grid3DVector3DfField vectorField, VECTOR_COMPONENTS axis);
 	void InsertComponents(VFXEpoch::Grid2DfScalarField component, VFXEpoch::Grid2DVector2DfField& vectorField, VECTOR_COMPONENTS axis);
 	void InsertComponents(VFXEpoch::Grid2DfScalarField component, VFXEpoch::Grid3DVector3DfField& vectorField, VECTOR_COMPONENTS axis);
 	float InterpolateGrid(float x, float y, VFXEpoch::Grid2DfScalarField& field);
 	float InterpolateGrid(Vector2Df pos, VFXEpoch::Grid2DfScalarField& field);
+	double InterpolateGrid(double x, double y, VFXEpoch::Grid2DdScalarField& field);
+	double InterpolateGrid(Vector2Dd pos, VFXEpoch::Grid2DdScalarField& field);
 	float InterpolateGradient(Vector2Df& gradient, Vector2Df pos, VFXEpoch::Grid2DfScalarField& field);
+	double InterpolateGradient(Vector2Dd& gradient, Vector2Dd pos, VFXEpoch::Grid2DdScalarField& field);
 	float InteralFrac(float left, float right);
 	void DataFromVectorToGrid(const std::vector<float> vec, VFXEpoch::Grid2DfScalarField& grid);
 	void DataFromVectorToGrid(const std::vector<double> vec, VFXEpoch::Grid2DdScalarField& grid);

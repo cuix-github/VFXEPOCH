@@ -16,7 +16,7 @@
 #include "utl/PCGSolver/pcg_solver.h"
 
 /********************************* For Debug *********************************/
-#include "utl/UTL_Helpers.h"
+
 /********************************* For Debug *********************************/
 
 using namespace VFXEpoch;
@@ -158,14 +158,15 @@ namespace VFXEpoch{
       void close(); // Overload
       void set_source_location(int i, int j);
       void set_external_force_location(VFXEpoch::VECTOR_COMPONENTS component, int i, int j);
-      void add_particles(VFXEpoch::Particle2D p);
+      void add_particles(VFXEpoch::Particle2Dd p);
+      vector<VFXEpoch::Particle2Dd> get_particles();
       
       // About boundaries
     public:
 
       void set_inside_boundary(Grid2DCellTypes boundaries);
       void set_domain_boundary(VFXEpoch::BOUNDARY boundary_type, VFXEpoch::EDGES_2DSIM edge);
-      void set_static_boundary(float (*phi)(const VFXEpoch::Vector2Df&));
+      void set_static_boundary(double (*phi)(const VFXEpoch::Vector2Dd&));
 
       /********************************* Debug the field *********************************/
       // TODO: Ensure to close following functions
@@ -183,9 +184,9 @@ namespace VFXEpoch{
 
       void add_source(); // Overload
       void add_force();
-      void set_domain_boundary_wrapper(Grid2DfScalarField& field);
-      void density_diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref);
-      void dynamic_diffuse(Grid2DfScalarField& dest, Grid2DfScalarField ref);
+      void set_domain_boundary_wrapper(Grid2DdScalarField& field);
+      void density_diffuse(Grid2DdScalarField& dest, Grid2DdScalarField ref);
+      void dynamic_diffuse(Grid2DdScalarField& dest, Grid2DdScalarField ref);
       void advect_vel();
       void advect_curl();
       void advect_den();
@@ -198,17 +199,17 @@ namespace VFXEpoch{
       void apply_buoyancy();
       void pressure_solve(); // Overload
       void apply_gradients();
-      void find_boundary(Grid2DfScalarField& grid, const Grid2DfScalarField& weights, 
+      void find_boundary(Grid2DdScalarField& grid, const Grid2DdScalarField& weights, 
                            Grid2DCellTypes& mask, Grid2DCellTypes& mask0);
       void get_grid_weights();
       void correct_vel();
       void setup_pressure_coef_matrix();
-      Vector2Df trace_rk2(const Vector2Df& pos, float dt);
-      Vector2Df get_vel(const Vector2Df& pos);
-      float get_den(const Vector2Df& pos);
-      float get_curl(const Vector2Df& pos);
-      float get_cfl();
-      float get_tmp(const Vector2Df& pos);
+      Vector2Dd trace_rk2(const Vector2Dd& pos, double dt);
+      Vector2Dd get_vel(const Vector2Dd& pos);
+      double get_den(const Vector2Dd& pos);
+      double get_curl(const Vector2Dd& pos);
+      double get_cfl();
+      double get_tmp(const Vector2Dd& pos);
 
     private:
 
@@ -230,16 +231,16 @@ namespace VFXEpoch{
 
     private:
 
-      Grid2DfScalarField u, u0;
-      Grid2DfScalarField v, v0;
-      Grid2DfScalarField uw, vw;
-      Grid2DfScalarField d, d0;
-      Grid2DfScalarField t, t0;
-      Grid2DfScalarField omega, omega0;
-      Grid2DfScalarField nodal_solid_phi;
+      Grid2DdScalarField u, u0;
+      Grid2DdScalarField v, v0;
+      Grid2DdScalarField uw, vw;
+      Grid2DdScalarField d, d0;
+      Grid2DdScalarField t, t0;
+      Grid2DdScalarField omega, omega0;
+      Grid2DdScalarField nodal_solid_phi;
       Grid2DCellTypes inside_mask, inside_mask0;
       BndConditionPerEdge domain_boundaries[4];
-      vector<VFXEpoch::Particle2D> particles_container;
+      vector<VFXEpoch::Particle2Dd> particles_container;
       vector<VFXEpoch::Vector2Di> source_locations;
 
       // The last component is used to specify velocity component

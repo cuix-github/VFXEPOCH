@@ -31,8 +31,18 @@ VFXEpoch::Lerp(float t, float x0, float x1){
 	return (1.0f - t) * x0 + t * x1;
 }
 
+double
+VFXEpoch::Lerp(double t, double x0, double x1){
+	return (1.0f - t) * x0 + t * x1;
+}
+
 float
 VFXEpoch::Bilerp(float t, float s, float x0, float x1, float y0, float y1){
+	return VFXEpoch::Lerp(s, VFXEpoch::Lerp(t, x0, x1), VFXEpoch::Lerp(t, y0, y1));
+}
+
+double
+VFXEpoch::Bilerp(double t, double s, double x0, double x1, double y0, double y1){
 	return VFXEpoch::Lerp(s, VFXEpoch::Lerp(t, x0, x1), VFXEpoch::Lerp(t, y0, y1));
 }
 
@@ -141,6 +151,28 @@ VFXEpoch::InterpolateGrid(Vector2Df pos, Grid2DfScalarField& field){
 	return VFXEpoch::Bilerp(fx, fy, field(i, j), field(i, j + 1), field(i + 1, j), field(i + 1, j + 1));
 }
 
+double
+VFXEpoch::InterpolateGrid(double x, double y, VFXEpoch::Grid2DdScalarField& field){
+	int i, j;
+	double fx, fy;
+
+	VFXEpoch::get_barycentric(x, j, fx, 0, field.getDimX());
+	VFXEpoch::get_barycentric(y, i, fy, 0, field.getDimY());
+	// TODO: Verify for Bilinear interpolation
+	return VFXEpoch::Bilerp(fx, fy, field(i, j), field(i, j + 1), field(i + 1, j), field(i + 1, j + 1));
+}
+
+double
+VFXEpoch::InterpolateGrid(Vector2Dd pos, Grid2DdScalarField& field){
+	int i, j;
+	double fx, fy;
+	VFXEpoch::get_barycentric(pos.m_x, j, fx, 0, field.getDimX());
+	VFXEpoch::get_barycentric(pos.m_y, i, fy, 0, field.getDimY());
+
+	// TODO: Verify for Bilinear interpolation
+	return VFXEpoch::Bilerp(fx, fy, field(i, j), field(i, j + 1), field(i + 1, j), field(i + 1, j + 1));
+}
+
 float 
 VFXEpoch::InterpolateGradient(Vector2Df& gradient, Vector2Df pos, VFXEpoch::Grid2DfScalarField& field){
 	int i, j;
@@ -153,6 +185,25 @@ VFXEpoch::InterpolateGradient(Vector2Df& gradient, Vector2Df pos, VFXEpoch::Grid
 	float dy1 = field(i+1, j+1) - field(i, j+1);
 	float dx0 = field(i, j+1) - field(i, j);
 	float dx1 = field(i+1, j+1) - field(i+1, j);
+
+	gradient.m_x = VFXEpoch::Lerp(fy, dx0, dx1);
+	gradient.m_y = VFXEpoch::Lerp(fx, dy0, dy1);
+
+	return VFXEpoch::Bilerp(fx, fy, field(i, j), field(i, j+1), field(i+1, j), field(i+1, j+1));
+}
+
+double 
+VFXEpoch::InterpolateGradient(Vector2Dd& gradient, Vector2Dd pos, VFXEpoch::Grid2DdScalarField& field){
+	int i, j;
+	double fx, fy;
+	VFXEpoch::get_barycentric(pos.m_x, j, fx, 0, field.getDimX());
+	VFXEpoch::get_barycentric(pos.m_y, i, fy, 0, field.getDimY());
+
+	assert(i >= 0 && i < field.getDimY() && j >= 0 && j < field.getDimX());
+	double dy0 = field(i+1, j) - field(i, j);
+	double dy1 = field(i+1, j+1) - field(i, j+1);
+	double dx0 = field(i, j+1) - field(i, j);
+	double dx1 = field(i+1, j+1) - field(i+1, j);
 
 	gradient.m_x = VFXEpoch::Lerp(fy, dx0, dx1);
 	gradient.m_y = VFXEpoch::Lerp(fx, dy0, dy1);

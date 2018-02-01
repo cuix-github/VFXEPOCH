@@ -40,7 +40,7 @@ void mouse(int button, int state, int x, int y);
 void drag(int x, int y);
 void timer(int junk);
 
-std::vector<VFXEpoch::Vector2Df> particles;
+std::vector<VFXEpoch::Vector2Dd> particles;
 unsigned int total_frames = 300;
 unsigned int frame_counter = 0;
 unsigned int width = 960;
@@ -97,7 +97,7 @@ load_bin(const char* filename){
     fclose(f);
     
     for(int i = 0; i != num_of_particles; i++){
-        VFXEpoch::Vector2Df v(data[i * 4 + 0], data[i * 4 + 1]);
+        VFXEpoch::Vector2Dd v(data[i * 4 + 0], data[i * 4 + 1]);
         particles.push_back(v);
     }
     

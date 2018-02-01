@@ -21,6 +21,7 @@ OpenGL_Utility::draw_grid2d(const VFXEpoch::Vector2Dd& origin, float dx, unsigne
 	float width = nx * dx;
 	float height = ny * dx;
 
+  glLineWidth(1);
   glBegin(GL_LINES);
   for(int i = 0; i != nx; i++){
    
@@ -53,7 +54,7 @@ OpenGL_Utility::draw_grid2d(const VFXEpoch::Vector2Dd& origin, float dx, unsigne
 }
 
 void 
-OpenGL_Utility::draw_particles2d(const std::vector<VFXEpoch::Vector2Df>& particles_container) {
+OpenGL_Utility::draw_particles2d(const std::vector<VFXEpoch::Vector2Dd>& particles_container) {
    glBegin(GL_POINTS);
    for(unsigned int i = 0; i < particles_container.size(); ++i) {
        glVertex2f(particles_container[i].m_x, particles_container[i].m_y);
@@ -61,3 +62,28 @@ OpenGL_Utility::draw_particles2d(const std::vector<VFXEpoch::Vector2Df>& particl
    glEnd();
 }
 
+void
+OpenGL_Utility::draw_particles2d(const std::vector<VFXEpoch::Particle2Dd>& particles_container) {
+  glBegin(GL_POINTS);
+  for(unsigned int i = 0; i < particles_container.size(); ++i) {
+    glVertex2f(particles_container[i].pos.m_x, particles_container[i].pos.m_y);
+  }
+  glEnd(); 
+}
+
+void 
+OpenGL_Utility::draw_circle2d(const VFXEpoch::Vector2Dd& center, double rad, int segs) {
+  
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  glLineWidth(2);
+  glBegin(GL_POLYGON);
+  for(int i = 0; i < segs; i++){
+    double cosine = rad * cos(i * 2 * M_PI / (double)(segs));
+    double sine = rad * sin(i * 2 * M_PI / (double)(segs));
+
+    VFXEpoch::Vector2Dd tmp = VFXEpoch::Vector2Dd(cosine, sine) + center;
+    double vec[2] = {tmp.m_x, tmp.m_y};
+    glVertex2dv(vec);
+  }
+  glEnd();
+}
