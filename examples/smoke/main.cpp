@@ -109,9 +109,19 @@ bool process_cmd_params(int argc, char* argv[])
 		std::string::size_type sz;
 		params.dimension[0] = std::stoi(resx, &sz);
 		params.dimension[1] = std::stoi(resy, &sz);
-		std::cout << "Dimension: " <<  params.dimension[0] << " x " << params.dimension[1] << std::endl;
+		total_frames = -1;
 	}
-	// Window Size is specified
+	// Total Frame specificed
+	else if (4 == argc) {
+		std::string resx = argv[1];
+		std::string resy = argv[2];
+		std::string frames = argv[3];
+		std::string::size_type sz;
+		params.dimension[0] = std::stoi(resx, &sz);
+		params.dimension[1] = std::stoi(resy, &sz);
+		total_frames = std::stoi(frames, &sz);
+	}
+	// Window Size specified
 	else if (5 == argc) {
 		std::string resx = argv[1];
 		std::string resy = argv[2];
@@ -122,38 +132,42 @@ bool process_cmd_params(int argc, char* argv[])
 		params.dimension[1] = std::stoi(resy, &sz);
 		win_width = std::stoi(window_width, &sz);
 		win_height = std::stoi(window_height, &sz);
+		preview = true;
+		total_frames = -1;
 	}
-	// Total Frame is specified
-	else if (6 == argc) {
-		std::string resx = argv[1];
-		std::string resy = argv[2];
-		std::string window_width = argv[3];
-		std::string window_height = argv[4];
-		std::string frames = argv[5];
-		std::string::size_type sz;
-		params.dimension[0] = std::stoi(resx, &sz);
-		params.dimension[1] = std::stoi(resy, &sz);
-		win_width = std::stoi(window_width, &sz);
-		win_height = std::stoi(window_height, &sz);
-		total_frames = std::stoi(frames, &sz);
-	}
-	// Preview on/off
+	// Windows Size & Total Frame specified
 	else if (7 == argc) {
 		std::string resx = argv[1];
 		std::string resy = argv[2];
-		std::string window_width = argv[3];
-		std::string window_height = argv[4];
-		std::string frames = argv[5];
-		std::stringstream preview_switch(argv[6]);
+		std::string frames = argv[3];
+		std::string window_width = argv[4];
+		std::string window_height = argv[5];
 		std::string::size_type sz;
 		params.dimension[0] = std::stoi(resx, &sz);
 		params.dimension[1] = std::stoi(resy, &sz);
 		win_width = std::stoi(window_width, &sz);
 		win_height = std::stoi(window_height, &sz);
+		preview = true;
 		total_frames = std::stoi(frames, &sz);
-		if (!(preview_switch >> std::boolalpha >> preview)) {
-			return false;
-		}
+	}
+
+	// Preview on/off
+	else if (7 == argc) {
+		// std::string resx = argv[1];
+		// std::string resy = argv[2];
+		// std::string window_width = argv[3];
+		// std::string window_height = argv[4];
+		// std::string frames = argv[5];
+		// std::stringstream preview_switch(argv[6]);
+		// std::string::size_type sz;
+		// params.dimension[0] = std::stoi(resx, &sz);
+		// params.dimension[1] = std::stoi(resy, &sz);
+		// win_width = std::stoi(window_width, &sz);
+		// win_height = std::stoi(window_height, &sz);
+		// total_frames = std::stoi(frames, &sz);
+		// if (!(preview_switch >> std::boolalpha >> preview)) {
+		// 	return false;
+		// }
 	}
 	else if (1 == argc) {
 		params.dimension[0] = 32;

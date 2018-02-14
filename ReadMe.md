@@ -92,7 +92,8 @@ When it's done, you should see an examples folder under the build directory. Go 
 1. **Smoke**
 <br />Launch the program by all default settings or provide arguments as:
 ```
-$ ./program resolutionX(int) resolutionY(int) window_width(int) window_height(int) total_frames(int) preview_swtich(true/false)
+$ ./program resolutionX(int) resolutionY(int) total_frames(int) window_width(int) window_height(int)
+$ ./program resolutionX(int) resolutionY(int) total_frames(int)
 $  Example Below
-$ ./smoke 64 64 720 720 240 true
+$ ./smoke 64 64 240 720 720
 ```
