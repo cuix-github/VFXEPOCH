@@ -14,20 +14,20 @@
 
 const int Nx = 1024;
 const int Ny = 1024;
-const double source = 1.0f;
-const double h = 1.f / Nx;
-VFXEpoch::Vector2Dd c0(0.5,0.5), c1(0.7,0.5), c2(0.3,0.35), c3(0.5,0.7);
-double rad0 = 0.4,  rad1 = 0.1,  rad2 = 0.1,   rad3 = 0.1;
+const float source = 1.0f;
+const float h = 1.f / Nx;
+VFXEpoch::Vector2Df c0(0.5,0.5), c1(0.7,0.5), c2(0.3,0.35), c3(0.5,0.7);
+float rad0 = 0.4,  rad1 = 0.1,  rad2 = 0.1,   rad3 = 0.1;
 
 using namespace Helpers;
 
 /****************************** For Dbuge ******************************/
-double circle_phi(const VFXEpoch::Vector2Dd& pos, const VFXEpoch::Vector2Dd& center, double radius){
+float circle_phi(const VFXEpoch::Vector2Df& pos, const VFXEpoch::Vector2Df& center, float radius){
 	return (VFXEpoch::Dist2D(pos, center) - radius);	
 }
 
-double boundary_phi(const VFXEpoch::Vector2Dd& position) {
-   double phi0 = -circle_phi(position, c0, rad0);
+float boundary_phi(const VFXEpoch::Vector2Df& position) {
+   float phi0 = -circle_phi(position, c0, rad0);
    // float phi1 = circle_phi(position, c1, rad1);
    // float phi2 = circle_phi(position, c2, rad2);
    // float phi3 = circle_phi(position, c3, rad3);

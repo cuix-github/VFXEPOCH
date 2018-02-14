@@ -12,10 +12,12 @@
 
 namespace VFXEpoch{
     namespace OpenGL_Utility{
-        void draw_grid2d(const VFXEpoch::Vector2Dd& origin, float dx, unsigned int nx, unsigned int ny);
+        void draw_grid2d(const VFXEpoch::Vector2Df& origin, float dx, unsigned int nx, unsigned int ny);
         void draw_particles2d(const std::vector<VFXEpoch::Vector2Dd>& particles_container);
+        void draw_particles2d(const std::vector<VFXEpoch::Vector2Df>& particles_container);
         void draw_particles2d(const std::vector<VFXEpoch::Particle2Dd>& particles_container);
-        void draw_circle2d(const VFXEpoch::Vector2Dd& center, double rad, int segs);
+        void draw_particles2d(const std::vector<VFXEpoch::Particle2Df>& particles_container);
+        void draw_circle2d(const VFXEpoch::Vector2Df& center, double rad, int segs);
     }
 }
 
