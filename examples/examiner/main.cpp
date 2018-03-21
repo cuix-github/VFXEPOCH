@@ -12,8 +12,8 @@
 
 #include "Helpers.h"
 
-const int Nx = 1024;
-const int Ny = 1024;
+const int Nx = 64;
+const int Ny = 64;
 const float source = 1.0f;
 const float h = 1.f / Nx;
 VFXEpoch::Vector2Df c0(0.5,0.5), c1(0.7,0.5), c2(0.3,0.35), c3(0.5,0.7);

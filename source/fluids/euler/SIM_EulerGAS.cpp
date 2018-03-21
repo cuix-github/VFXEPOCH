@@ -127,8 +127,8 @@ EulerGAS2D::step(){
   cout << "--> Solving pressure" << endl;
   project();
   cout << "--> Pressure linear solver (pcg) outputs:" << endl;
-  cout << " -> Tolerance:" << user_params.out_tolerance << endl;
-  cout << " -> rations:" << user_params.out_iterations << endl;
+  cout << " ->  Tolerance:" << user_params.out_tolerance << endl;
+  cout << " ->  iterations:" << user_params.out_iterations << endl;
   cout << "--> Looking for boundaries" << endl;
   find_boundary(u, uw, inside_mask, inside_mask0);
   find_boundary(v, vw, inside_mask, inside_mask0);
@@ -197,6 +197,13 @@ EulerGAS2D::add_force(){
     } else {
       assert(ite->m_x >= 0 && ite->m_x < v.getDimY() && ite->m_y >= 0 && ite->m_y < v.getDimX());
       v(ite->m_x, ite->m_y) = user_params.external_force_strength;
+    }
+  }
+
+  if (user_params.use_gravity){
+    float grav = -981.0f * user_params.dt;
+    LOOP_GRID2D(v){
+      v(i, j) += grav;
     }
   }
 }

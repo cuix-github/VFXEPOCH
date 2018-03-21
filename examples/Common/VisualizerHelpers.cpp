@@ -301,7 +301,7 @@ export_rib(ostream &output)
 
 PanZoom2D::
 PanZoom2D(float bottom_, float height_, float left_, float right_)
-    : bottom(bottom_), left(left_), height(height_), right(right_), action_mode(INACTIVE)
+    : bottom(bottom_), height(height_), left(left_), right(right_), action_mode(INACTIVE)
 {
     default_bottom = bottom;
     default_left = left;
@@ -415,6 +415,8 @@ gl_transform(void)
     glLoadIdentity();
     glOrtho(left, right, bottom, height, 0, 1);
     // glOrtho(left, left+(height*winwidth)/winheight, bottom, bottom+height, 0, 1);
+    std::cout << "right = " << right << std::endl;
+    std::cout << "height = " << height << std::endl;
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }

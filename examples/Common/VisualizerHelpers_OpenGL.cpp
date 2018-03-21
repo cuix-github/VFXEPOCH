@@ -23,7 +23,7 @@ OpenGL_Utility::draw_grid2d(const VFXEpoch::Vector2Df& origin, float dx, unsigne
 
   glLineWidth(1);
   glBegin(GL_LINES);
-  for(int i = 0; i != nx; i++){
+  for(int i = 0; i <= nx; i++){
    
     VFXEpoch::Vector2Df a(i * dx, 0);
     VFXEpoch::Vector2Df b(i * dx, height);
@@ -37,7 +37,7 @@ OpenGL_Utility::draw_grid2d(const VFXEpoch::Vector2Df& origin, float dx, unsigne
     glVertex2dv(ob_d);
   }
 
-  for(int j = 0; j != ny; j++){
+  for(int j = 0; j <= ny; j++){
 
     VFXEpoch::Vector2Df a(0, j * dx);
     VFXEpoch::Vector2Df b(width, j * dx);
@@ -54,46 +54,81 @@ OpenGL_Utility::draw_grid2d(const VFXEpoch::Vector2Df& origin, float dx, unsigne
 }
 
 void 
-OpenGL_Utility::draw_particles2d(const std::vector<VFXEpoch::Vector2Dd>& particles_container) {
-   glBegin(GL_POINTS);
-   for(unsigned int i = 0; i < particles_container.size(); ++i) {
-       glVertex2f(particles_container[i].m_x, particles_container[i].m_y);
-   }
-   glEnd();
+OpenGL_Utility::draw_particles2d(const std::vector<VFXEpoch::Vector2Dd>& particles_container, 
+  int particle_size, VFXEpoch::Vector3Df color, bool is_round_point) {
+
+  glColor3f(color.m_x, color.m_y, color.m_z);
+  glPointSize(particle_size);
+
+  if (is_round_point)
+    glEnable( GL_POINT_SMOOTH );
+
+  glBegin(GL_POINTS);
+  for(unsigned int i = 0; i < particles_container.size(); ++i) {
+    double data[2] = { particles_container[i].m_x, particles_container[i].m_y };
+    glVertex2dv(data);
+  }
+  glEnd();
 }
 
 void 
-OpenGL_Utility::draw_particles2d(const std::vector<VFXEpoch::Vector2Df>& particles_container) {
-   glBegin(GL_POINTS);
-   for(unsigned int i = 0; i < particles_container.size(); ++i) {
-       glVertex2f(particles_container[i].m_x, particles_container[i].m_y);
-   }
-   glEnd();
+OpenGL_Utility::draw_particles2d(const std::vector<VFXEpoch::Vector2Df>& particles_container, 
+  int particle_size, VFXEpoch::Vector3Df color, bool is_round_point) {
+  
+  glColor3f(color.m_x, color.m_y, color.m_z);
+  glPointSize(particle_size);
+
+  if (is_round_point)
+    glEnable( GL_POINT_SMOOTH );
+
+  glBegin(GL_POINTS);
+  for(unsigned int i = 0; i < particles_container.size(); ++i) {
+      double data[2] = { particles_container[i].m_x, particles_container[i].m_y };
+      glVertex2dv(data);
+  }
+  glEnd();
 }
 
 void
-OpenGL_Utility::draw_particles2d(const std::vector<VFXEpoch::Particle2Dd>& particles_container) {
+OpenGL_Utility::draw_particles2d(const std::vector<VFXEpoch::Particle2Dd>& particles_container, 
+  int particle_size, VFXEpoch::Vector3Df color, bool is_round_point) {
+  
+  glColor3f(color.m_x, color.m_y, color.m_z);
+  glPointSize(particle_size);
+
+  if (is_round_point)
+    glEnable( GL_POINT_SMOOTH );
+
   glBegin(GL_POINTS);
   for(unsigned int i = 0; i < particles_container.size(); ++i) {
-    glVertex2f(particles_container[i].pos.m_x, particles_container[i].pos.m_y);
+    double data[2] = { particles_container[i].pos.m_x, particles_container[i].pos.m_y };
+    glVertex2dv(data);
   }
   glEnd(); 
 }
 
 void
-OpenGL_Utility::draw_particles2d(const std::vector<VFXEpoch::Particle2Df>& particles_container) {
+OpenGL_Utility::draw_particles2d(const std::vector<VFXEpoch::Particle2Df>& particles_container, 
+  int particle_size, VFXEpoch::Vector3Df color, bool is_round_point) {
+
+  glColor3f(color.m_x, color.m_y, color.m_z);
+  glPointSize(particle_size);
+
+  if (is_round_point)
+    glEnable( GL_POINT_SMOOTH );
+
   glBegin(GL_POINTS);
   for(unsigned int i = 0; i < particles_container.size(); ++i) {
-    glVertex2f(particles_container[i].pos.m_x, particles_container[i].pos.m_y);
+    double data[2] = { particles_container[i].pos.m_x, particles_container[i].pos.m_y };
+    glVertex2dv(data);
   }
   glEnd(); 
 }
 
 void 
 OpenGL_Utility::draw_circle2d(const VFXEpoch::Vector2Df& center, double rad, int segs) {
-  
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   glLineWidth(2);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   glBegin(GL_POLYGON);
   for(int i = 0; i < segs; i++){
     double cosine = rad * cos(i * 2 * M_PI / (double)(segs));

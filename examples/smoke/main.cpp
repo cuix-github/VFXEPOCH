@@ -35,9 +35,16 @@ using namespace IMATH_NAMESPACE;
 /***************************** For Visualization ******************************/
 unsigned int win_width = 720;
 unsigned int win_height = 720;
+float sim_width = 100.0f;
 int total_frames = 240;
 
-PanZoom2D cam(-0.5, 0.5, -0.5, 0.5);
+// cam(bottom, height, left, right)
+float pan_zoom_cam_bottom = -0.1f;
+float pan_zoom_cam_height = 1.2f;
+float pan_zoom_cam_left = -0.1f;
+float pan_zoom_cam_right = pan_zoom_cam_left + (pan_zoom_cam_height * win_width) / win_height;
+PanZoom2D cam(pan_zoom_cam_bottom, pan_zoom_cam_bottom + pan_zoom_cam_height, pan_zoom_cam_left, pan_zoom_cam_right);
+
 bool process_cmd_params(int argc, char* argv[]);
 bool init_solver_params();
 void display();
@@ -46,7 +53,7 @@ void drag(int x, int y);
 void timer(int arg);
 
 // Visualization & Output Data
-bool preview = true;
+bool preview = false;
 bool outputParticles = false;
 bool outputAlembic = false;
 /***************************** For Visualization ******************************/
@@ -55,9 +62,9 @@ EulerGAS2D::Parameters params;
 VFXEpoch::Solvers::Euler_Fluid2D_Base *solver = NULL;
 VFXEpoch::Solvers::EulerGAS2D *gas_solver = NULL;
 const float source = 1.0f;
-VFXEpoch::Vector2Df c0(0.0, 0.0), c1(0.7,0.5), c2(0.3,0.35), c3(0.5,0.7);
-VFXEpoch::Vector2Df o0(-0.5, -0.5);
-float rad0 = 50,  rad1 = 0.1,  rad2 = 0.1,   rad3 = 0.1;
+VFXEpoch::Vector2Df c0(50, 50), c1(0.7,0.5), c2(0.3,0.35), c3(0.5,0.7);
+VFXEpoch::Vector2Df o0(-0.1, 0.0);
+float rad0 = 40.0f,  rad1 = 0.1,  rad2 = 0.1,   rad3 = 0.1;
 const int tracers = 100000;
 
 using namespace Helpers;
@@ -136,7 +143,7 @@ bool process_cmd_params(int argc, char* argv[])
 		total_frames = -1;
 	}
 	// Windows Size & Total Frame specified
-	else if (7 == argc) {
+	else if (6 == argc) {
 		std::string resx = argv[1];
 		std::string resy = argv[2];
 		std::string frames = argv[3];
@@ -149,25 +156,6 @@ bool process_cmd_params(int argc, char* argv[])
 		win_height = std::stoi(window_height, &sz);
 		preview = true;
 		total_frames = std::stoi(frames, &sz);
-	}
-
-	// Preview on/off
-	else if (7 == argc) {
-		// std::string resx = argv[1];
-		// std::string resy = argv[2];
-		// std::string window_width = argv[3];
-		// std::string window_height = argv[4];
-		// std::string frames = argv[5];
-		// std::stringstream preview_switch(argv[6]);
-		// std::string::size_type sz;
-		// params.dimension[0] = std::stoi(resx, &sz);
-		// params.dimension[1] = std::stoi(resy, &sz);
-		// win_width = std::stoi(window_width, &sz);
-		// win_height = std::stoi(window_height, &sz);
-		// total_frames = std::stoi(frames, &sz);
-		// if (!(preview_switch >> std::boolalpha >> preview)) {
-		// 	return false;
-		// }
 	}
 	else if (1 == argc) {
 		params.dimension[0] = 32;
@@ -182,13 +170,15 @@ bool process_cmd_params(int argc, char* argv[])
 
 bool init_solver_params()
 {
-	params.h = 1.f / (float)params.dimension[0];
+	// The dimension would be set during processing the command line argument
+	params.h = sim_width / (float)params.dimension[0];
 	params.dt = 0.005f;
 	params.buoyancy_alpha = 0.1;
 	params.buoyancy_beta = 0.3;
 	params.vort_conf_eps = 0.55;
 	params.density_source = 20;
-	params.external_force_strength = 10;
+	params.external_force_strength = 0;
+	params.use_gravity = true;
 	params.max_iterations = 300;
 	params.min_tolerance = 1e-5;
 	params.diff = 0.01;
@@ -199,12 +189,20 @@ bool init_solver_params()
 vector<VFXEpoch::Vector2Df> particles;
 void display()
 {
-	glColor3f(1.0, 1.0, 1.0);
-	glPointSize(5);
-	glEnable(GL_POINT_SMOOTH);
+	glPushMatrix();
+
+	float glScale = 1.0f / (params.h* params.dimension[0]);
+	glScaled(glScale, glScale, glScale);
+
+	glColor3f(0.5, 0.5, 0.5);
 	OpenGL_Utility::draw_grid2d(o0, params.h, params.dimension[0], params.dimension[1]);
-	OpenGL_Utility::draw_particles2d(gas_solver->get_particles());
+
+	glColor3f(0.0, 1.0, 0.0);
 	OpenGL_Utility::draw_circle2d(c0, rad0, 100);
+	
+	OpenGL_Utility::draw_particles2d(gas_solver->get_particles(), 5, VFXEpoch::Vector3Df(1.0, 1.0, 1.0), true);
+
+	glPopMatrix();
 }
 
 void mouse(int button, int state, int x, int y)
@@ -295,16 +293,13 @@ int main(int argc, char** argv)
 		cout << "Simulation User Parameters:" << endl;
 		cout << params << endl;
 
-		cout << "Simulation User Parameters:" << endl;
-		cout << params << endl;
-
 		bool isInit = gas_solver->init(params);	if(!isInit) return -1;
 		gas_solver->set_source_location(params.dimension[0] / 2, params.dimension[1] / 2);
 		gas_solver->set_external_force_location(VFXEpoch::VECTOR_COMPONENTS::Y, params.dimension[0]/2, params.dimension[1]/2);
 		gas_solver->set_static_boundary(boundary_phi);
 
 		VFXEpoch::Particle2Df p;
-		p.pos = VFXEpoch::Vector2Df(0.0, 0.0);
+		p.pos = VFXEpoch::Vector2Df(42.079145937118049,  47.019514491033981);
 		gas_solver->add_particles(p);
 
 		Gluvi::init("VFXEPOCH - Example - Smoke", &argc, argv, win_width, win_height);

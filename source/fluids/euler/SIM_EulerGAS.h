@@ -42,15 +42,16 @@ namespace VFXEpoch{
           num_particles = 0;
           density_source = 0.0;
           external_force_strength = 0.0;
+          use_gravity = true;
         }
         Parameters(Vector2Di _dimension, double _h, double _dt, 
                    double _buoyancy_alpha, double _buoyancy_beta, double _min_tolerance,
                    double _diff, double _visc, int _max_iterations, int _num_particles, 
-                   double _density_source, double _external_force_strength): 
+                   double _density_source, double _external_force_strength, bool _use_gravity): 
                    dimension(_dimension), h(_h), dt(_dt), 
                    buoyancy_alpha(_buoyancy_alpha), buoyancy_beta(_buoyancy_beta), 
                    min_tolerance(_min_tolerance), diff(_diff), visc(_visc), max_iterations(_max_iterations), 
-                   num_particles(_num_particles), density_source(_density_source), external_force_strength(_external_force_strength){}
+                   num_particles(_num_particles), density_source(_density_source), external_force_strength(_external_force_strength), use_gravity(_use_gravity){}
         Parameters(const Parameters& src){
           dimension = src.dimension;
           h = src.h;
@@ -63,6 +64,7 @@ namespace VFXEpoch{
           num_particles = src.num_particles;
           density_source = src.density_source;
           external_force_strength = src.external_force_strength;
+          use_gravity = src.use_gravity;
         }
         Parameters& operator=(const Parameters& rhs){
           dimension = rhs.dimension;
@@ -76,6 +78,7 @@ namespace VFXEpoch{
           num_particles = rhs.num_particles;
           density_source = rhs.density_source;
           external_force_strength = rhs.external_force_strength;
+          use_gravity = rhs.use_gravity;
           return *this;
         }
         ~Parameters(){ clear(); }
@@ -92,6 +95,7 @@ namespace VFXEpoch{
           num_particles = 0;
           density_source = 0.0;
           external_force_strength = 0.0;
+          use_gravity = true;
         }
 
         friend inline ostream&
@@ -111,6 +115,7 @@ namespace VFXEpoch{
           os << "Maximum iterations in pressure solver = " << params.max_iterations << endl;
           os << "Minimum tolerance in pressure solver = " << params.min_tolerance << endl;
           os << "External force strength = " << params.external_force_strength << endl;
+          os << "Apply gravity: " << params.use_gravity << endl;
           return os;
         }
       public:
@@ -128,6 +133,7 @@ namespace VFXEpoch{
         int max_iterations;
         int out_iterations;
         int num_particles;
+        bool use_gravity;
       };
     /***************************** User Parameters END *************************/
 
