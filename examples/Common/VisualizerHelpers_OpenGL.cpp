@@ -126,6 +126,42 @@ OpenGL_Utility::draw_particles2d(const std::vector<VFXEpoch::Particle2Df>& parti
 }
 
 void 
+OpenGL_Utility::draw_arrows(const VFXEpoch::Vector2Df& start, const VFXEpoch::Vector2Df& end, float arrow_head_len){
+  
+  double data[2] = {0.0, 0.0};
+  VFXEpoch::Vector2Df direction = end - start;
+  VFXEpoch::Vector2Df dir_norm = direction;
+  
+  //TODO Possibly automatically scale arrowhead length based on vector magnitude
+  if(dir_norm.norm() < 1e-14)
+    return;
+  
+  dir_norm.normalize();
+  VFXEpoch::Vector2Df perp(dir_norm[1], -dir_norm[0]);  
+  VFXEpoch::Vector2Df tip_left = end + arrow_head_len / (float)sqrt(2.0) * ( -dir_norm + perp );
+  VFXEpoch::Vector2Df tip_right = end + arrow_head_len / (float)sqrt(2.0) * ( -dir_norm - perp );
+  
+  glBegin(GL_LINES);
+  data[0] = start.m_x, data[1] = start.m_y;
+  glVertex2dv(data);
+  data[0] = end.m_x, data[1] = end.m_y;
+  glVertex2dv(data);
+  glVertex2dv(data);
+  data[0] = tip_left.m_x, data[1] = tip_left.m_y;
+  glVertex2dv(data);
+  data[0] = end.m_x, data[1] = end.m_y;
+  glVertex2dv(data);
+  data[0] = tip_right.m_x, data[1] = tip_right.m_y;
+  glVertex2dv(data);
+  glEnd();
+}
+
+void 
+OpenGL_Utility::draw_arrows(const VFXEpoch::Vector2Dd& start, const VFXEpoch::Vector2Dd& end, double header_len){
+
+}
+
+void 
 OpenGL_Utility::draw_circle2d(const VFXEpoch::Vector2Df& center, double rad, int segs) {
   glLineWidth(2);
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -140,3 +176,5 @@ OpenGL_Utility::draw_circle2d(const VFXEpoch::Vector2Df& center, double rad, int
   }
   glEnd();
 }
+
+

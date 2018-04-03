@@ -189,7 +189,8 @@ EulerGAS2D::set_external_force_location(VFXEpoch::VECTOR_COMPONENTS component, i
 // Protected
 void
 EulerGAS2D::add_force(){
-  /* TODO: code */
+  // In this function, we use the the last compoenent of a 3D vector to specify adding the source
+  // to u component or v compoenent
   for(std::vector<VFXEpoch::Vector3Di>::iterator ite = external_force_locations.begin(); ite != external_force_locations.end(); ite++){
     if(0 == ite->m_z){
       assert(ite->m_x >= 0 && ite->m_x < u.getDimY() && ite->m_y >= 0 && ite->m_y < u.getDimX());
@@ -244,7 +245,7 @@ void
 EulerGAS2D::set_static_boundary(float (*phi)(const VFXEpoch::Vector2Df&)){
   LOOP_GRID2D(nodal_solid_phi){
     VFXEpoch::Vector2Df position(i * user_params.h, j * user_params.h);
-    nodal_solid_phi(i, j) = phi(position);
+    nodal_solid_phi(i, j) = phi(position + user_params.origin);
   }
 }
 

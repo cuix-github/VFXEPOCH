@@ -80,6 +80,10 @@ namespace VFXEpoch
 			m_x = m_y = 0.0f;
 		}
 
+		inline T norm(){
+			return sqrt(pow(m_x, 2) + pow(m_y, 2));
+		}
+
 		// Clockwise is positive while Counterclockwise is negtive
 		void rotate(T degree) {
 			T theta = T(-degree / UTL_PI_DEGREE * UTL_PI);
@@ -197,6 +201,10 @@ namespace VFXEpoch
 
 		inline void ZeroCompoenents(){
 			m_x = m_y = m_z = 0.0f;
+		}
+
+		inline T norm(){
+			return sqrt(pow(m_x, 2) + pow(m_y, 2) + pow(m_z, 2));
 		}
 
 		T length(){ return std::sqrt(m_x * m_x + m_y * m_y + m_z * m_z); }

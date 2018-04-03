@@ -30,7 +30,6 @@ namespace IMF = OPENEXR_IMF_NAMESPACE;
 using namespace IMF;
 using namespace IMATH_NAMESPACE;
 
-PanZoom2D cam(-2.5f, 0.0f, 5.0f);
 bool load_bin(const char* filename);
 void write_exrs(const char fileName[], const Rgba *pixels, int width, int height);
 void convert_to_exr_rgba(GLubyte* in_pixels, Array2D<Imf::Rgba>& out_pixels, int width, int height);
@@ -45,7 +44,13 @@ unsigned int total_frames = 300;
 unsigned int frame_counter = 0;
 unsigned int width = 960;
 unsigned int height = 280;
-bool is_write_to_disk = false;
+bool is_write_to_disk = true;
+
+float pan_zoom_cam_bottom = -2.5f;
+float pan_zoom_cam_height = 5.0f;
+float pan_zoom_cam_left = 0.0f;
+float pan_zoom_cam_right = pan_zoom_cam_left + (pan_zoom_cam_height * width) / height;
+PanZoom2D cam(pan_zoom_cam_bottom, pan_zoom_cam_bottom + pan_zoom_cam_height, pan_zoom_cam_left, pan_zoom_cam_right);
 
 int main(int argc, char **argv)
 {   

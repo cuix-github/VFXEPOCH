@@ -63,7 +63,7 @@ VFXEpoch::Solvers::Euler_Fluid2D_Base *solver = NULL;
 VFXEpoch::Solvers::EulerGAS2D *gas_solver = NULL;
 const float source = 1.0f;
 VFXEpoch::Vector2Df c0(50, 50), c1(0.7,0.5), c2(0.3,0.35), c3(0.5,0.7);
-VFXEpoch::Vector2Df o0(-0.1, 0.0);
+VFXEpoch::Vector2Df o0(0.0, 0.0);
 float rad0 = 40.0f,  rad1 = 0.1,  rad2 = 0.1,   rad3 = 0.1;
 const int tracers = 100000;
 
@@ -168,16 +168,27 @@ bool process_cmd_params(int argc, char* argv[])
 	return true;
 }
 
+bool init_particles(int num_particles)
+{
+	
+}
+
+
 bool init_solver_params()
 {
-	// The dimension would be set during processing the command line argument
+	params.origin = o0;
+	
+	// params.dimension = VFXEpoch::Vector2Di(32, 32);
+	// Since druing debuggin, we change the dimension very often, so we move this param
+	// to be passed from command line
+	
 	params.h = sim_width / (float)params.dimension[0];
 	params.dt = 0.005f;
 	params.buoyancy_alpha = 0.1;
 	params.buoyancy_beta = 0.3;
 	params.vort_conf_eps = 0.55;
 	params.density_source = 20;
-	params.external_force_strength = 0;
+	params.external_force_strength = 5000;
 	params.use_gravity = true;
 	params.max_iterations = 300;
 	params.min_tolerance = 1e-5;
@@ -294,15 +305,32 @@ int main(int argc, char** argv)
 		cout << params << endl;
 
 		bool isInit = gas_solver->init(params);	if(!isInit) return -1;
-		gas_solver->set_source_location(params.dimension[0] / 2, params.dimension[1] / 2);
+		gas_solver->set_source_location(params.dimension[0] / 2 - 10, params.dimension[1] / 2);
+		gas_solver->set_source_location(params.dimension[0] / 2 + 1, params.dimension[1] / 2);
+		gas_solver->set_source_location(params.dimension[0] / 2 + 2, params.dimension[1] / 2);
+		gas_solver->set_source_location(params.dimension[0] / 2 + 3, params.dimension[1] / 2);
 		gas_solver->set_external_force_location(VFXEpoch::VECTOR_COMPONENTS::Y, params.dimension[0]/2, params.dimension[1]/2);
 		gas_solver->set_static_boundary(boundary_phi);
 
 		VFXEpoch::Particle2Df p;
 		p.pos = VFXEpoch::Vector2Df(42.079145937118049,  47.019514491033981);
 		gas_solver->add_particles(p);
+		p.pos = VFXEpoch::Vector2Df(33.079145937118049,  52.019514491033981);
+		gas_solver->add_particles(p);
+		p.pos = VFXEpoch::Vector2Df(55.079145937118049,  25.019514491033981);
+		gas_solver->add_particles(p);
+		p.pos = VFXEpoch::Vector2Df(30.079145937118049,  45.019514491033981);
+		gas_solver->add_particles(p);
+		p.pos = VFXEpoch::Vector2Df(23.079145937118049,  66.019514491033981);
+		gas_solver->add_particles(p);
+		p.pos = VFXEpoch::Vector2Df(11.079145937118049,  21.019514491033981);
+		gas_solver->add_particles(p);
+		p.pos = VFXEpoch::Vector2Df(7.079145937118049,  10.019514491033981);
+		gas_solver->add_particles(p);
+		p.pos = VFXEpoch::Vector2Df(9.079145937118049,  27.019514491033981);
+		gas_solver->add_particles(p);
 
-		Gluvi::init("VFXEPOCH - Example - Smoke", &argc, argv, win_width, win_height);
+		Gluvi::init("VFXEPOCH - Smoke Prototype", &argc, argv, win_width, win_height);
 		Gluvi::camera = &cam;
 		Gluvi::userDisplayFunc = display;
 		Gluvi::userMouseFunc = mouse;

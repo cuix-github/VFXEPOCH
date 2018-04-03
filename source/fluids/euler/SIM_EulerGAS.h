@@ -33,7 +33,9 @@ namespace VFXEpoch{
       struct Parameters{
       public:
         Parameters(){
-          dimension.m_x = 0; dimension.m_y = 0; dt = 0.0; 
+          origin.m_x = 0.0f; origin.m_y = 0.0f;
+          dimension.m_x = 0; dimension.m_y = 0; 
+          dt = 0.0; 
           h = 0.0;
           dt = 0.0;
           buoyancy_alpha = buoyancy_beta = 0.0;
@@ -44,15 +46,17 @@ namespace VFXEpoch{
           external_force_strength = 0.0;
           use_gravity = true;
         }
-        Parameters(Vector2Di _dimension, double _h, double _dt, 
+        Parameters(Vector2Df _origin, Vector2Di _dimension, double _h, double _dt, 
                    double _buoyancy_alpha, double _buoyancy_beta, double _min_tolerance,
                    double _diff, double _visc, int _max_iterations, int _num_particles, 
                    double _density_source, double _external_force_strength, bool _use_gravity): 
+                   origin(_origin),
                    dimension(_dimension), h(_h), dt(_dt), 
                    buoyancy_alpha(_buoyancy_alpha), buoyancy_beta(_buoyancy_beta), 
                    min_tolerance(_min_tolerance), diff(_diff), visc(_visc), max_iterations(_max_iterations), 
                    num_particles(_num_particles), density_source(_density_source), external_force_strength(_external_force_strength), use_gravity(_use_gravity){}
         Parameters(const Parameters& src){
+          origin = src.origin;
           dimension = src.dimension;
           h = src.h;
           dt = src.dt;
@@ -67,6 +71,7 @@ namespace VFXEpoch{
           use_gravity = src.use_gravity;
         }
         Parameters& operator=(const Parameters& rhs){
+          origin = rhs.origin;
           dimension = rhs.dimension;
           h = rhs.h;
           dt = rhs.dt;
@@ -84,6 +89,7 @@ namespace VFXEpoch{
         ~Parameters(){ clear(); }
       public:
         inline void clear(){
+          origin.m_x = origin.m_y = 0.0f;
           dimension.m_x = dimension.m_y = 0;
           h = 0.0;
           dt = 0.0;
@@ -101,6 +107,7 @@ namespace VFXEpoch{
         friend inline ostream&
         operator<<(ostream& os, const Parameters& params) {
           os << std::setprecision(6) << setiosflags(ios::fixed);
+          os << "Origin = (" << params.origin.m_x << ", " << params.origin.m_y << ")" << endl;
           os << "Dimension = " << params.dimension.m_x << " x " << params.dimension.m_y << endl;
           os << "Increment h = " << params.h << endl;
           os << "Diffuse rate = " << params.diff << endl;
@@ -119,6 +126,7 @@ namespace VFXEpoch{
           return os;
         }
       public:
+        Vector2Df origin;
         Vector2Di dimension;
         double h;
         double dt;
