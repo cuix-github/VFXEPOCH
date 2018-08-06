@@ -3,6 +3,8 @@
 |:----------------------:|
 |![Build Status](https://travis-ci.org/Shakebones/VFXEPOCH.svg?branch=master)|
 
+![Splsh](docs/splash.png)
+
 ### **Tested Platform**
 1. gcc/g++-4.8 & ubuntu 14.04 failed
 2. gcc/g++-5.4 & ubuntu 14.04 passed

@@ -47,6 +47,7 @@
         "memory": "cpp",
         "mutex": "cpp",
         "ratio": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "string_view": "cpp"
     }
 }
