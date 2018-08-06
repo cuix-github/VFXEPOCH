@@ -174,7 +174,9 @@ namespace VFXEpoch{
 
     public:
       void set_user_params(Parameters params);
-      EulerGAS2D::Parameters get_user_params();
+      EulerGAS2D::Parameters get_user_params() const;
+      Vector2Df get_grid_velocity(VFXEpoch::Vector2Df pos);
+
     protected:
       void add_source(); // Overload
       void add_force();

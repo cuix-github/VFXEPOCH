@@ -136,7 +136,6 @@ VFXEpoch::InterpolateGrid(float x, float y, VFXEpoch::Grid2DfScalarField& field)
 
 	VFXEpoch::get_barycentric(x, j, fx, 0, field.getDimX());
 	VFXEpoch::get_barycentric(y, i, fy, 0, field.getDimY());
-	// TODO: Verify for Bilinear interpolation
 	return VFXEpoch::Bilerp(fx, fy, field(i, j), field(i, j + 1), field(i + 1, j), field(i + 1, j + 1));
 }
 
@@ -146,8 +145,6 @@ VFXEpoch::InterpolateGrid(Vector2Df pos, Grid2DfScalarField& field){
 	float fx, fy;
 	VFXEpoch::get_barycentric(pos.m_x, j, fx, 0, field.getDimX());
 	VFXEpoch::get_barycentric(pos.m_y, i, fy, 0, field.getDimY());
-
-	// TODO: Verify for Bilinear interpolation
 	return VFXEpoch::Bilerp(fx, fy, field(i, j), field(i, j + 1), field(i + 1, j), field(i + 1, j + 1));
 }
 

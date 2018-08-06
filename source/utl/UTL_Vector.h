@@ -46,6 +46,7 @@ namespace VFXEpoch
 		T m_x;
 		T m_y;
 
+
 	public:
 		Vector2D(){}
 		Vector2D(T _x, T _y) : m_x(_x), m_y(_y){}

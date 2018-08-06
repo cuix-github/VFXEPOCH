@@ -37,10 +37,16 @@ FILE(
   "${CMAKE_CURRENT_SOURCE_DIR}/write_alembic/*.h"
   "${CMAKE_CURRENT_SOURCE_DIR}/write_alembic/*.cpp"
 )
-
+MESSAGE ( STATUS "------------------------ START SEARCHING FOR FUNDAMENTAL LIBRARIES! ------------------------")
+MESSAGE ( STATUS ">>>>>>>>>>>>>>>>>>>>>>>> Searching for OpenGL >>>>>>>>>>>>>>>>>>>>>>>>")
 find_package(OpenGL REQUIRED)
+MESSAGE ( STATUS ">>>>>>>>>>>>>>>>>>>>>>>> Searching for GLUT >>>>>>>>>>>>>>>>>>>>>>>>")
 find_package(GLUT REQUIRED)
-include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} )
+MESSAGE ( STATUS ">>>>>>>>>>>>>>>>>>>>>>>> Searching for X11 >>>>>>>>>>>>>>>>>>>>>>>>")
+FIND_PACKAGE ( X11 REQUIRED )
+MESSAGE ( STATUS "------------------------ FUNDAMENTAL LIBRARIES SEARCHING FINISHED! -------------------------")
+
+include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ${X11_INCLUDE_DIR})
 
 #Homemade public headers and libs
 include_directories(/usr/local/include)
@@ -60,7 +66,7 @@ add_executable(2D_particle_visualizer ${2DPARTICLE_VISUALIZER})
 add_executable(vortex_rings_2d ${VORTEX_RINGS_2D})
 add_executable(write_alembic_points ${WRITE_ALEMBIC_POINTS})
 
-target_link_libraries(smoke VFXEpoch ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
+target_link_libraries(smoke VFXEpoch ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${X11_LIBRARIES})
 target_link_libraries(examiner VFXEpoch ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
 target_link_libraries(2D_particle_visualizer VFXEpoch ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} IlmImf-2_2 Half)
 target_link_libraries(vortex_rings_2d VFXEpoch ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} IlmImf-2_2 Imath-2_2 Half Alembic)

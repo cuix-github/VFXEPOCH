@@ -17,8 +17,9 @@ using namespace std;
 
 // TODO: Synchronize with VFXEPOCH library
 void 
-OpenGL_Utility::draw_grid2d(const VFXEpoch::Vector2Df& origin, float dx, unsigned int nx, unsigned int ny) {
-	float width = nx * dx;
+OpenGL_Utility::draw_grid2d(const VFXEpoch::Vector2Df& origin, float dx, unsigned int nx, unsigned int ny, VFXEpoch::Vector3Df color) {
+	glColor3f(color.m_x, color.m_y, color.m_z);
+  float width = nx * dx;
 	float height = ny * dx;
 
   glLineWidth(1);
@@ -126,43 +127,49 @@ OpenGL_Utility::draw_particles2d(const std::vector<VFXEpoch::Particle2Df>& parti
 }
 
 void 
-OpenGL_Utility::draw_arrows(const VFXEpoch::Vector2Df& start, const VFXEpoch::Vector2Df& end, float arrow_head_len){
-  
-  double data[2] = {0.0, 0.0};
-  VFXEpoch::Vector2Df direction = end - start;
-  VFXEpoch::Vector2Df dir_norm = direction;
-  
-  //TODO Possibly automatically scale arrowhead length based on vector magnitude
-  if(dir_norm.norm() < 1e-14)
+OpenGL_Utility::draw_arrows(VFXEpoch::Solvers::EulerGAS2D* solver, float arrow_len, VFXEpoch::Vector3Df color){
+  if(!solver){
+    std::cout << "ERROR: solver is not initialized" << std::endl;
     return;
-  
-  dir_norm.normalize();
-  VFXEpoch::Vector2Df perp(dir_norm[1], -dir_norm[0]);  
-  VFXEpoch::Vector2Df tip_left = end + arrow_head_len / (float)sqrt(2.0) * ( -dir_norm + perp );
-  VFXEpoch::Vector2Df tip_right = end + arrow_head_len / (float)sqrt(2.0) * ( -dir_norm - perp );
-  
-  glBegin(GL_LINES);
-  data[0] = start.m_x, data[1] = start.m_y;
-  glVertex2dv(data);
-  data[0] = end.m_x, data[1] = end.m_y;
-  glVertex2dv(data);
-  glVertex2dv(data);
-  data[0] = tip_left.m_x, data[1] = tip_left.m_y;
-  glVertex2dv(data);
-  data[0] = end.m_x, data[1] = end.m_y;
-  glVertex2dv(data);
-  data[0] = tip_right.m_x, data[1] = tip_right.m_y;
-  glVertex2dv(data);
-  glEnd();
+  }
+
+  glColor3f(color.m_x, color.m_y, color.m_z);
+  VFXEpoch::Solvers::EulerGAS2D::Parameters user_params = solver->get_user_params();
+  int row = user_params.dimension.m_x;
+  int col = user_params.dimension.m_y;
+
+  VFXEpoch::Vector2Df start, end;
+
+  LOOP_GRID2D(row, col) {
+    VFXEpoch::Vector2Df pos = VFXEpoch::Vector2Df((j + 0.5) * user_params.h, (i + 0.5) * user_params.h) + user_params.origin;
+    start = pos;
+    end = pos + arrow_len * solver->get_grid_velocity(pos);
+    VFXEpoch::Vector2Df direction = end - start;
+    VFXEpoch::Vector2Df dir_norm = direction;    
+
+    //TODO Possibly automatically scale arrowhead length based on vector magnitude
+    // if(dir_norm.norm() < 1e-30)
+    //   return;
+
+    dir_norm.normalize();
+    VFXEpoch::Vector2Df perp(dir_norm[1], -dir_norm[0]);  
+    VFXEpoch::Vector2Df tip_left = end + arrow_len / (float)sqrt(2.0) * ( -dir_norm + perp );
+    VFXEpoch::Vector2Df tip_right = end + arrow_len / (float)sqrt(2.0) * ( -dir_norm - perp );
+
+    glBegin(GL_LINES);
+    glVertex2f(start[0], start[1]);
+    glVertex2f(end[0], end[1]);
+    glVertex2f(end[0], end[1]);
+    glVertex2f(tip_left[0], tip_left[1]);
+    glVertex2f(end[0], end[1]);
+    glVertex2f(tip_right[0], tip_right[1]);
+    glEnd();
+  }
 }
 
 void 
-OpenGL_Utility::draw_arrows(const VFXEpoch::Vector2Dd& start, const VFXEpoch::Vector2Dd& end, double header_len){
-
-}
-
-void 
-OpenGL_Utility::draw_circle2d(const VFXEpoch::Vector2Df& center, double rad, int segs) {
+OpenGL_Utility::draw_circle2d(const VFXEpoch::Vector2Df& center, double rad, int segs, VFXEpoch::Vector3Df color) {
+  glColor3f(color.m_x, color.m_y, color.m_z);
   glLineWidth(2);
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   glBegin(GL_POLYGON);

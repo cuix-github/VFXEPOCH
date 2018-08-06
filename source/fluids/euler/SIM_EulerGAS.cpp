@@ -262,8 +262,14 @@ EulerGAS2D::set_user_params(Parameters params){
 }
 
 EulerGAS2D::Parameters
-EulerGAS2D::get_user_params(){
+EulerGAS2D::get_user_params() const {
   return user_params;
+}
+
+// Public
+VFXEpoch::Vector2Df 
+EulerGAS2D::get_grid_velocity(VFXEpoch::Vector2Df pos) {
+  return get_vel(pos);
 }
 
 // Protected

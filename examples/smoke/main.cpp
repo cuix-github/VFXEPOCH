@@ -32,6 +32,19 @@ using namespace IMATH_NAMESPACE;
 #include <cctype>
 #include <algorithm>
 
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+
+int X_error_handler(Display *d, XErrorEvent *e)
+{
+        char msg[80];
+        XGetErrorText(d, e->error_code, msg, sizeof(msg));
+
+        fprintf(stderr, "Error %d (%s): request %d.%d\n",
+                        e->error_code, msg, e->request_code, 
+                        e->minor_code);
+}
+
 /***************************** For Visualization ******************************/
 unsigned int win_width = 720;
 unsigned int win_height = 720;
@@ -53,7 +66,7 @@ void drag(int x, int y);
 void timer(int arg);
 
 // Visualization & Output Data
-bool preview = false;
+bool preview = true;
 bool outputParticles = false;
 bool outputAlembic = false;
 /***************************** For Visualization ******************************/
@@ -183,12 +196,12 @@ bool init_solver_params()
 	// to be passed from command line
 	
 	params.h = sim_width / (float)params.dimension[0];
-	params.dt = 0.005f;
+	params.dt = 0.1f;
 	params.buoyancy_alpha = 0.1;
 	params.buoyancy_beta = 0.3;
 	params.vort_conf_eps = 0.55;
 	params.density_source = 20;
-	params.external_force_strength = 5000;
+	params.external_force_strength = 50;
 	params.use_gravity = true;
 	params.max_iterations = 300;
 	params.min_tolerance = 1e-5;
@@ -205,13 +218,13 @@ void display()
 	float glScale = 1.0f / (params.h* params.dimension[0]);
 	glScaled(glScale, glScale, glScale);
 
-	glColor3f(0.5, 0.5, 0.5);
-	OpenGL_Utility::draw_grid2d(o0, params.h, params.dimension[0], params.dimension[1]);
+	OpenGL_Utility::draw_grid2d(o0, params.h, params.dimension[0], params.dimension[1], VFXEpoch::Vector3Df(0.5, 0.5, 0.5));
 
-	glColor3f(0.0, 1.0, 0.0);
-	OpenGL_Utility::draw_circle2d(c0, rad0, 100);
+	OpenGL_Utility::draw_circle2d(c0, rad0, 100, VFXEpoch::Vector3Df(0.0, 1.0, 0.0));
 	
-	OpenGL_Utility::draw_particles2d(gas_solver->get_particles(), 5, VFXEpoch::Vector3Df(1.0, 1.0, 1.0), true);
+	OpenGL_Utility::draw_particles2d(gas_solver->get_particles(), 10, VFXEpoch::Vector3Df(1.0, 0.0, 0.0), true);
+
+	OpenGL_Utility::draw_arrows(gas_solver, 0.1f, VFXEpoch::Vector3Df(0.0, 1.0, 0.0));
 
 	glPopMatrix();
 }
@@ -238,6 +251,15 @@ void timer(int arg)
 		cout << endl;
 		glutPostRedisplay();
 		glutTimerFunc(1000 / 24, timer, arg - 1);
+	}
+	else if (total_frames == -1) {
+		int i = (total_frames - arg) + 1;
+		cout << "****************** Frame " << i << " ******************" << endl;
+		gas_solver->step();
+		cout << "**************** Step " << i << " done ****************" << endl;
+		cout << endl;
+		glutPostRedisplay();
+		glutTimerFunc(1000 / 24, timer, 0);
 	}
 	else {
 		std::cout << total_frames << " steps of simulation is done" << std::endl;
@@ -343,6 +365,8 @@ int main(int argc, char** argv)
 	if(solver) 
 		delete solver;
 	solver = NULL;
+
+	XSetErrorHandler(X_error_handler);
 
 	return 0;
 }
