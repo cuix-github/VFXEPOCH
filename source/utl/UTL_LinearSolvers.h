@@ -24,6 +24,9 @@ namespace VFXEpoch
 		GSSolve(VFXEpoch::Grid2DfScalarField& x, VFXEpoch::Grid2DfScalarField x0, VFXEpoch::BndConditionPerEdge b[], float coefMatrixAElement, float c, int iterations);
 
 		void
+		GSSolve(VFXEpoch::Grid2DdScalarField& x, VFXEpoch::Grid2DdScalarField x0, VFXEpoch::BndConditionPerEdge b[], float coefMatrixAElement, float c, int iterations);		
+
+		void
 		RBGSSolve(float h, VFXEpoch::Grid2DfScalarField& x, VFXEpoch::Grid2DfScalarField x0, VFXEpoch::BndConditionPerEdge b[], float coefMatrixAElement, float c);
 
 		void

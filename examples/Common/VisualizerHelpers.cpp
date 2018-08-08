@@ -300,19 +300,13 @@ export_rib(ostream &output)
 //=================================================================================
 
 PanZoom2D::
-PanZoom2D(float bottom_, float left_, float height_, bool isSquare_)
-    : bottom(bottom_), left(left_), height(height_), isSquare(isSquare_), action_mode(INACTIVE)
+PanZoom2D(float bottom_, float height_, float left_, float right_)
+    : bottom(bottom_), height(height_), left(left_), right(right_), action_mode(INACTIVE)
 {
-    default_bottom=bottom;
-    default_left=left;
-    default_height=height;
-    default_isSquare=isSquare;
-}
-
-bool PanZoom2D::
-is_square(void)
-{
-    return isSquare;
+    default_bottom = bottom;
+    default_left = left;
+    default_height = height;
+    default_right = right;
 }
 
 void PanZoom2D::
@@ -402,6 +396,7 @@ return_to_default(void)
     bottom=default_bottom;
     left=default_left;
     height=default_height;
+    right=default_right;
 }
 
 void PanZoom2D::
@@ -418,17 +413,10 @@ gl_transform(void)
     glViewport(0, 0, (GLsizei)winwidth, (GLsizei)winheight);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(left, left+(height*winwidth)/winheight, bottom, bottom+height, 0, 1);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-}
-
-void PanZoom2D::
-gl_transform_square(void){
-    glViewport(0, 0, (GLsizei)winwidth, (GLsizei)winheight);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(bottom, bottom+height, bottom, bottom+height, 0.0f, 1.0f);
+    glOrtho(left, right, bottom, height, 0, 1);
+    // glOrtho(left, left+(height*winwidth)/winheight, bottom, bottom+height, 0, 1);
+    std::cout << "right = " << right << std::endl;
+    std::cout << "height = " << height << std::endl;
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
@@ -739,12 +727,7 @@ static void gluviDisplay()
 
     // draw the scene
     if(camera) {
-        if(camera->is_square()){
-            camera->gl_transform_square();
-        }
-        else{
-            camera->gl_transform();
-        }
+        camera->gl_transform();
     }
     if(userDisplayFunc) userDisplayFunc();
 

@@ -3,6 +3,8 @@
 |:----------------------:|
 |![Build Status](https://travis-ci.org/Shakebones/VFXEPOCH.svg?branch=master)|
 
+![Splsh](docs/splash.png)
+
 ### **Tested Platform**
 1. gcc/g++-4.8 & ubuntu 14.04 failed
 2. gcc/g++-5.4 & ubuntu 14.04 passed
@@ -87,3 +89,13 @@ $ sudo make install
 $ ./cleanup.sh && ./setup.sh
 ```
 When it's done, you should see an examples folder under the build directory. Go into it and have fun!
+
+### **Examples**
+1. **Smoke**
+<br />Launch the program by all default settings or provide arguments as:
+```
+$ ./program resolutionX(int) resolutionY(int) total_frames(int) window_width(int) window_height(int)
+$ ./program resolutionX(int) resolutionY(int) total_frames(int)
+$  Example Below
+$ ./smoke 64 64 240 720 720
+```

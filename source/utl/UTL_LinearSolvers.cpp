@@ -24,7 +24,26 @@ namespace VFXEpoch
 						x(i, j) = curApproximation;
 					}
 				}
-					// TODO: Boundary values need to be set
+				x.setBoundaries(b[0].boundaryType, b[0].side);
+				x.setBoundaries(b[1].boundaryType, b[1].side);
+				x.setBoundaries(b[2].boundaryType, b[2].side);
+				x.setBoundaries(b[3].boundaryType, b[3].side);
+				x.setBoundariesOnCorners();
+			}
+		}
+
+		void
+		GSSolve(VFXEpoch::Grid2DdScalarField& x, VFXEpoch::Grid2DdScalarField x0, VFXEpoch::BndConditionPerEdge b[], float coefMatrixAElement, float c, int iterations)	{
+			for (int m = 0; m != iterations; m++)	{
+				for (int i = 1; i != x.getDimY() - 1; i++)	{
+					for (int j = 1; j != x.getDimX() - 1; j++)	{
+						double sumFluxout = x(i + 1, j) + x(i - 1, j) + x(i, j + 1) + x(i, j - 1);
+						sumFluxout *= coefMatrixAElement;
+						double curApproximation = x0(i, j) + sumFluxout;
+						curApproximation /= c;
+						x(i, j) = curApproximation;
+					}
+				}
 				x.setBoundaries(b[0].boundaryType, b[0].side);
 				x.setBoundaries(b[1].boundaryType, b[1].side);
 				x.setBoundaries(b[2].boundaryType, b[2].side);

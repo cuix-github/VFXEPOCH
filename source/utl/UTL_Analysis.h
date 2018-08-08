@@ -66,6 +66,11 @@ namespace VFXEpoch
 		void
 		computeDivergence_with_weights_mac(VFXEpoch::Grid2DdScalarField& dest, float h, VFXEpoch::Grid2DfScalarField u, VFXEpoch::Grid2DfScalarField v,
 										   VFXEpoch::Grid2DfScalarField _uw, VFXEpoch::Grid2DfScalarField _vw);
+
+		void
+		computeDivergence_with_weights_mac(VFXEpoch::Grid2DdScalarField& dest, double h, VFXEpoch::Grid2DdScalarField u, VFXEpoch::Grid2DdScalarField v,
+										   VFXEpoch::Grid2DdScalarField _uw, VFXEpoch::Grid2DdScalarField _vw);
+
 		void
 		computeDivergence_mac(VFXEpoch::Grid2DfScalarField& dest, VFXEpoch::Grid2DfScalarField u, VFXEpoch::Grid2DfScalarField v);
 	}

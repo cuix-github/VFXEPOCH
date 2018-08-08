@@ -46,14 +46,15 @@ namespace VFXEpoch
 		T m_x;
 		T m_y;
 
+
 	public:
 		Vector2D(){}
 		Vector2D(T _x, T _y) : m_x(_x), m_y(_y){}
 		Vector2D(const Vector2D& source) : m_x(source.m_x), m_y(source.m_y){}
 		~Vector2D(){}
 		Vector2D& operator=(const Vector2D& rhs){ this->m_x = rhs.m_x; this->m_y = rhs.m_y; return *this; }
-		Vector2D operator+(Vector2D& source) const { return Vector2D(m_x + source.m_x, m_y + source.m_y); }
-		Vector2D operator+(Vector2D&& source) const { return Vector2D(m_x + source.m_x, m_y + source.m_y); }
+		Vector2D operator+(const Vector2D& source) const { return Vector2D(m_x + source.m_x, m_y + source.m_y); }
+		Vector2D operator+(const Vector2D&& source) const { return Vector2D(m_x + source.m_x, m_y + source.m_y); }
 		Vector2D operator-(const Vector2D& source) const { return Vector2D(m_x - source.m_x, m_y - source.m_y); }
 		Vector2D operator-(const Vector2D&& source) const { return Vector2D(m_x - source.m_x, m_y - source.m_y); }
 		Vector2D operator-()const { return Vector2D(-m_x, -m_y); }
@@ -62,7 +63,7 @@ namespace VFXEpoch
 		Vector2D& operator-=(const Vector2D& source){ m_x -= source.m_x; m_y -= source.m_y; return *this; }
 		Vector2D& operator*=(const T& coef){ m_x *= coef; m_y *= coef; return *this; }
 		Vector2D& operator/=(const T& coef){ m_x /= coef; m_y /= coef; return *this; }
-		T& operator[](int i) { assert(i < 0 || i > 1); if (0 == i) return m_x; else return m_y;	}
+		T& operator[](int i) { assert(i == 0 || i == 1); if (0 == i) return m_x; else return m_y; }
 
 		inline bool operator==(const Vector2D& source) const {
 			ROUND(m_x); ROUND(m_y);
@@ -78,6 +79,10 @@ namespace VFXEpoch
 
 		inline void ZeroComponents(){
 			m_x = m_y = 0.0f;
+		}
+
+		inline T norm(){
+			return sqrt(pow(m_x, 2) + pow(m_y, 2));
 		}
 
 		// Clockwise is positive while Counterclockwise is negtive
@@ -197,6 +202,10 @@ namespace VFXEpoch
 
 		inline void ZeroCompoenents(){
 			m_x = m_y = m_z = 0.0f;
+		}
+
+		inline T norm(){
+			return sqrt(pow(m_x, 2) + pow(m_y, 2) + pow(m_z, 2));
 		}
 
 		T length(){ return std::sqrt(m_x * m_x + m_y * m_y + m_z * m_z); }

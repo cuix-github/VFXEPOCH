@@ -127,8 +127,8 @@ EulerGAS2D::step(){
   cout << "--> Solving pressure" << endl;
   project();
   cout << "--> Pressure linear solver (pcg) outputs:" << endl;
-  cout << " -> Tolerance:" << user_params.out_tolerance << endl;
-  cout << " -> rations:" << user_params.out_iterations << endl;
+  cout << " ->  Tolerance:" << user_params.out_tolerance << endl;
+  cout << " ->  iterations:" << user_params.out_iterations << endl;
   cout << "--> Looking for boundaries" << endl;
   find_boundary(u, uw, inside_mask, inside_mask0);
   find_boundary(v, vw, inside_mask, inside_mask0);
@@ -189,7 +189,8 @@ EulerGAS2D::set_external_force_location(VFXEpoch::VECTOR_COMPONENTS component, i
 // Protected
 void
 EulerGAS2D::add_force(){
-  /* TODO: code */
+  // In this function, we use the the last compoenent of a 3D vector to specify adding the source
+  // to u component or v compoenent
   for(std::vector<VFXEpoch::Vector3Di>::iterator ite = external_force_locations.begin(); ite != external_force_locations.end(); ite++){
     if(0 == ite->m_z){
       assert(ite->m_x >= 0 && ite->m_x < u.getDimY() && ite->m_y >= 0 && ite->m_y < u.getDimX());
@@ -199,11 +200,18 @@ EulerGAS2D::add_force(){
       v(ite->m_x, ite->m_y) = user_params.external_force_strength;
     }
   }
+
+  if (user_params.use_gravity){
+    float grav = -981.0f * user_params.dt;
+    LOOP_GRID2D(v){
+      v(i, j) += grav;
+    }
+  }
 }
 
 // Public
 void
-EulerGAS2D::add_particles(VFXEpoch::Particle2D p){
+EulerGAS2D::add_particles(VFXEpoch::Particle2Df p){
   particles_container.push_back(p);
 }
 
@@ -237,8 +245,14 @@ void
 EulerGAS2D::set_static_boundary(float (*phi)(const VFXEpoch::Vector2Df&)){
   LOOP_GRID2D(nodal_solid_phi){
     VFXEpoch::Vector2Df position(i * user_params.h, j * user_params.h);
-    nodal_solid_phi(i, j) = phi(position);
+    nodal_solid_phi(i, j) = phi(position + user_params.origin);
   }
+}
+
+// Public
+vector<VFXEpoch::Particle2Df> 
+EulerGAS2D::get_particles(){
+  return particles_container;
 }
 
 // Public
@@ -248,8 +262,14 @@ EulerGAS2D::set_user_params(Parameters params){
 }
 
 EulerGAS2D::Parameters
-EulerGAS2D::get_user_params(){
+EulerGAS2D::get_user_params() const {
   return user_params;
+}
+
+// Public
+VFXEpoch::Vector2Df 
+EulerGAS2D::get_grid_velocity(VFXEpoch::Vector2Df pos) {
+  return get_vel(pos);
 }
 
 // Protected
@@ -343,7 +363,7 @@ EulerGAS2D::advect_curl(){
 // Protected
 void
 EulerGAS2D::advect_particles(){
-  std::vector<VFXEpoch::Particle2D>::iterator ite(0);
+  std::vector<VFXEpoch::Particle2Df>::iterator ite(0);
   for(ite = particles_container.begin(); ite != particles_container.end(); ite++){
     ite->pos = trace_rk2(ite->pos, user_params.dt);
 
